@@ -1,6 +1,6 @@
 import { routes } from "@/config/routes";
 import { AdminLayout, AuthLayout } from "@/layouts";
-import { CategoryPage, DashboardPage, InvoicePage, MedicinePage, OrderPage, SupplierPage, UserPage } from "@/pages/admin";
+import { AccountPage, CategoryPage, DashboardPage, InvoicePage, MedicinePage, OrderPage, SupplierPage } from "@/pages/admin";
 import { LoginPage } from "@/pages/auth";
 import { Navigate, RouteObject } from "react-router-dom";
 
@@ -35,8 +35,8 @@ export const reactRouter: RouteObject[] = [
         element: <DashboardPage />,
       },
       {
-        path: routes.admin.users,
-        element: <UserPage />,
+        path: routes.admin.account,
+        element: <AccountPage />,
       },
       {
         path: routes.admin.categories,

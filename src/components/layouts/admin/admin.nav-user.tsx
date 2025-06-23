@@ -4,6 +4,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar } from "@/components/ui/sidebar";
 import { routes } from "@/config";
+import { AccountRole } from "@/data/enum";
 import { UserResponse } from "@/data/interfaces";
 import { cn } from "@/lib/utils";
 
@@ -79,9 +80,14 @@ export function AdminNavUser({ user }: { user: UserResponse }) {
                   <span className="text-sm text-muted-foreground">
                     {user.email}
                   </span>
-                  <span className="mt-1 inline-flex items-center gap-1 rounded-full bg-emerald-100 px-2 py-0.5 text-xs font-medium text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300">
-                    <Shield className="h-3 w-3" /> Quản trị viên
-                  </span>
+                  <div className="flex items-center gap-1">
+                    <span className={`mt-1 inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-medium ${user.role === AccountRole.ADMIN
+                      ? 'bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300'
+                      : 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300'
+                      }`}>
+                      <Shield className="h-3 w-3" /> {user.role === AccountRole.ADMIN ? 'Quản trị viên' : 'Dược sĩ'}
+                    </span>
+                  </div>
                 </div>
               </div>
             </DropdownMenuLabel>

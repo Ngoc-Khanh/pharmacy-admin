@@ -8,7 +8,7 @@ const baseRoutes = {
   admin: {
     root: "/admin",
     dashboard: "/admin/dashboard",
-    users: "/admin/users",
+    account: "/admin/account",
     categories: "/admin/categories",
     medicines: "/admin/medicines",
     medicineDetails: (id: string) => `/admin/medicines/${id}/detail`,
@@ -37,7 +37,7 @@ export const routeNames = {
   [baseRoutes.admin.root]: "Trang chủ",
   [baseRoutes.admin.dashboard]: "Thống kê",
   [baseRoutes.admin.settings.root]: "Cài đặt",
-  [baseRoutes.admin.users]: "Quản lý người dùng",
+  [baseRoutes.admin.account]: "Quản lý tài khoản",
   [baseRoutes.admin.categories]: "Quản lý danh mục",
   [baseRoutes.admin.medicines]: "Quản lý dược phẩm",
   [baseRoutes.admin.medicineDetails(":id")]: "Chi tiết dược phẩm",
