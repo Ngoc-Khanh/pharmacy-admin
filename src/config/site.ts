@@ -52,8 +52,8 @@ export const sidebarConfig = {
       icon: LayoutDashboardIcon,
     },
     {
-      title: routeNames[routes.admin.users],
-      url: routes.admin.users,
+      title: routeNames[routes.admin.account],
+      url: routes.admin.account,
       icon: UsersIcon,
     },
     {

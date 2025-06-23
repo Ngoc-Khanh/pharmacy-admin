@@ -1,0 +1,15 @@
+import { UserResponse } from "@/data/interfaces";
+import { atom, useAtom } from "jotai";
+
+export type DialogType = "add" | "edit" | "delete";
+
+export type AccountDialogType = DialogType | "detail" | "suspend" | "activate";
+
+export const openAccountDialogAtom = atom<AccountDialogType | null>(null);
+export const currentAccountAtom = atom<UserResponse | null>(null);
+
+export const useAccountDialog = () => {
+  const [open, setOpen] = useAtom(openAccountDialogAtom);
+  const [currentAccount, setCurrentAccount] = useAtom(currentAccountAtom);
+  return { open, setOpen, currentAccount, setCurrentAccount };
+}
