@@ -1,4 +1,4 @@
-import { DashboardCharts, DashboardHeader, DashboardStatisticsCard } from "@/components/pages/dashboard";
+import { DashboardCharts, DashboardHeader, DashboardStatisticsCard, DashboardRevenueCalendar } from "@/components/pages/dashboard";
 import { routeNames, routes, siteConfig } from "@/config";
 import { OrderStatus } from "@/data/enum";
 import { DashboardAPI } from "@/services/v1";
@@ -82,6 +82,7 @@ export default function DashboardPage() {
         <DashboardHeader />
         <DashboardStatisticsCard stats={stats} isLoading={isLoading} />
         <DashboardCharts revenueData={revenueChartData} ordersData={orderStatusData} isLoading={isLoading} />
+        <DashboardRevenueCalendar isLoading={isLoading} />
       </div>
     </div>
   );
