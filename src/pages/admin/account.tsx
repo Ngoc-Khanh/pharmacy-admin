@@ -11,7 +11,7 @@ import { Helmet } from "react-helmet-async";
 
 export default function AccountPage() {
   const { data: accountList, isLoading } = useQuery({
-    queryKey: ["account-list"],
+    queryKey: ["accounts"],
     queryFn: () => AccountAPI.AccountList(),
     refetchOnWindowFocus: false,
     refetchOnMount: false,
