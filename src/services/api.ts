@@ -1,8 +1,8 @@
 import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
 
-import { getAccessToken } from "@/lib/get-token";
-import { getLocale } from "@/lib/get-locales";
 import { routes, siteConfig } from "@/config";
+import { getLocale } from "@/lib/get-locales";
+import { getAccessToken } from "@/lib/get-token";
 import { toCamelCase } from "@/lib/to-camel-case";
 import { toSnakeCase } from "@/lib/to-snake-case";
 

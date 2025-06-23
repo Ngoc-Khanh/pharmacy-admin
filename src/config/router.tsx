@@ -2,7 +2,7 @@ import { routes } from "@/config/routes";
 import { AdminLayout, AuthLayout } from "@/layouts";
 import { DashboardPage } from "@/pages/admin";
 import { LoginPage } from "@/pages/auth";
-import { RouteObject } from "react-router-dom";
+import { Navigate, RouteObject } from "react-router-dom";
 
 export const reactRouter: RouteObject[] = [
   // AUTHENTICATION PAGES
@@ -22,8 +22,12 @@ export const reactRouter: RouteObject[] = [
     children: [
       {
         path: routes.admin.root,
-        element: <DashboardPage />,
+        element: <Navigate to={routes.admin.dashboard} />,
       },
+      {
+        path: routes.admin.dashboard,
+        element: <DashboardPage />,
+      }
     ],
   },
 
