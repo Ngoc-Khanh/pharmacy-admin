@@ -22,5 +22,5 @@ export type UpdateAccountDto = {
 }
 
 export type ChangeStatusAccountDto = {
-  status: AccountStatus;
+  status: AccountStatus.ACTIVE | AccountStatus.SUSPENDED;
 }

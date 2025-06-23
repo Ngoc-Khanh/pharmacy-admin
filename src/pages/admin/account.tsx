@@ -79,12 +79,15 @@ export default function AccountPage() {
                 <AccountPrimaryButtons />
               </div>
 
-              <motion.div 
+              <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ duration: 0.4, delay: 0.4 }}
+                className="bg-white dark:bg-slate-950 rounded-xl shadow-sm border border-emerald-100 dark:border-emerald-900/30"
               >
-                <AccountDataTable columns={accountColumns} data={accountData} />
+                <div className="p-4 md:p-6">
+                  <AccountDataTable columns={accountColumns} data={accountData} />
+                </div>
               </motion.div>
             </div>
           )}
