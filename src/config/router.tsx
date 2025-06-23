@@ -1,10 +1,16 @@
 import { routes } from "@/config/routes";
 import { AdminLayout, AuthLayout } from "@/layouts";
-import { DashboardPage } from "@/pages/admin";
+import { CategoryPage, DashboardPage, InvoicePage, MedicinePage, OrderPage, SupplierPage, UserPage } from "@/pages/admin";
 import { LoginPage } from "@/pages/auth";
 import { Navigate, RouteObject } from "react-router-dom";
 
 export const reactRouter: RouteObject[] = [
+  // PUBLIC PAGES
+  {
+    path: "/",
+    element: <Navigate to={routes.admin.root} />,
+  },
+
   // AUTHENTICATION PAGES
   {
     element: <AuthLayout />,
@@ -27,7 +33,31 @@ export const reactRouter: RouteObject[] = [
       {
         path: routes.admin.dashboard,
         element: <DashboardPage />,
-      }
+      },
+      {
+        path: routes.admin.users,
+        element: <UserPage />,
+      },
+      {
+        path: routes.admin.categories,
+        element: <CategoryPage />,
+      },
+      {
+        path: routes.admin.medicines,
+        element: <MedicinePage />,
+      },
+      {
+        path: routes.admin.suppliers,
+        element: <SupplierPage />,
+      },
+      {
+        path: routes.admin.orders,
+        element: <OrderPage />,
+      },
+      {
+        path: routes.admin.invoices,
+        element: <InvoicePage />,
+      },
     ],
   },
 
