@@ -1,14 +1,16 @@
 import { RouterProvider, ThemeProvider } from "@/providers";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { HelmetProvider } from "react-helmet-async";
-import { QueryClient, QueryClientProvider } from "react-query";
+import { Toaster } from "sonner";
 
 function App() {
   const queryClient = new QueryClient();
 
   return (
     <QueryClientProvider client={queryClient}>
-      <ThemeProvider defaultTheme="dark" storageKey="admin-ui-theme">
+      <ThemeProvider defaultTheme="light" storageKey="admin-ui-theme">
         <HelmetProvider>
+          <Toaster richColors />
           <RouterProvider />
         </HelmetProvider>
       </ThemeProvider>
