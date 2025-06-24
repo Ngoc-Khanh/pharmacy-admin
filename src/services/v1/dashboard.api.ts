@@ -1,4 +1,4 @@
-import { DashboardChartData, DashboardChartOrdersStatus, DashboardStats } from "@/data/interfaces"
+import { DashboardChartData, DashboardChartOrdersStatus, DashboardRevenueCalendar, DashboardStats } from "@/data/interfaces"
 import { SRO } from "@/data/sro"
 import { apiGet } from "../api"
 
@@ -15,6 +15,11 @@ export const DashboardAPI = {
 
   async DashboardChartOrdersStatus() {
     const res = await apiGet<SRO<DashboardChartOrdersStatus[]>>("v1/admin/statistics/order-status")
+    return res.data.data
+  },
+
+  async DashboardRevenueCalendar(month: number, year: number) {
+    const res = await apiGet<SRO<DashboardRevenueCalendar[]>>(`v1/admin/statistics/daily-revenue-calendar?m=${month}&y=${year}`)
     return res.data.data
   }
 }
