@@ -53,7 +53,7 @@ export const accountColumns: ColumnDef<UserResponse>[] = [
     cell: ({ row }) => {
       const { firstname, lastname } = row.original;
       const initials = `${firstname?.[0] || ''}${lastname?.[0] || ''}`.toUpperCase();
-      const profileImage = row.getValue("profileImage") as { url: string, publicId: string } | undefined;
+      const profileImage = row.getValue("profileImage") as { url: string, publicId: string, alt: string } | undefined;
 
       return (
         <motion.div
@@ -67,7 +67,7 @@ export const accountColumns: ColumnDef<UserResponse>[] = [
             {profileImage ? (
               <AvatarImage
                 src={profileImage.url}
-                alt={`${firstname} ${lastname}`}
+                alt={profileImage.alt}
                 className="object-cover"
               />
             ) : null}
