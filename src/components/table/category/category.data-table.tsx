@@ -1,11 +1,11 @@
 import { DataTablePagination } from "@/components/table/data-table-pagination";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { UserResponse } from "@/data/interfaces";
+import { CategoryResponse } from "@/data/interfaces";
 import { cn } from "@/lib/utils";
 import { ColumnDef, ColumnFiltersState, flexRender, getCoreRowModel, getFacetedRowModel, getFacetedUniqueValues, getFilteredRowModel, getPaginationRowModel, getSortedRowModel, RowData, SortingState, useReactTable, VisibilityState } from "@tanstack/react-table";
 import { motion, Variants } from 'motion/react';
 import { useState } from "react";
-import { AccountTableToolbar } from "./account.table-toolbar";
+import { CategoriesTableToolbar } from "./category.table-toolbar";
 
 declare module "@tanstack/react-table" {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -15,11 +15,11 @@ declare module "@tanstack/react-table" {
 }
 
 interface DataTableProps {
-  columns: ColumnDef<UserResponse>[];
-  data: UserResponse[];
+  columns: ColumnDef<CategoryResponse>[]
+  data: CategoryResponse[]
 }
 
-export default function AccountDataTable({ columns, data }: DataTableProps) {
+export function CategoryDataTable({ columns, data }: DataTableProps) {
   const [rowSelection, setRowSelection] = useState({});
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
@@ -48,6 +48,16 @@ export default function AccountDataTable({ columns, data }: DataTableProps) {
     getSortedRowModel: getSortedRowModel(),
     getFacetedRowModel: getFacetedRowModel(),
     getFacetedUniqueValues: getFacetedUniqueValues(),
+    globalFilterFn: (row, value) => {
+      const search = value.toLowerCase();
+      const title = row.original.title?.toLowerCase() || '';
+      const description = row.original.description?.toLowerCase() || '';
+      const slug = row.original.slug?.toLowerCase() || '';
+
+      return title.includes(search) ||
+        description.includes(search) ||
+        slug.includes(search);
+    },
   });
 
   const fadeInUpVariants = {
@@ -65,9 +75,9 @@ export default function AccountDataTable({ columns, data }: DataTableProps) {
 
   return (
     <div className="space-y-4">
-      <AccountTableToolbar table={table} />
+      <CategoriesTableToolbar table={table} />
 
-      <div className="overflow-hidden rounded-xl border border-emerald-100 dark:border-emerald-800/30 bg-white dark:bg-slate-950 shadow-sm">
+      <div className="overflow-hidden rounded-xl border border-amber-100 dark:border-amber-800/30 bg-white dark:bg-slate-950 shadow-sm">
         <motion.div
           initial={{ opacity: 0.7 }}
           animate={{ opacity: 1 }}
@@ -75,26 +85,18 @@ export default function AccountDataTable({ columns, data }: DataTableProps) {
           className="relative"
         >
           <div className="overflow-x-auto">
-            <Table className="w-full table-fixed">
-              <TableHeader className="bg-emerald-50/80 dark:bg-emerald-950/40 sticky top-0 z-10">
+            <Table className="table-fixed">
+              <TableHeader className="bg-amber-50/70 dark:bg-amber-950/40 sticky top-0 z-10">
                 {table.getHeaderGroups().map((headerGroup) => (
-                  <TableRow key={headerGroup.id} className="border-b border-emerald-100 dark:border-emerald-800/20">
+                  <TableRow key={headerGroup.id} className="border-b border-amber-100 dark:border-amber-800/20">
                     {headerGroup.headers.map((header) => {
                       return (
                         <TableHead
                           key={header.id}
+                          style={{ width: `${header.getSize()}px` }}
                           colSpan={header.colSpan}
                           className={cn(
-                            "h-11 font-medium text-emerald-800 dark:text-emerald-300 text-sm px-4 py-3 text-left",
-                            header.column.id === "select" && "w-[50px]",
-                            header.column.id === "profileImage" && "w-[80px]",
-                            header.column.id === "fullname" && "w-[200px]",
-                            header.column.id === "email" && "w-[250px]",
-                            header.column.id === "phone" && "w-[140px]",
-                            header.column.id === "addresses" && "w-[120px]",
-                            header.column.id === "status" && "w-[120px]",
-                            header.column.id === "role" && "w-[150px]",
-                            header.column.id === "actions" && "w-[80px] text-right",
+                            "font-semibold text-amber-800 dark:text-amber-300 text-sm py-4 px-4",
                             header.column.columnDef.meta?.className
                           )}
                         >
@@ -119,34 +121,38 @@ export default function AccountDataTable({ columns, data }: DataTableProps) {
                       initial="hidden"
                       animate="visible"
                       variants={fadeInUpVariants as Variants}
-                      className="group border-b border-emerald-50 dark:border-emerald-800/10 hover:bg-emerald-50/70 dark:hover:bg-emerald-900/20 data-[state=selected]:bg-emerald-100 dark:data-[state=selected]:bg-emerald-800/30 transition-colors"
+                      transition={{
+                        duration: 0.2,
+                        delay: i * 0.05,
+                        ease: "easeOut"
+                      }}
+                      className="group border-b border-amber-100 dark:border-amber-800/10 hover:bg-amber-50/70 dark:hover:bg-amber-900/20 data-[state=selected]:bg-amber-100 dark:data-[state=selected]:bg-amber-800/30 transition-colors"
                       data-state={row.getIsSelected() && "selected"}
                     >
                       {row.getVisibleCells().map((cell) => (
                         <TableCell
                           key={cell.id}
+                          style={{ width: `${cell.column.getSize()}px` }}
                           className={cn(
-                            "h-14 px-4 py-3 align-middle text-left",
-                            cell.column.id === "select" && "w-[50px]",
-                            cell.column.id === "profileImage" && "w-[80px] text-center",
-                            cell.column.id === "fullname" && "w-[200px]",
-                            cell.column.id === "email" && "w-[250px]",
-                            cell.column.id === "phone" && "w-[140px]",
-                            cell.column.id === "addresses" && "w-[120px] text-center",
-                            cell.column.id === "status" && "w-[120px] text-center",
-                            cell.column.id === "role" && "w-[150px] text-center",
-                            cell.column.id === "actions" && "w-[80px] text-right"
+                            "border-b border-amber-100/70 dark:border-amber-800/20 h-auto py-4 px-4 align-middle group-last:border-0",
+                            cell.column.columnDef.meta?.className
                           )}
                         >
-                          {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                          {flexRender(
+                            cell.column.columnDef.cell,
+                            cell.getContext()
+                          )}
                         </TableCell>
                       ))}
                     </motion.tr>
                   ))
                 ) : (
                   <TableRow>
-                    <TableCell colSpan={columns.length} className="h-24 text-center">
-                      Không có người dùng nào.
+                    <TableCell
+                      colSpan={columns.length}
+                      className="h-24 text-center px-4"
+                    >
+                      Không có kết quả.
                     </TableCell>
                   </TableRow>
                 )}
@@ -156,7 +162,7 @@ export default function AccountDataTable({ columns, data }: DataTableProps) {
         </motion.div>
       </div>
 
-      <div className="bg-white dark:bg-slate-950 rounded-xl border border-emerald-100 dark:border-emerald-800/30 shadow-sm p-2">
+      <div className="bg-white dark:bg-slate-950 rounded-xl border border-amber-100 dark:border-amber-800/30 shadow-sm p-2">
         <DataTablePagination table={table} />
       </div>
     </div>
