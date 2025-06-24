@@ -1,5 +1,7 @@
 import { SidebarGroup, SidebarGroupContent, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from "@/components/ui/sidebar";
-
+import { isPharmacistUserAtom } from "@/atoms";
+import { routes } from "@/config";
+import { useAtomValue } from "jotai";
 import { motion } from "framer-motion";
 import { type LucideIcon } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
@@ -15,12 +17,18 @@ export function AdminNavMain({
   }[]
 }) {
   const location = useLocation();
+  const isPharmacist = useAtomValue(isPharmacistUserAtom);
+
+  // Lọc bỏ mục "Quản lý tài khoản" nếu user là PHARMACIST
+  const filteredItems = isPharmacist 
+    ? items.filter(item => item.url !== routes.admin.account)
+    : items;
 
   return (
     <SidebarGroup>
       <SidebarGroupContent className="flex flex-col gap-2 py-2">
         <SidebarMenu>
-          {items.map((item) => {
+          {filteredItems.map((item) => {
             // Check if current pathname matches or starts with the item URL
             const isActive = location.pathname === item.url ||
               (item.url !== '#' && item.url !== '/' && location.pathname.startsWith(item.url));

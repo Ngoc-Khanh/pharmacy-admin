@@ -16,6 +16,7 @@ interface AccountDataTableFacetedFilterProps<TData, TValue> {
     value: string | boolean;
     icon?: React.ComponentType<{ className?: string }>;
     color?: string;
+    count?: number; // Tổng số từ toàn bộ data
   }[];
 }
 
@@ -24,7 +25,6 @@ export function AccountDataTableFacetedFilter<TData, TValue>({
   title,
   options,
 }: AccountDataTableFacetedFilterProps<TData, TValue>) {
-  const facets = column?.getFacetedUniqueValues();
   const selectedValues = new Set(column?.getFilterValue() as (string | boolean)[]);
 
   return (
@@ -66,13 +66,14 @@ export function AccountDataTableFacetedFilter<TData, TValue>({
                     .filter((option) => selectedValues.has(option.value))
                     .map((option) => (
                       <Badge
-                        variant="secondary"
+                        variant="outline"
                         key={option.value.toString()}
                         className={cn(
-                          "rounded-md px-1.5 py-0 text-xs font-medium",
+                          "rounded-md px-1.5 py-0 text-xs font-medium flex items-center gap-1",
                           option.color || "bg-emerald-100 dark:bg-emerald-900/50 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800/50"
                         )}
                       >
+                        {option.icon && <option.icon className="h-3 w-3" />}
                         {option.label}
                       </Badge>
                     ))
@@ -93,8 +94,14 @@ export function AccountDataTableFacetedFilter<TData, TValue>({
             className="h-9 px-3 text-sm border-b border-emerald-100 dark:border-emerald-800/30 focus-visible:ring-0 focus-visible:ring-offset-0"
           />
           <CommandList>
-            <CommandEmpty className="py-3 text-sm text-center text-muted-foreground">
-              Không tìm thấy kết quả.
+            <CommandEmpty className="py-6 text-sm text-center">
+              <div className="flex flex-col items-center gap-2">
+                <div className="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center">
+                  <Filter className="w-4 h-4 text-slate-400" />
+                </div>
+                <p className="text-slate-500 dark:text-slate-400 font-medium">Không tìm thấy kết quả</p>
+                <p className="text-xs text-slate-400 dark:text-slate-500">Thử tìm kiếm với từ khóa khác</p>
+              </div>
             </CommandEmpty>
             <CommandGroup className="py-1.5 px-1">
               {options.map((option) => {
@@ -138,9 +145,9 @@ export function AccountDataTableFacetedFilter<TData, TValue>({
                       )} />
                     )}
                     <span className="truncate">{option.label}</span>
-                    {facets?.get(option.value) && (
+                    {option.count !== undefined && (
                       <Badge className="ml-auto h-5 px-1.5 bg-emerald-50 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400 border-emerald-200 dark:border-emerald-800/50 text-xs rounded-full">
-                        {facets.get(option.value)}
+                        {option.count}
                       </Badge>
                     )}
                   </CommandItem>

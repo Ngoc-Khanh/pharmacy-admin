@@ -1,17 +1,26 @@
 import { CategoryResponse, UserResponse } from "@/data/interfaces";
 import { atom, useAtom } from "jotai";
 
-export type DialogType = "add" | "edit" | "delete";
+export type DialogType = "add" | "edit" | "delete" | "bulk-delete";
 
 export type AccountDialogType = DialogType | "detail" | "suspend" | "activate";
 
 export const openAccountDialogAtom = atom<AccountDialogType | null>(null);
 export const currentAccountAtom = atom<UserResponse | null>(null);
+export const selectedAccountsForBulkDeleteAtom = atom<UserResponse[]>([]);
 
 export const useAccountDialog = () => {
   const [open, setOpen] = useAtom(openAccountDialogAtom);
   const [currentAccount, setCurrentAccount] = useAtom(currentAccountAtom);
-  return { open, setOpen, currentAccount, setCurrentAccount };
+  const [selectedAccountsForBulkDelete, setSelectedAccountsForBulkDelete] = useAtom(selectedAccountsForBulkDeleteAtom);
+  return { 
+    open, 
+    setOpen, 
+    currentAccount, 
+    setCurrentAccount,
+    selectedAccountsForBulkDelete,
+    setSelectedAccountsForBulkDelete
+  };
 }
 
 export type CategoryDialogType = DialogType | "status";

@@ -186,7 +186,7 @@ export const AccountDeleteDialog = memo(function AccountDeleteDialog({ currentAc
         deleteUserMutation.isPending ? (
           <span className="flex items-center gap-1.5">
             <span className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-current border-t-transparent" />
-            Đang xử lý...
+            Đang xóa...
           </span>
         ) : "Xóa Vĩnh Viễn"
       }

@@ -9,17 +9,17 @@ export interface PaginatedResponse<T> {
   currentPage: number;
 }
 
-export interface UsePaginatedDataOptions<T> {
+export interface UsePaginatedDataOptions<T, S = T> {
   queryKey: (page: number, limit: number) => unknown[];
   queryFn: (page: number, limit: number) => Promise<PaginatedResponse<T>>;
   searchQueryKey?: (searchTerm: string) => unknown[];
   searchQueryFn?: (searchTerm: string) => Promise<PaginatedResponse<T>>;
   statsQueryKey?: unknown[];
-  statsQueryFn?: () => Promise<PaginatedResponse<T>>;
+  statsQueryFn?: () => Promise<S>;
   enabled?: boolean;
 }
 
-export interface UsePaginatedDataReturn<T> {
+export interface UsePaginatedDataReturn<T, S = T> {
   // Main paginated data
   data: T[];
   isLoading: boolean;
@@ -34,7 +34,7 @@ export interface UsePaginatedDataReturn<T> {
   isSearchLoading: boolean;
   
   // Stats data (for cards, not paginated)
-  statsData: T[];
+  statsData: S | undefined;
   isStatsLoading: boolean;
   
   // Loading more indicator
@@ -44,7 +44,7 @@ export interface UsePaginatedDataReturn<T> {
   isChangingPage: boolean;
 }
 
-export function usePaginatedData<T>({
+export function usePaginatedData<T, S = T>({
   queryKey,
   queryFn,
   searchQueryKey,
@@ -52,10 +52,10 @@ export function usePaginatedData<T>({
   statsQueryKey,
   statsQueryFn,
   enabled = true,
-}: UsePaginatedDataOptions<T>, 
+}: UsePaginatedDataOptions<T, S>, 
 paginationState: PaginationState<T>,
 paginationActions: PaginationActions<T>
-): UsePaginatedDataReturn<T> {
+): UsePaginatedDataReturn<T, S> {
   
   const { currentPage, limit, searchTerm, accumulatedData, isLoadingMore, isChangingPage } = paginationState;
   const { setAccumulatedData } = paginationActions;
@@ -65,6 +65,7 @@ paginationActions: PaginationActions<T>
     queryKey: queryKey(currentPage, limit),
     queryFn: () => queryFn(currentPage, limit),
     enabled: enabled && !searchTerm,
+    staleTime: 30000, // 30 seconds
     refetchOnWindowFocus: false,
     refetchOnMount: false,
     refetchInterval: false,
@@ -75,6 +76,7 @@ paginationActions: PaginationActions<T>
     queryKey: searchQueryKey ? searchQueryKey(searchTerm) : ["search", searchTerm],
     queryFn: () => searchQueryFn ? searchQueryFn(searchTerm) : Promise.resolve({ data: [], total: 0, lastPage: 1, currentPage: 1 }),
     enabled: !!searchTerm && !!searchQueryFn,
+    staleTime: 60000, // 1 minute for search results
     refetchOnWindowFocus: false,
     refetchOnMount: false,
     refetchInterval: false,
@@ -83,8 +85,9 @@ paginationActions: PaginationActions<T>
   // Stats query (for dashboard cards)
   const { data: statsResult, isLoading: isStatsLoading } = useQuery({
     queryKey: statsQueryKey || ["stats"],
-    queryFn: () => statsQueryFn ? statsQueryFn() : Promise.resolve({ data: [], total: 0, lastPage: 1, currentPage: 1 }),
+    queryFn: () => statsQueryFn ? statsQueryFn() : Promise.resolve(undefined),
     enabled: !!statsQueryFn,
+    staleTime: 300000, // 5 minutes for stats
     refetchOnWindowFocus: false,
     refetchOnMount: false,
     refetchInterval: false,
@@ -92,10 +95,10 @@ paginationActions: PaginationActions<T>
 
   // Update accumulated data when main data changes
   useEffect(() => {
-    if (paginatedData?.data && !isLoadingMore) {
+    if (paginatedData?.data && !isLoadingMore && paginatedData.data.length > 0) {
       setAccumulatedData(paginatedData.data);
     }
-  }, [paginatedData, isLoadingMore, setAccumulatedData]);
+  }, [paginatedData?.data, isLoadingMore, setAccumulatedData]);
 
   // Determine which data to display
   const displayData = searchTerm 
@@ -119,7 +122,7 @@ paginationActions: PaginationActions<T>
     },
     searchData: searchResult?.data || [],
     isSearchLoading,
-    statsData: statsResult?.data || [],
+    statsData: statsResult,
     isStatsLoading,
     isLoadingMore,
     isChangingPage,

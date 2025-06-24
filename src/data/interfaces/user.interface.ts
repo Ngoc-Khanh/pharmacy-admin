@@ -37,3 +37,13 @@ export interface UserAddress {
   readonly createdAt: string;
   readonly updatedAt: string;
 }
+
+export interface UserStatsResponse {
+  totalUsers: number;
+  adminAccounts: number;
+  pharmacistAccounts: number;
+  customerAccounts: number;
+  activeUsers: number;
+  pendingUsers: number;
+  suspendedUsers: number;
+}

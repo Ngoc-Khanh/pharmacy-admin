@@ -1,8 +1,15 @@
 import { useAccountDialog } from "@/atoms";
-import { AccountActionDialog, AccountChangeStatusDialog, AccountDeleteDialog, ViewAccountSheet } from "@/components/dialogs/account";
+import { AccountActionDialog, AccountBulkDeleteDialog, AccountChangeStatusDialog, AccountDeleteDialog, ViewAccountSheet } from "@/components/dialogs/account";
 
 export default function AccountDialog() {
-  const { open, setOpen, currentAccount, setCurrentAccount } = useAccountDialog();
+  const {
+    open,
+    setOpen,
+    currentAccount,
+    setCurrentAccount,
+    selectedAccountsForBulkDelete,
+    setSelectedAccountsForBulkDelete
+  } = useAccountDialog();
 
   return (
     <>
@@ -90,6 +97,22 @@ export default function AccountDialog() {
           />
         </>
       )}
+
+      <AccountBulkDeleteDialog
+        open={open === "bulk-delete"}
+        onOpenChange={(isOpen) => {
+          if (!isOpen) {
+            setOpen(null);
+            setTimeout(() => {
+              setSelectedAccountsForBulkDelete([]);
+            }, 300);
+          }
+        }}
+        selectedAccounts={selectedAccountsForBulkDelete}
+        onSuccess={() => {
+          setSelectedAccountsForBulkDelete([]);
+        }}
+      />
     </>
   )
 }

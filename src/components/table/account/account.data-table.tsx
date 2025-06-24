@@ -1,6 +1,6 @@
 import { DataTablePagination } from "@/components/table/data-table-pagination";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { UserResponse } from "@/data/interfaces";
+import { UserResponse, UserStatsResponse } from "@/data/interfaces";
 import { cn } from "@/lib/utils";
 import { ColumnDef, ColumnFiltersState, flexRender, getCoreRowModel, getFacetedRowModel, getFacetedUniqueValues, getFilteredRowModel, getPaginationRowModel, getSortedRowModel, RowData, SortingState, useReactTable, VisibilityState } from "@tanstack/react-table";
 import { motion, Variants } from 'motion/react';
@@ -32,17 +32,21 @@ interface DataTableProps {
   isLoadingMore?: boolean;
   isChangingPage?: boolean;
   pagination?: PaginationProps;
+  onBulkDelete?: (selectedAccounts: UserResponse[]) => void;
+  statsData?: UserStatsResponse;
 }
 
-export default function AccountDataTable({ 
-  columns, 
-  data, 
-  searchTerm, 
-  onSearchChange, 
-  isLoading, 
+export default function AccountDataTable({
+  columns,
+  data,
+  searchTerm,
+  onSearchChange,
+  isLoading,
   isLoadingMore = false,
   isChangingPage = false,
-  pagination 
+  pagination,
+  onBulkDelete,
+  statsData
 }: DataTableProps) {
   const [rowSelection, setRowSelection] = useState({});
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
@@ -88,11 +92,29 @@ export default function AccountDataTable({
 
   return (
     <div className="space-y-4">
-      <AccountTableToolbar 
-        table={table} 
+      <AccountTableToolbar
+        table={table}
         searchTerm={searchTerm}
         onSearchChange={onSearchChange}
+        onBulkDelete={onBulkDelete}
+        statsData={statsData}
       />
+
+      <div className="bg-white dark:bg-slate-950 rounded-xl border border-emerald-100 dark:border-emerald-800/30 shadow-sm p-2">
+        {pagination ? (
+          <DataTablePagination
+            table={table}
+            onPageChange={pagination.onPageChange}
+            onPageSizeChange={pagination.onPageSizeChange}
+            currentPage={pagination.currentPage}
+            totalPages={pagination.totalPages}
+            pageSize={pagination.pageSize}
+            totalItems={pagination.totalItems}
+          />
+        ) : (
+          <DataTablePagination table={table} />
+        )}
+      </div>
 
       <div className="overflow-hidden rounded-xl border border-emerald-100 dark:border-emerald-800/30 bg-white dark:bg-slate-950 shadow-sm">
         <motion.div
@@ -101,27 +123,25 @@ export default function AccountDataTable({
           transition={{ duration: 0.3 }}
           className="relative"
         >
-          {isLoadingMore && (
-            <div className="absolute inset-0 bg-white/50 dark:bg-slate-950/50 backdrop-blur-sm z-20 flex items-center justify-center">
-              <div className="bg-emerald-50 dark:bg-emerald-900/30 px-4 py-2 rounded-lg border border-emerald-200 dark:border-emerald-800">
-                <span className="text-emerald-600 dark:text-emerald-400 text-sm font-medium">
-                  Đang tải thêm dữ liệu...
-                </span>
+          {(isLoadingMore || isChangingPage) && (
+            <div className="absolute inset-0 bg-white/50 dark:bg-slate-950/50 z-20 flex items-center justify-center">
+              <div className="bg-emerald-50 dark:bg-emerald-900/30 px-3 py-1.5 rounded-lg border border-emerald-200 dark:border-emerald-800 flex items-center gap-2">
+                {isChangingPage ? (
+                  <>
+                    <div className="w-3 h-3 border border-cyan-600 dark:border-cyan-400 border-t-transparent rounded-full animate-spin"></div>
+                    <span className="text-cyan-600 dark:text-cyan-400 text-xs font-medium">
+                      Chuyển trang...
+                    </span>
+                  </>
+                ) : (
+                  <span className="text-emerald-600 dark:text-emerald-400 text-xs font-medium">
+                    Đang tải thêm...
+                  </span>
+                )}
               </div>
             </div>
           )}
-          
-          {isChangingPage && (
-            <div className="absolute inset-0 bg-white/60 dark:bg-slate-950/60 backdrop-blur-sm z-30 flex items-center justify-center">
-              <div className="bg-cyan-50 dark:bg-cyan-900/30 px-4 py-2 rounded-lg border border-cyan-200 dark:border-cyan-800 flex items-center gap-2">
-                <div className="w-4 h-4 border-2 border-cyan-600 dark:border-cyan-400 border-t-transparent rounded-full animate-spin"></div>
-                <span className="text-cyan-600 dark:text-cyan-400 text-sm font-medium">
-                  Đang chuyển trang...
-                </span>
-              </div>
-            </div>
-          )}
-          
+
           <div className="overflow-x-auto">
             <Table className="w-full table-fixed">
               <TableHeader className="bg-emerald-50/80 dark:bg-emerald-950/40 sticky top-0 z-10">
@@ -215,22 +235,6 @@ export default function AccountDataTable({
             </Table>
           </div>
         </motion.div>
-      </div>
-
-      <div className="bg-white dark:bg-slate-950 rounded-xl border border-emerald-100 dark:border-emerald-800/30 shadow-sm p-2">
-        {pagination ? (
-          <DataTablePagination 
-            table={table} 
-            onPageChange={pagination.onPageChange}
-            onPageSizeChange={pagination.onPageSizeChange}
-            currentPage={pagination.currentPage}
-            totalPages={pagination.totalPages}
-            pageSize={pagination.pageSize}
-            totalItems={pagination.totalItems}
-          />
-        ) : (
-          <DataTablePagination table={table} />
-        )}
       </div>
     </div>
   )

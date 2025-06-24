@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState, useMemo } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 
 export interface PaginationState<T = unknown> {
@@ -57,10 +57,10 @@ export function usePagination<T = unknown>({
     }
     navigate(`${location.pathname}?${queryParams.toString()}`);
     
-    // Reset changing page state after a short delay to allow for navigation
+    // Reset changing page state quickly to reduce lag
     setTimeout(() => {
       setIsChangingPage(false);
-    }, 300);
+    }, 150);
   }, [location.pathname, navigate, queryParams, limit, defaultLimit]);
 
   // Handle page size change with smart loading
@@ -131,23 +131,23 @@ export function usePagination<T = unknown>({
     }
   }, [accumulatedData, currentPage, limit, location.pathname, navigate, queryParams, loadMoreData]);
 
-  const state: PaginationState<T> = {
+  const state: PaginationState<T> = useMemo(() => ({
     currentPage,
     limit,
     searchTerm,
     isLoadingMore,
     isChangingPage,
     accumulatedData,
-  };
+  }), [currentPage, limit, searchTerm, isLoadingMore, isChangingPage, accumulatedData]);
 
-  const actions: PaginationActions<T> = {
+  const actions: PaginationActions<T> = useMemo(() => ({
     setSearchTerm,
     handlePageChange,
     handlePageSizeChange,
     setAccumulatedData,
     setIsLoadingMore,
     setIsChangingPage,
-  };
+  }), [setSearchTerm, handlePageChange, handlePageSizeChange, setAccumulatedData, setIsLoadingMore, setIsChangingPage]);
 
   return [state, actions];
 } 

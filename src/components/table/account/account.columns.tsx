@@ -106,6 +106,8 @@ export const accountColumns: ColumnDef<UserResponse>[] = [
     meta: {
       className: `w-48`,
     },
+    enableHiding: true,
+    enableSorting: true,
   },
   {
     accessorKey: "email",
