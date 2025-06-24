@@ -40,3 +40,9 @@ export interface DashboardChartOrdersStatus {
   status: OrderStatus,
   count: number;
 }
+
+export interface DashboardRevenueCalendar {
+  date: string;
+  revenue: number;
+  orders: number;
+}

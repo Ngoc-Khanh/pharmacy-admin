@@ -1,4 +1,4 @@
-import { DataTableFacetedFilter } from "@/components/table/data-table-faceted-filter";
+import { AccountDataTableFacetedFilter } from "@/components/table/account/account.data-table-faceted-filter";
 import { DataTableViewOptions } from "@/components/table/data-table-view-options";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -47,7 +47,7 @@ export function AccountTableToolbar({ table }: AccountTableToolbarProps) {
 
         <div className="flex items-center gap-2">
           {table.getColumn("status") && (
-            <DataTableFacetedFilter
+            <AccountDataTableFacetedFilter
               column={table.getColumn("status")}
               title="Trạng thái"
               options={[
@@ -59,7 +59,7 @@ export function AccountTableToolbar({ table }: AccountTableToolbarProps) {
           )}
 
           {table.getColumn("role") && (
-            <DataTableFacetedFilter
+            <AccountDataTableFacetedFilter
               column={table.getColumn("role")}
               title="Vai trò"
               options={userTypes.map((t) => ({ ...t }))}

@@ -8,7 +8,7 @@ import { Column } from "@tanstack/react-table";
 import { motion } from "framer-motion";
 import { CheckIcon, Filter, PlusCircle } from "lucide-react";
 
-interface DataTableFacetedFilterProps<TData, TValue> {
+interface AccountDataTableFacetedFilterProps<TData, TValue> {
   column?: Column<TData, TValue>;
   title?: string;
   options: {
@@ -19,11 +19,11 @@ interface DataTableFacetedFilterProps<TData, TValue> {
   }[];
 }
 
-export function DataTableFacetedFilter<TData, TValue>({
+export function AccountDataTableFacetedFilter<TData, TValue>({
   column,
   title,
   options,
-}: DataTableFacetedFilterProps<TData, TValue>) {
+}: AccountDataTableFacetedFilterProps<TData, TValue>) {
   const facets = column?.getFacetedUniqueValues();
   const selectedValues = new Set(column?.getFilterValue() as (string | boolean)[]);
 
