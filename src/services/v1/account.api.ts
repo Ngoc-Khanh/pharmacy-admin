@@ -1,5 +1,5 @@
 import { AddAcccountDto, UpdateAccountDto } from "@/data/dto";
-import { UserResponse } from "@/data/interfaces";
+import { UserResponse, UserStatsResponse } from "@/data/interfaces";
 import { Paginated, SRO } from "@/data/sro";
 import { apiDelete, apiGet, apiPatch, apiPost } from "@/services/api";
 
@@ -21,6 +21,11 @@ export const AccountAPI = {
     return res.data.data;
   },
 
+  async AccountStats() {
+    const res = await apiGet<SRO<UserStatsResponse>>("v1/admin/users/statistics");
+    return res.data.data;
+  },
+
   async AccountAdd(data: AddAcccountDto) {
     const res = await apiPost<AddAcccountDto, SRO<UserResponse>>("v1/admin/users/add", data);
     return res.data.data;
@@ -33,6 +38,11 @@ export const AccountAPI = {
 
   async AccountDelete(accountId: string) {
     const res = await apiDelete<SRO<UserResponse>>(`/v1/admin/users/delete/${accountId}`);
+    return res.data.data;
+  },
+
+  async AccountBulkDelete(accountIds: string[]) {
+    const res = await apiDelete<SRO<{deletedCount: number}>>(`/v1/admin/users/bulk-delete?ids=${accountIds.join(',')}`);
     return res.data.data;
   },
 };

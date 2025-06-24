@@ -1,22 +1,17 @@
-import { AccountRole } from "@/data/enum";
-import { UserResponse } from "@/data/interfaces";
+import { UserStatsResponse } from "@/data/interfaces";
 import { TrendingUp, User2, UserCheck, UserCog } from "lucide-react";
 import { motion } from 'motion/react';
 
 interface Props {
-  accountData: UserResponse[];
+  statsData: UserStatsResponse | undefined;
   isLoading: boolean;
 }
 
-export function AccountStats({ accountData, isLoading }: Props) {
-  const adminCount = accountData.filter(account => account.role === AccountRole.ADMIN).length;
-  const customerCount = accountData.filter(account => account.role === AccountRole.CUSTOMER).length;
-  const pharmacistCount = accountData.filter(account => account.role === AccountRole.PHARMACIST).length;
-
+export function AccountStats({ statsData, isLoading }: Props) {
   const stats = [
     {
       title: "Tổng người dùng",
-      value: accountData.length,
+      value: statsData?.totalUsers ?? 0,
       icon: TrendingUp,
       color: "from-cyan-400 via-cyan-500 to-cyan-600",
       iconBg: "bg-gradient-to-br from-cyan-50 to-cyan-100 dark:from-cyan-900/20 dark:to-cyan-800/20",
@@ -26,7 +21,7 @@ export function AccountStats({ accountData, isLoading }: Props) {
     },
     {
       title: "Khách hàng",
-      value: customerCount,
+      value: statsData?.customerAccounts ?? 0,
       icon: User2,
       color: "from-blue-400 via-blue-500 to-blue-600",
       iconBg: "bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20",
@@ -36,7 +31,7 @@ export function AccountStats({ accountData, isLoading }: Props) {
     },
     {
       title: "Dược sĩ",
-      value: pharmacistCount,
+      value: statsData?.pharmacistAccounts ?? 0,
       icon: UserCheck,
       color: "from-emerald-400 via-emerald-500 to-emerald-600",
       iconBg: "bg-gradient-to-br from-emerald-50 to-emerald-100 dark:from-emerald-900/20 dark:to-emerald-800/20",
@@ -46,7 +41,7 @@ export function AccountStats({ accountData, isLoading }: Props) {
     },
     {
       title: "Quản trị viên",
-      value: adminCount,
+      value: statsData?.adminAccounts ?? 0,
       icon: UserCog,
       color: "from-purple-400 via-purple-500 to-purple-600",
       iconBg: "bg-gradient-to-br from-purple-50 to-purple-100 dark:from-purple-900/20 dark:to-purple-800/20",

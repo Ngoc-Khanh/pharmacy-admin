@@ -1,16 +1,20 @@
+import { useAccountDialog } from "@/atoms";
 import AccountDialog from "@/components/dialogs/account.dialog";
 import { AccountPrimaryButtons, AccountStats } from "@/components/pages/account";
 import { accountColumns, AccountDataTable } from "@/components/table/account";
 import { Skeleton } from "@/components/ui/skeleton";
 import { routeNames, routes, siteConfig } from "@/config";
-import { UserResponse } from "@/data/interfaces";
-import { usePagination, usePaginatedData } from "@/hooks";
+import { UserResponse, UserStatsResponse } from "@/data/interfaces";
+import { usePaginatedData, usePagination } from "@/hooks";
 import { AccountAPI } from "@/services/v1";
 import { ShieldCheck, Users } from "lucide-react";
 import { motion } from 'motion/react';
 import { Helmet } from "react-helmet-async";
 
 export default function AccountPage() {
+  // Dialog state management
+  const { setOpen, setSelectedAccountsForBulkDelete } = useAccountDialog();
+
   // Pagination state management
   const [paginationState, paginationActions] = usePagination<UserResponse>({
     defaultLimit: 10,
@@ -29,7 +33,7 @@ export default function AccountPage() {
     isStatsLoading,
     isLoadingMore,
     isChangingPage,
-  } = usePaginatedData(
+  } = usePaginatedData<UserResponse, UserStatsResponse>(
     {
       queryKey: (page, limit) => ["accounts", page, limit],
       queryFn: async (page, limit) => {
@@ -53,13 +57,8 @@ export default function AccountPage() {
       },
       statsQueryKey: ["accounts-stats"],
       statsQueryFn: async () => {
-        const result = await AccountAPI.AccountList();
-        return {
-          data: result.data,
-          total: result.total,
-          lastPage: result.lastPage,
-          currentPage: result.currentPage,
-        };
+        const result = await AccountAPI.AccountStats();
+        return result;
       },
     },
     paginationState,
@@ -68,6 +67,12 @@ export default function AccountPage() {
 
   const { searchTerm } = paginationState;
   const { setSearchTerm, handlePageChange, handlePageSizeChange } = paginationActions;
+
+  // Handle bulk delete
+  const handleBulkDelete = (selectedAccounts: UserResponse[]) => {
+    setSelectedAccountsForBulkDelete(selectedAccounts);
+    setOpen("bulk-delete");
+  };
 
   return (
     <div className="flex-col md:flex">
@@ -96,7 +101,7 @@ export default function AccountPage() {
         </motion.div>
 
         {/* Statistics Cards */}
-        <AccountStats accountData={statsData} isLoading={isStatsLoading} />
+        <AccountStats statsData={statsData} isLoading={isStatsLoading} />
 
         <div className="grid gap-4 grid-cols-1">
           {isTableLoading && !isLoadingMore ? (
@@ -143,6 +148,8 @@ export default function AccountPage() {
                     isLoading={isTableLoading}
                     isLoadingMore={isLoadingMore}
                     isChangingPage={isChangingPage}
+                    onBulkDelete={handleBulkDelete}
+                    statsData={statsData}
                     pagination={searchTerm ? undefined : {
                       currentPage: paginationInfo.currentPage,
                       totalPages: paginationInfo.totalPages,
