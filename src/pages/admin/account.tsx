@@ -3,40 +3,71 @@ import { AccountPrimaryButtons, AccountStats } from "@/components/pages/account"
 import { accountColumns, AccountDataTable } from "@/components/table/account";
 import { Skeleton } from "@/components/ui/skeleton";
 import { routeNames, routes, siteConfig } from "@/config";
+import { UserResponse } from "@/data/interfaces";
+import { usePagination, usePaginatedData } from "@/hooks";
 import { AccountAPI } from "@/services/v1";
-import { useQuery } from "@tanstack/react-query";
 import { ShieldCheck, Users } from "lucide-react";
 import { motion } from 'motion/react';
-import { useState } from "react";
 import { Helmet } from "react-helmet-async";
 
 export default function AccountPage() {
-  const [searchTerm, setSearchTerm] = useState<string>("");
-
-  // Query cho tải dữ liệu ban đầu (không search)
-  const { data: initialAccountList, isLoading: isInitialLoading } = useQuery({
-    queryKey: ["accounts-initial"],
-    queryFn: () => AccountAPI.AccountList(),
-    refetchOnWindowFocus: false,
-    refetchOnMount: false,
-    refetchInterval: false,
+  // Pagination state management
+  const [paginationState, paginationActions] = usePagination<UserResponse>({
+    defaultLimit: 10,
+    loadMoreData: async (page: number, limit: number) => {
+      const result = await AccountAPI.AccountList({ page, limit });
+      return { data: result.data };
+    },
   });
 
-  // Query cho search (chỉ chạy khi có searchTerm)
-  const { data: searchAccountList, isLoading: isSearchLoading } = useQuery({
-    queryKey: ["accounts-search", searchTerm],
-    queryFn: () => AccountAPI.AccountList({ s: searchTerm }),
-    refetchOnWindowFocus: false,
-    refetchOnMount: false,
-    refetchInterval: false,
-    enabled: !!searchTerm, // Chỉ chạy khi có searchTerm
-  });
+  // Data fetching with pagination
+  const {
+    data: accountData,
+    isLoading: isTableLoading,
+    paginationInfo,
+    statsData,
+    isStatsLoading,
+    isLoadingMore,
+    isChangingPage,
+  } = usePaginatedData(
+    {
+      queryKey: (page, limit) => ["accounts", page, limit],
+      queryFn: async (page, limit) => {
+        const result = await AccountAPI.AccountList({ page, limit });
+        return {
+          data: result.data,
+          total: result.total,
+          lastPage: result.lastPage,
+          currentPage: result.currentPage,
+        };
+      },
+      searchQueryKey: (searchTerm) => ["accounts-search", searchTerm],
+      searchQueryFn: async (searchTerm) => {
+        const result = await AccountAPI.AccountList({ s: searchTerm });
+        return {
+          data: result.data,
+          total: result.total,
+          lastPage: result.lastPage,
+          currentPage: result.currentPage,
+        };
+      },
+      statsQueryKey: ["accounts-stats"],
+      statsQueryFn: async () => {
+        const result = await AccountAPI.AccountList();
+        return {
+          data: result.data,
+          total: result.total,
+          lastPage: result.lastPage,
+          currentPage: result.currentPage,
+        };
+      },
+    },
+    paginationState,
+    paginationActions
+  );
 
-  // Quyết định data nào sẽ hiển thị
-  const accountData = searchTerm  ? (searchAccountList?.data || []) : (initialAccountList?.data || []);
-
-  // Loading state cho table
-  const isTableLoading = searchTerm ? isSearchLoading : isInitialLoading;
+  const { searchTerm } = paginationState;
+  const { setSearchTerm, handlePageChange, handlePageSizeChange } = paginationActions;
 
   return (
     <div className="flex-col md:flex">
@@ -64,11 +95,11 @@ export default function AccountPage() {
           </p>
         </motion.div>
 
-        {/* Statistics Cards - Sử dụng data ban đầu */}
-        <AccountStats accountData={initialAccountList?.data || []} isLoading={isInitialLoading} />
+        {/* Statistics Cards */}
+        <AccountStats accountData={statsData} isLoading={isStatsLoading} />
 
         <div className="grid gap-4 grid-cols-1">
-          {isInitialLoading ? (
+          {isTableLoading && !isLoadingMore ? (
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -110,6 +141,16 @@ export default function AccountPage() {
                     searchTerm={searchTerm}
                     onSearchChange={setSearchTerm}
                     isLoading={isTableLoading}
+                    isLoadingMore={isLoadingMore}
+                    isChangingPage={isChangingPage}
+                    pagination={searchTerm ? undefined : {
+                      currentPage: paginationInfo.currentPage,
+                      totalPages: paginationInfo.totalPages,
+                      onPageChange: handlePageChange,
+                      onPageSizeChange: handlePageSizeChange,
+                      pageSize: paginationState.limit,
+                      totalItems: paginationInfo.totalItems
+                    }}
                   />
                 </div>
               </motion.div>

@@ -14,7 +14,7 @@ export const AccountAPI = {
     const searchParams = new URLSearchParams();
     if (params?.s) searchParams.append('s', params.s);
     if (params?.page) searchParams.append('page', params.page.toString());
-    if (params?.limit) searchParams.append('limit', params.limit.toString());
+    if (params?.limit) searchParams.append('per_page', params.limit.toString());
     const queryString = searchParams.toString();
     const url = queryString ? `v1/admin/users?${queryString}` : "v1/admin/users";
     const res = await apiGet<SRO<Paginated<UserResponse>>>(url);

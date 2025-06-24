@@ -1,10 +1,10 @@
 import { isAuthenticatedAtom } from "@/atoms";
-import { AppSidebar } from "@/components/layouts/admin/app-sidebar";
 import { AdminHeader } from "@/components/layouts/admin/admin.header";
+import { AppSidebar } from "@/components/layouts/admin/app-sidebar";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { routes } from "@/config";
 import { useAtomValue } from "jotai";
-import { Navigate, Outlet, ScrollRestoration } from "react-router-dom";
+import { Navigate, Outlet } from "react-router-dom";
 
 export default function AdminLayout() {
   const isAuthenticated = useAtomValue(isAuthenticatedAtom)
@@ -22,7 +22,6 @@ export default function AdminLayout() {
             </div>
           </main>
         </SidebarInset>
-        <ScrollRestoration />
       </SidebarProvider>
     </div>
   );

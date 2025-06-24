@@ -14,15 +14,36 @@ declare module "@tanstack/react-table" {
   }
 }
 
+interface PaginationProps {
+  currentPage: number;
+  totalPages: number;
+  onPageChange: (page: number) => void;
+  onPageSizeChange: (pageSize: number) => void;
+  pageSize: number;
+  totalItems: number;
+}
+
 interface DataTableProps {
   columns: ColumnDef<UserResponse>[];
   data: UserResponse[];
   searchTerm: string;
   onSearchChange: (search: string) => void;
   isLoading: boolean;
+  isLoadingMore?: boolean;
+  isChangingPage?: boolean;
+  pagination?: PaginationProps;
 }
 
-export default function AccountDataTable({ columns, data, searchTerm, onSearchChange, isLoading }: DataTableProps) {
+export default function AccountDataTable({ 
+  columns, 
+  data, 
+  searchTerm, 
+  onSearchChange, 
+  isLoading, 
+  isLoadingMore = false,
+  isChangingPage = false,
+  pagination 
+}: DataTableProps) {
   const [rowSelection, setRowSelection] = useState({});
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
@@ -48,6 +69,8 @@ export default function AccountDataTable({ columns, data, searchTerm, onSearchCh
     getSortedRowModel: getSortedRowModel(),
     getFacetedRowModel: getFacetedRowModel(),
     getFacetedUniqueValues: getFacetedUniqueValues(),
+    // Disable internal pagination if external pagination is provided
+    manualPagination: !!pagination,
   });
 
   const fadeInUpVariants = {
@@ -78,6 +101,27 @@ export default function AccountDataTable({ columns, data, searchTerm, onSearchCh
           transition={{ duration: 0.3 }}
           className="relative"
         >
+          {isLoadingMore && (
+            <div className="absolute inset-0 bg-white/50 dark:bg-slate-950/50 backdrop-blur-sm z-20 flex items-center justify-center">
+              <div className="bg-emerald-50 dark:bg-emerald-900/30 px-4 py-2 rounded-lg border border-emerald-200 dark:border-emerald-800">
+                <span className="text-emerald-600 dark:text-emerald-400 text-sm font-medium">
+                  Đang tải thêm dữ liệu...
+                </span>
+              </div>
+            </div>
+          )}
+          
+          {isChangingPage && (
+            <div className="absolute inset-0 bg-white/60 dark:bg-slate-950/60 backdrop-blur-sm z-30 flex items-center justify-center">
+              <div className="bg-cyan-50 dark:bg-cyan-900/30 px-4 py-2 rounded-lg border border-cyan-200 dark:border-cyan-800 flex items-center gap-2">
+                <div className="w-4 h-4 border-2 border-cyan-600 dark:border-cyan-400 border-t-transparent rounded-full animate-spin"></div>
+                <span className="text-cyan-600 dark:text-cyan-400 text-sm font-medium">
+                  Đang chuyển trang...
+                </span>
+              </div>
+            </div>
+          )}
+          
           <div className="overflow-x-auto">
             <Table className="w-full table-fixed">
               <TableHeader className="bg-emerald-50/80 dark:bg-emerald-950/40 sticky top-0 z-10">
@@ -174,7 +218,19 @@ export default function AccountDataTable({ columns, data, searchTerm, onSearchCh
       </div>
 
       <div className="bg-white dark:bg-slate-950 rounded-xl border border-emerald-100 dark:border-emerald-800/30 shadow-sm p-2">
-        <DataTablePagination table={table} />
+        {pagination ? (
+          <DataTablePagination 
+            table={table} 
+            onPageChange={pagination.onPageChange}
+            onPageSizeChange={pagination.onPageSizeChange}
+            currentPage={pagination.currentPage}
+            totalPages={pagination.totalPages}
+            pageSize={pagination.pageSize}
+            totalItems={pagination.totalItems}
+          />
+        ) : (
+          <DataTablePagination table={table} />
+        )}
       </div>
     </div>
   )
