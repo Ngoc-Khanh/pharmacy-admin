@@ -17,14 +17,16 @@ declare module "@tanstack/react-table" {
 interface DataTableProps {
   columns: ColumnDef<UserResponse>[];
   data: UserResponse[];
+  searchTerm: string;
+  onSearchChange: (search: string) => void;
+  isLoading: boolean;
 }
 
-export default function AccountDataTable({ columns, data }: DataTableProps) {
+export default function AccountDataTable({ columns, data, searchTerm, onSearchChange, isLoading }: DataTableProps) {
   const [rowSelection, setRowSelection] = useState({});
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [sorting, setSorting] = useState<SortingState>([]);
-  const [globalFilter, setGlobalFilter] = useState('');
 
   const table = useReactTable({
     data,
@@ -34,13 +36,11 @@ export default function AccountDataTable({ columns, data }: DataTableProps) {
       columnVisibility,
       rowSelection,
       columnFilters,
-      globalFilter,
     },
     enableRowSelection: true,
     onRowSelectionChange: setRowSelection,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
-    onGlobalFilterChange: setGlobalFilter,
     onColumnVisibilityChange: setColumnVisibility,
     getCoreRowModel: getCoreRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
@@ -65,7 +65,11 @@ export default function AccountDataTable({ columns, data }: DataTableProps) {
 
   return (
     <div className="space-y-4">
-      <AccountTableToolbar table={table} />
+      <AccountTableToolbar 
+        table={table} 
+        searchTerm={searchTerm}
+        onSearchChange={onSearchChange}
+      />
 
       <div className="overflow-hidden rounded-xl border border-emerald-100 dark:border-emerald-800/30 bg-white dark:bg-slate-950 shadow-sm">
         <motion.div
@@ -111,7 +115,20 @@ export default function AccountDataTable({ columns, data }: DataTableProps) {
                 ))}
               </TableHeader>
               <TableBody>
-                {table.getRowModel().rows?.length ? (
+                {isLoading ? (
+                  // Loading skeleton rows
+                  Array.from({ length: 5 }).map((_, i) => (
+                    <TableRow key={`loading-${i}`} className="border-b border-emerald-50 dark:border-emerald-800/10">
+                      {columns.map((_, colIndex) => (
+                        <TableCell key={`loading-cell-${i}-${colIndex}`} className="h-14 px-4 py-3">
+                          <div className="animate-pulse">
+                            <div className="h-4 bg-emerald-100 dark:bg-emerald-900/30 rounded"></div>
+                          </div>
+                        </TableCell>
+                      ))}
+                    </TableRow>
+                  ))
+                ) : table.getRowModel().rows?.length ? (
                   table.getRowModel().rows.map((row, i) => (
                     <motion.tr
                       key={row.id}
@@ -146,7 +163,7 @@ export default function AccountDataTable({ columns, data }: DataTableProps) {
                 ) : (
                   <TableRow>
                     <TableCell colSpan={columns.length} className="h-24 text-center">
-                      Không có người dùng nào.
+                      {searchTerm ? `Không tìm thấy kết quả cho "${searchTerm}"` : "Không có người dùng nào."}
                     </TableCell>
                   </TableRow>
                 )}

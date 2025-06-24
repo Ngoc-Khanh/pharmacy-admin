@@ -7,18 +7,36 @@ import { AccountAPI } from "@/services/v1";
 import { useQuery } from "@tanstack/react-query";
 import { ShieldCheck, Users } from "lucide-react";
 import { motion } from 'motion/react';
+import { useState } from "react";
 import { Helmet } from "react-helmet-async";
 
 export default function AccountPage() {
-  const { data: accountList, isLoading } = useQuery({
-    queryKey: ["accounts"],
+  const [searchTerm, setSearchTerm] = useState<string>("");
+
+  // Query cho tải dữ liệu ban đầu (không search)
+  const { data: initialAccountList, isLoading: isInitialLoading } = useQuery({
+    queryKey: ["accounts-initial"],
     queryFn: () => AccountAPI.AccountList(),
     refetchOnWindowFocus: false,
     refetchOnMount: false,
     refetchInterval: false,
-  })
+  });
 
-  const accountData = accountList?.data || [];
+  // Query cho search (chỉ chạy khi có searchTerm)
+  const { data: searchAccountList, isLoading: isSearchLoading } = useQuery({
+    queryKey: ["accounts-search", searchTerm],
+    queryFn: () => AccountAPI.AccountList({ s: searchTerm }),
+    refetchOnWindowFocus: false,
+    refetchOnMount: false,
+    refetchInterval: false,
+    enabled: !!searchTerm, // Chỉ chạy khi có searchTerm
+  });
+
+  // Quyết định data nào sẽ hiển thị
+  const accountData = searchTerm  ? (searchAccountList?.data || []) : (initialAccountList?.data || []);
+
+  // Loading state cho table
+  const isTableLoading = searchTerm ? isSearchLoading : isInitialLoading;
 
   return (
     <div className="flex-col md:flex">
@@ -46,11 +64,11 @@ export default function AccountPage() {
           </p>
         </motion.div>
 
-        {/* Statistics Cards */}
-        <AccountStats accountData={accountData} isLoading={isLoading} />
+        {/* Statistics Cards - Sử dụng data ban đầu */}
+        <AccountStats accountData={initialAccountList?.data || []} isLoading={isInitialLoading} />
 
         <div className="grid gap-4 grid-cols-1">
-          {isLoading ? (
+          {isInitialLoading ? (
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -86,7 +104,13 @@ export default function AccountPage() {
                 className="bg-white dark:bg-slate-950 rounded-xl shadow-sm border border-emerald-100 dark:border-emerald-900/30"
               >
                 <div className="p-4 md:p-6">
-                  <AccountDataTable columns={accountColumns} data={accountData} />
+                  <AccountDataTable 
+                    columns={accountColumns} 
+                    data={accountData} 
+                    searchTerm={searchTerm}
+                    onSearchChange={setSearchTerm}
+                    isLoading={isTableLoading}
+                  />
                 </div>
               </motion.div>
             </div>
