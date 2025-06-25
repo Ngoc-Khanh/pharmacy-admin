@@ -5,7 +5,7 @@ import { routeNames, routes, siteConfig } from "@/config";
 import { SupplierResponse } from "@/data/interfaces";
 import { useTable } from "@/hooks";
 import { SupplierAPI } from "@/services/v1";
-import { Building2, Truck } from "lucide-react";
+import { Building2 } from "lucide-react";
 import { motion } from 'motion/react';
 import { useMemo } from "react";
 import { Helmet } from "react-helmet-async";
@@ -29,7 +29,6 @@ export default function SupplierPage() {
   // Memoize pagination props để tránh re-render không cần thiết
   const paginationProps = useMemo(() => {
     if (searchTerm) return undefined; // Không hiển thị pagination khi đang search
-
     return {
       currentPage: paginationInfo.currentPage,
       totalPages: paginationInfo.totalPages,
@@ -79,7 +78,7 @@ export default function SupplierPage() {
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
             <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }}>
               <h3 className="text-lg font-semibold text-slate-800 dark:text-slate-200 flex items-center gap-2">
-                <Truck size={18} className="text-violet-500" />
+                <Building2 size={18} className="text-violet-500" />
                 Danh sách nhà cung cấp
               </h3>
               <p className="text-sm text-slate-500 dark:text-slate-400">

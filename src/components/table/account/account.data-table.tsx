@@ -32,7 +32,6 @@ interface DataTableProps {
   isChangingPage?: boolean;
   pagination?: PaginationProps;
   onBulkDelete?: (selectedAccounts: UserResponse[]) => void;
-  onBulkDeleteSuccess?: () => void;
   statsData?: UserStatsResponse;
 }
 
@@ -45,19 +44,12 @@ export default function AccountDataTable({
   isChangingPage = false,
   pagination,
   onBulkDelete,
-  onBulkDeleteSuccess,
   statsData
 }: DataTableProps) {
   const [rowSelection, setRowSelection] = useState({});
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [sorting, setSorting] = useState<SortingState>([]);
-
-  // Reset row selection khi bulk delete thành công
-  const handleBulkDeleteSuccess = () => {
-    setRowSelection({});
-    onBulkDeleteSuccess?.();
-  };
 
   const table = useReactTable({
     data,
@@ -79,7 +71,6 @@ export default function AccountDataTable({
     getSortedRowModel: getSortedRowModel(),
     getFacetedRowModel: getFacetedRowModel(),
     getFacetedUniqueValues: getFacetedUniqueValues(),
-    // Disable internal pagination if external pagination is provided
     manualPagination: !!pagination,
   });
 
@@ -103,11 +94,10 @@ export default function AccountDataTable({
         searchTerm={searchTerm}
         onSearchChange={onSearchChange}
         onBulkDelete={onBulkDelete}
-        onBulkDeleteSuccess={handleBulkDeleteSuccess}
         statsData={statsData}
       />
 
-      <div className="bg-white dark:bg-slate-950 rounded-xl border border-emerald-100 dark:border-emerald-800/30 shadow-sm p-2">
+      <div className="bg-white dark:bg-slate-950 rounded-xl border border-cyan-100 dark:border-cyan-800/30 shadow-sm p-2">
         {pagination ? (
           <DataTablePagination
             table={table}
@@ -123,7 +113,7 @@ export default function AccountDataTable({
         )}
       </div>
 
-      <div className="overflow-hidden rounded-xl border border-emerald-100 dark:border-emerald-800/30 bg-white dark:bg-slate-950 shadow-sm">
+      <div className="overflow-hidden rounded-xl border border-cyan-100 dark:border-cyan-800/30 bg-white dark:bg-slate-950 shadow-sm">
         <motion.div
           initial={{ opacity: 0.7 }}
           animate={{ opacity: 1 }}
@@ -134,8 +124,8 @@ export default function AccountDataTable({
           {(isLoading || isChangingPage) && (
             <div className="absolute inset-0 bg-white/80 dark:bg-slate-950/80 z-20 flex items-center justify-center">
               <div className="flex items-center gap-2">
-                <div className="w-4 h-4 border-2 border-emerald-500 border-t-transparent rounded-full animate-spin"></div>
-                <span className="text-emerald-600 dark:text-emerald-400 text-sm font-medium">
+                <div className="w-4 h-4 border-2 border-cyan-500 border-t-transparent rounded-full animate-spin"></div>
+                <span className="text-cyan-600 dark:text-cyan-400 text-sm font-medium">
                   Đang tải...
                 </span>
               </div>
@@ -144,16 +134,16 @@ export default function AccountDataTable({
 
           <div className="overflow-x-auto">
             <Table className="w-full table-fixed">
-              <TableHeader className="bg-emerald-50/80 dark:bg-emerald-950/40 sticky top-0 z-10">
+              <TableHeader className="bg-cyan-50/80 dark:bg-cyan-950/40 sticky top-0 z-10">
                 {table.getHeaderGroups().map((headerGroup) => (
-                  <TableRow key={headerGroup.id} className="border-b border-emerald-100 dark:border-emerald-800/20">
+                  <TableRow key={headerGroup.id} className="border-b border-cyan-100 dark:border-cyan-800/20">
                     {headerGroup.headers.map((header) => {
                       return (
                         <TableHead
                           key={header.id}
                           colSpan={header.colSpan}
                           className={cn(
-                            "h-11 font-medium text-emerald-800 dark:text-emerald-300 text-sm px-4 py-3 text-left",
+                            "h-11 font-medium text-cyan-800 dark:text-cyan-300 text-sm px-4 py-3 text-left",
                             header.column.id === "select" && "w-[50px]",
                             header.column.id === "profileImage" && "w-[80px]",
                             header.column.id === "fullname" && "w-[200px]",
@@ -187,7 +177,7 @@ export default function AccountDataTable({
                       initial="hidden"
                       animate="visible"
                       variants={fadeInUpVariants as Variants}
-                      className="group border-b border-emerald-50 dark:border-emerald-800/10 hover:bg-emerald-50/70 dark:hover:bg-emerald-900/20 data-[state=selected]:bg-emerald-100 dark:data-[state=selected]:bg-emerald-800/30 transition-colors"
+                      className="group border-b border-cyan-50 dark:border-cyan-800/10 hover:bg-cyan-50/70 dark:hover:bg-cyan-900/20 data-[state=selected]:bg-cyan-100 dark:data-[state=selected]:bg-cyan-800/30 transition-colors"
                       data-state={row.getIsSelected() && "selected"}
                     >
                       {row.getVisibleCells().map((cell) => (
