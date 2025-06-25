@@ -15,7 +15,7 @@ const baseRoutes = {
     suppliers: "/admin/suppliers",
     orders: "/admin/orders",
     invoices: "/admin/invoices",
-    invoiceDetails: (id: string) => `/admin/invoice/${id}/detail`,
+    invoiceDetails: (id: string) => `/admin/invoices/${id}/detail`,
     settings: {
       root: "/admin/settings",
     }
@@ -44,7 +44,6 @@ export const routeNames = {
   [baseRoutes.admin.suppliers]: "Quản lý nhà cung cấp",
   [baseRoutes.admin.orders]: "Quản lý đơn hàng",
   [baseRoutes.admin.invoices]: "Quản lý hóa đơn",
-  [baseRoutes.admin.invoiceDetails(":id")]: "Chi tiết hóa đơn",
 };
 
 export const routes = {

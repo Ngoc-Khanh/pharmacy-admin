@@ -1,6 +1,7 @@
 import { DataTablePagination } from "@/components/table/data-table-pagination";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { UserResponse, UserStatsResponse } from "@/data/interfaces";
+import { PaginationProps, UserResponse, UserStatsResponse } from "@/data/interfaces";
+import { fadeInUpVariants } from "@/lib/motion-vartiant";
 import { cn } from "@/lib/utils";
 import { ColumnDef, ColumnFiltersState, flexRender, getCoreRowModel, getFacetedRowModel, getFacetedUniqueValues, getFilteredRowModel, getPaginationRowModel, getSortedRowModel, RowData, SortingState, useReactTable, VisibilityState } from "@tanstack/react-table";
 import { motion, Variants } from 'motion/react';
@@ -12,15 +13,6 @@ declare module "@tanstack/react-table" {
   interface ColumnMeta<TData extends RowData, TValue> {
     className: string;
   }
-}
-
-interface PaginationProps {
-  currentPage: number;
-  totalPages: number;
-  onPageChange: (page: number) => void;
-  onPageSizeChange: (pageSize: number) => void;
-  pageSize: number;
-  totalItems: number;
 }
 
 interface DataTableProps {
@@ -73,19 +65,6 @@ export default function AccountDataTable({
     getFacetedUniqueValues: getFacetedUniqueValues(),
     manualPagination: !!pagination,
   });
-
-  const fadeInUpVariants = {
-    hidden: { opacity: 0, y: 10 },
-    visible: (i: number) => ({
-      opacity: 1,
-      y: 0,
-      transition: {
-        delay: i * 0.03,
-        duration: 0.25,
-        ease: "easeOut"
-      }
-    })
-  };
 
   return (
     <div className="space-y-4">

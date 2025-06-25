@@ -1,4 +1,4 @@
-import { CategoryResponse, SupplierResponse, UserResponse } from "@/data/interfaces";
+import { CategoryResponse, InvoiceResponse, SupplierResponse, UserResponse } from "@/data/interfaces";
 import { atom, useAtom } from "jotai";
 
 export type DialogType = "add" | "edit" | "delete" | "bulk-delete";
@@ -46,4 +46,16 @@ export const useSupplierDialog = () => {
   const [open, setOpen] = useAtom(openSupplierDialogAtom);
   const [currentSupplier, setCurrentSupplier] = useAtom(currentSupplierAtom);
   return { open, setOpen, currentSupplier, setCurrentSupplier };
+}
+
+// Invoice Dialog
+export type InvoiceDialogType = DialogType | "detail" | "pay";
+
+export const openInvoiceDialogAtom = atom<InvoiceDialogType | null>(null);
+export const currentInvoiceAtom = atom<InvoiceResponse | null>(null);
+
+export const useInvoiceDialog = () => {
+  const [open, setOpen] = useAtom(openInvoiceDialogAtom);
+  const [currentInvoice, setCurrentInvoice] = useAtom(currentInvoiceAtom);
+  return { open, setOpen, currentInvoice, setCurrentInvoice };
 }
