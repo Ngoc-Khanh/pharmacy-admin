@@ -29,7 +29,6 @@ interface DataTableProps {
   searchTerm: string;
   onSearchChange: (search: string) => void;
   isLoading: boolean;
-  isLoadingMore?: boolean;
   isChangingPage?: boolean;
   pagination?: PaginationProps;
   onBulkDelete?: (selectedAccounts: UserResponse[]) => void;
@@ -43,7 +42,6 @@ export default function AccountDataTable({
   searchTerm,
   onSearchChange,
   isLoading,
-  isLoadingMore = false,
   isChangingPage = false,
   pagination,
   onBulkDelete,
@@ -132,21 +130,14 @@ export default function AccountDataTable({
           transition={{ duration: 0.3 }}
           className="relative"
         >
-          {(isLoadingMore || isChangingPage) && (
-            <div className="absolute inset-0 bg-white/50 dark:bg-slate-950/50 z-20 flex items-center justify-center">
-              <div className="bg-emerald-50 dark:bg-emerald-900/30 px-3 py-1.5 rounded-lg border border-emerald-200 dark:border-emerald-800 flex items-center gap-2">
-                {isChangingPage ? (
-                  <>
-                    <div className="w-3 h-3 border border-cyan-600 dark:border-cyan-400 border-t-transparent rounded-full animate-spin"></div>
-                    <span className="text-cyan-600 dark:text-cyan-400 text-xs font-medium">
-                      Chuyển trang...
-                    </span>
-                  </>
-                ) : (
-                  <span className="text-emerald-600 dark:text-emerald-400 text-xs font-medium">
-                    Đang tải thêm...
-                  </span>
-                )}
+          {/* Loading overlay đơn giản */}
+          {(isLoading || isChangingPage) && (
+            <div className="absolute inset-0 bg-white/80 dark:bg-slate-950/80 z-20 flex items-center justify-center">
+              <div className="flex items-center gap-2">
+                <div className="w-4 h-4 border-2 border-emerald-500 border-t-transparent rounded-full animate-spin"></div>
+                <span className="text-emerald-600 dark:text-emerald-400 text-sm font-medium">
+                  Đang tải...
+                </span>
               </div>
             </div>
           )}
@@ -188,20 +179,7 @@ export default function AccountDataTable({
                 ))}
               </TableHeader>
               <TableBody>
-                {isLoading ? (
-                  // Loading skeleton rows
-                  Array.from({ length: 5 }).map((_, i) => (
-                    <TableRow key={`loading-${i}`} className="border-b border-emerald-50 dark:border-emerald-800/10">
-                      {columns.map((_, colIndex) => (
-                        <TableCell key={`loading-cell-${i}-${colIndex}`} className="h-14 px-4 py-3">
-                          <div className="animate-pulse">
-                            <div className="h-4 bg-emerald-100 dark:bg-emerald-900/30 rounded"></div>
-                          </div>
-                        </TableCell>
-                      ))}
-                    </TableRow>
-                  ))
-                ) : table.getRowModel().rows?.length ? (
+                {table.getRowModel().rows?.length > 0 ? (
                   table.getRowModel().rows.map((row, i) => (
                     <motion.tr
                       key={row.id}
@@ -235,8 +213,17 @@ export default function AccountDataTable({
                   ))
                 ) : (
                   <TableRow>
-                    <TableCell colSpan={columns.length} className="h-24 text-center">
-                      {searchTerm ? `Không tìm thấy kết quả cho "${searchTerm}"` : "Không có người dùng nào."}
+                    <TableCell colSpan={columns.length} className="h-32 text-center">
+                      <div className="flex flex-col items-center justify-center gap-2 text-gray-500 dark:text-gray-400">
+                        <span className="text-sm">
+                          {searchTerm ? `Không tìm thấy kết quả cho "${searchTerm}"` : "Không có người dùng nào."}
+                        </span>
+                        {searchTerm && (
+                          <span className="text-xs opacity-75">
+                            Thử thay đổi từ khóa tìm kiếm hoặc xóa bộ lọc
+                          </span>
+                        )}
+                      </div>
                     </TableCell>
                   </TableRow>
                 )}
