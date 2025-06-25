@@ -77,6 +77,10 @@ export function CategoryDataTable({ columns, data }: DataTableProps) {
     <div className="space-y-4">
       <CategoriesTableToolbar table={table} />
 
+      <div className="bg-white dark:bg-slate-950 rounded-xl border border-amber-100 dark:border-amber-800/30 shadow-sm p-2">
+        <DataTablePagination table={table} />
+      </div>
+
       <div className="overflow-hidden rounded-xl border border-amber-100 dark:border-amber-800/30 bg-white dark:bg-slate-950 shadow-sm">
         <motion.div
           initial={{ opacity: 0.7 }}
@@ -160,10 +164,6 @@ export function CategoryDataTable({ columns, data }: DataTableProps) {
             </Table>
           </div>
         </motion.div>
-      </div>
-
-      <div className="bg-white dark:bg-slate-950 rounded-xl border border-amber-100 dark:border-amber-800/30 shadow-sm p-2">
-        <DataTablePagination table={table} />
       </div>
     </div>
   )

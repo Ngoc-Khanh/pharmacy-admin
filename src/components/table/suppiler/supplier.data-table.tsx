@@ -1,11 +1,11 @@
 import { DataTablePagination } from "@/components/table/data-table-pagination";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { UserResponse, UserStatsResponse } from "@/data/interfaces";
+import { SupplierResponse } from "@/data/interfaces";
 import { cn } from "@/lib/utils";
 import { ColumnDef, ColumnFiltersState, flexRender, getCoreRowModel, getFacetedRowModel, getFacetedUniqueValues, getFilteredRowModel, getPaginationRowModel, getSortedRowModel, RowData, SortingState, useReactTable, VisibilityState } from "@tanstack/react-table";
 import { motion, Variants } from 'motion/react';
 import { useState } from "react";
-import { AccountTableToolbar } from "./account.table-toolbar";
+import { SupplierTableToolbar } from "./supplier.table-toolbar";
 
 declare module "@tanstack/react-table" {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -24,19 +24,16 @@ interface PaginationProps {
 }
 
 interface DataTableProps {
-  columns: ColumnDef<UserResponse>[];
-  data: UserResponse[];
+  columns: ColumnDef<SupplierResponse>[];
+  data: SupplierResponse[];
   searchTerm: string;
   onSearchChange: (search: string) => void;
   isLoading: boolean;
   isChangingPage?: boolean;
   pagination?: PaginationProps;
-  onBulkDelete?: (selectedAccounts: UserResponse[]) => void;
-  onBulkDeleteSuccess?: () => void;
-  statsData?: UserStatsResponse;
 }
 
-export default function AccountDataTable({
+export function SupplierDataTable({
   columns,
   data,
   searchTerm,
@@ -44,20 +41,11 @@ export default function AccountDataTable({
   isLoading,
   isChangingPage = false,
   pagination,
-  onBulkDelete,
-  onBulkDeleteSuccess,
-  statsData
 }: DataTableProps) {
   const [rowSelection, setRowSelection] = useState({});
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [sorting, setSorting] = useState<SortingState>([]);
-
-  // Reset row selection khi bulk delete thành công
-  const handleBulkDeleteSuccess = () => {
-    setRowSelection({});
-    onBulkDeleteSuccess?.();
-  };
 
   const table = useReactTable({
     data,
@@ -98,16 +86,13 @@ export default function AccountDataTable({
 
   return (
     <div className="space-y-4">
-      <AccountTableToolbar
+      <SupplierTableToolbar
         table={table}
         searchTerm={searchTerm}
         onSearchChange={onSearchChange}
-        onBulkDelete={onBulkDelete}
-        onBulkDeleteSuccess={handleBulkDeleteSuccess}
-        statsData={statsData}
       />
 
-      <div className="bg-white dark:bg-slate-950 rounded-xl border border-emerald-100 dark:border-emerald-800/30 shadow-sm p-2">
+      <div className="bg-white dark:bg-slate-950 rounded-xl border border-violet-100 dark:border-violet-800/30 shadow-sm p-2">
         {pagination ? (
           <DataTablePagination
             table={table}
@@ -123,19 +108,19 @@ export default function AccountDataTable({
         )}
       </div>
 
-      <div className="overflow-hidden rounded-xl border border-emerald-100 dark:border-emerald-800/30 bg-white dark:bg-slate-950 shadow-sm">
+      <div className="overflow-hidden rounded-xl border border-violet-100 dark:border-violet-800/30 bg-white dark:bg-slate-950 shadow-sm">
         <motion.div
           initial={{ opacity: 0.7 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.3 }}
           className="relative"
         >
-          {/* Loading overlay đơn giản */}
+          {/* Loading overlay */}
           {(isLoading || isChangingPage) && (
             <div className="absolute inset-0 bg-white/80 dark:bg-slate-950/80 z-20 flex items-center justify-center">
               <div className="flex items-center gap-2">
-                <div className="w-4 h-4 border-2 border-emerald-500 border-t-transparent rounded-full animate-spin"></div>
-                <span className="text-emerald-600 dark:text-emerald-400 text-sm font-medium">
+                <div className="w-4 h-4 border-2 border-violet-500 border-t-transparent rounded-full animate-spin"></div>
+                <span className="text-violet-600 dark:text-violet-400 text-sm font-medium">
                   Đang tải...
                 </span>
               </div>
@@ -144,25 +129,16 @@ export default function AccountDataTable({
 
           <div className="overflow-x-auto">
             <Table className="w-full table-fixed">
-              <TableHeader className="bg-emerald-50/80 dark:bg-emerald-950/40 sticky top-0 z-10">
+              <TableHeader className="bg-violet-50/80 dark:bg-violet-950/40 sticky top-0 z-10">
                 {table.getHeaderGroups().map((headerGroup) => (
-                  <TableRow key={headerGroup.id} className="border-b border-emerald-100 dark:border-emerald-800/20">
+                  <TableRow key={headerGroup.id} className="border-b border-violet-100 dark:border-violet-800/20">
                     {headerGroup.headers.map((header) => {
                       return (
                         <TableHead
                           key={header.id}
                           colSpan={header.colSpan}
                           className={cn(
-                            "h-11 font-medium text-emerald-800 dark:text-emerald-300 text-sm px-4 py-3 text-left",
-                            header.column.id === "select" && "w-[50px]",
-                            header.column.id === "profileImage" && "w-[80px]",
-                            header.column.id === "fullname" && "w-[200px]",
-                            header.column.id === "email" && "w-[250px]",
-                            header.column.id === "phone" && "w-[140px]",
-                            header.column.id === "addresses" && "w-[120px]",
-                            header.column.id === "status" && "w-[120px]",
-                            header.column.id === "role" && "w-[150px]",
-                            header.column.id === "actions" && "w-[80px] text-right",
+                            "h-11 font-medium text-violet-800 dark:text-violet-300 text-sm px-4 py-3 text-left",
                             header.column.columnDef.meta?.className
                           )}
                         >
@@ -187,7 +163,7 @@ export default function AccountDataTable({
                       initial="hidden"
                       animate="visible"
                       variants={fadeInUpVariants as Variants}
-                      className="group border-b border-emerald-50 dark:border-emerald-800/10 hover:bg-emerald-50/70 dark:hover:bg-emerald-900/20 data-[state=selected]:bg-emerald-100 dark:data-[state=selected]:bg-emerald-800/30 transition-colors"
+                      className="group border-b border-violet-50 dark:border-violet-800/10 hover:bg-violet-50/70 dark:hover:bg-violet-900/20 data-[state=selected]:bg-violet-100 dark:data-[state=selected]:bg-violet-800/30 transition-colors"
                       data-state={row.getIsSelected() && "selected"}
                     >
                       {row.getVisibleCells().map((cell) => (
@@ -195,15 +171,7 @@ export default function AccountDataTable({
                           key={cell.id}
                           className={cn(
                             "h-14 px-4 py-3 align-middle text-left",
-                            cell.column.id === "select" && "w-[50px]",
-                            cell.column.id === "profileImage" && "w-[80px] text-center",
-                            cell.column.id === "fullname" && "w-[200px]",
-                            cell.column.id === "email" && "w-[250px]",
-                            cell.column.id === "phone" && "w-[140px]",
-                            cell.column.id === "addresses" && "w-[120px] text-center",
-                            cell.column.id === "status" && "w-[120px] text-center",
-                            cell.column.id === "role" && "w-[150px] text-center",
-                            cell.column.id === "actions" && "w-[80px] text-right"
+                            cell.column.columnDef.meta?.className
                           )}
                         >
                           {flexRender(cell.column.columnDef.cell, cell.getContext())}
@@ -216,7 +184,7 @@ export default function AccountDataTable({
                     <TableCell colSpan={columns.length} className="h-32 text-center">
                       <div className="flex flex-col items-center justify-center gap-2 text-gray-500 dark:text-gray-400">
                         <span className="text-sm">
-                          {searchTerm ? `Không tìm thấy kết quả cho "${searchTerm}"` : "Không có người dùng nào."}
+                          {searchTerm ? `Không tìm thấy kết quả cho "${searchTerm}"` : "Không có nhà cung cấp nào."}
                         </span>
                         {searchTerm && (
                           <span className="text-xs opacity-75">

@@ -1,7 +1,11 @@
 import { useAccountDialog } from "@/atoms";
 import { AccountActionDialog, AccountBulkDeleteDialog, AccountChangeStatusDialog, AccountDeleteDialog, ViewAccountSheet } from "@/components/dialogs/account";
 
-export default function AccountDialog() {
+interface Props {
+  onBulkDeleteSuccess?: () => void;
+}
+
+export default function AccountDialog({ onBulkDeleteSuccess }: Props = {}) {
   const {
     open,
     setOpen,
@@ -111,6 +115,7 @@ export default function AccountDialog() {
         selectedAccounts={selectedAccountsForBulkDelete}
         onSuccess={() => {
           setSelectedAccountsForBulkDelete([]);
+          onBulkDeleteSuccess?.();
         }}
       />
     </>

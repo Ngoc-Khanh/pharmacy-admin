@@ -6,19 +6,13 @@ import { Navigate, RouteObject } from "react-router-dom";
 
 export const reactRouter: RouteObject[] = [
   // PUBLIC PAGES
-  {
-    path: "/",
-    element: <Navigate to={routes.admin.root} />,
-  },
+  { path: "/", element: <Navigate to={routes.admin.root} /> },
 
   // AUTHENTICATION PAGES
   {
     element: <AuthLayout />,
     children: [
-      {
-        path: routes.auth.login,
-        element: <LoginPage />,
-      },
+      { path: routes.auth.login, element: <LoginPage /> },
     ],
   },
 
@@ -26,38 +20,14 @@ export const reactRouter: RouteObject[] = [
   {
     element: <AdminLayout />,
     children: [
-      {
-        path: routes.admin.root,
-        element: <Navigate to={routes.admin.dashboard} />,
-      },
-      {
-        path: routes.admin.dashboard,
-        element: <DashboardPage />,
-      },
-      {
-        path: routes.admin.account,
-        element: <AccountPage />,
-      },
-      {
-        path: routes.admin.categories,
-        element: <CategoryPage />,
-      },
-      {
-        path: routes.admin.medicines,
-        element: <MedicinePage />,
-      },
-      {
-        path: routes.admin.suppliers,
-        element: <SupplierPage />,
-      },
-      {
-        path: routes.admin.orders,
-        element: <OrderPage />,
-      },
-      {
-        path: routes.admin.invoices,
-        element: <InvoicePage />,
-      },
+      { path: routes.admin.root, element: <Navigate to={routes.admin.dashboard} /> },
+      { path: routes.admin.dashboard, element: <DashboardPage /> },
+      { path: routes.admin.account, element: <AccountPage /> },
+      { path: routes.admin.categories, element: <CategoryPage /> },
+      { path: routes.admin.medicines, element: <MedicinePage /> },
+      { path: routes.admin.suppliers, element: <SupplierPage /> },
+      { path: routes.admin.orders, element: <OrderPage /> },
+      { path: routes.admin.invoices, element: <InvoicePage /> },
     ],
   },
 

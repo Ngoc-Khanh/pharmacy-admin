@@ -15,6 +15,7 @@ interface AccountTableToolbarProps {
   searchTerm: string;
   onSearchChange: (search: string) => void;
   onBulkDelete?: (selectedAccounts: UserResponse[]) => void;
+  onBulkDeleteSuccess?: () => void;
   statsData?: UserStatsResponse;
 }
 
@@ -23,6 +24,7 @@ export function AccountTableToolbar({
   searchTerm, 
   onSearchChange,
   onBulkDelete,
+  onBulkDeleteSuccess,
   statsData
 }: AccountTableToolbarProps) {
   const [localSearchTerm, setLocalSearchTerm] = useState(searchTerm);
