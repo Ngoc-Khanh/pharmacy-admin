@@ -33,6 +33,7 @@ interface DataTableProps {
   isChangingPage?: boolean;
   pagination?: PaginationProps;
   onBulkDelete?: (selectedAccounts: UserResponse[]) => void;
+  onBulkDeleteSuccess?: () => void;
   statsData?: UserStatsResponse;
 }
 
@@ -46,12 +47,19 @@ export default function AccountDataTable({
   isChangingPage = false,
   pagination,
   onBulkDelete,
+  onBulkDeleteSuccess,
   statsData
 }: DataTableProps) {
   const [rowSelection, setRowSelection] = useState({});
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [sorting, setSorting] = useState<SortingState>([]);
+
+  // Reset row selection khi bulk delete thành công
+  const handleBulkDeleteSuccess = () => {
+    setRowSelection({});
+    onBulkDeleteSuccess?.();
+  };
 
   const table = useReactTable({
     data,
@@ -97,6 +105,7 @@ export default function AccountDataTable({
         searchTerm={searchTerm}
         onSearchChange={onSearchChange}
         onBulkDelete={onBulkDelete}
+        onBulkDeleteSuccess={handleBulkDeleteSuccess}
         statsData={statsData}
       />
 

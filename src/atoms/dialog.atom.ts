@@ -1,8 +1,9 @@
-import { CategoryResponse, UserResponse } from "@/data/interfaces";
+import { CategoryResponse, SupplierResponse, UserResponse } from "@/data/interfaces";
 import { atom, useAtom } from "jotai";
 
 export type DialogType = "add" | "edit" | "delete" | "bulk-delete";
 
+// Account Dialog
 export type AccountDialogType = DialogType | "detail" | "suspend" | "activate";
 
 export const openAccountDialogAtom = atom<AccountDialogType | null>(null);
@@ -23,6 +24,7 @@ export const useAccountDialog = () => {
   };
 }
 
+// Category Dialog
 export type CategoryDialogType = DialogType | "status";
 
 export const openCategoryDialogAtom = atom<CategoryDialogType | null>(null);
@@ -32,4 +34,16 @@ export const useCategoryDialog = () => {
   const [open, setOpen] = useAtom(openCategoryDialogAtom);
   const [currentCategory, setCurrentCategory] = useAtom(currentCategoryAtom);
   return { open, setOpen, currentCategory, setCurrentCategory };
+}
+
+// Supplier Dialog
+export type SupplierDialogType = DialogType | "detail";
+
+export const openSupplierDialogAtom = atom<SupplierDialogType | null>(null);
+export const currentSupplierAtom = atom<SupplierResponse | null>(null);
+
+export const useSupplierDialog = () => {
+  const [open, setOpen] = useAtom(openSupplierDialogAtom);
+  const [currentSupplier, setCurrentSupplier] = useAtom(currentSupplierAtom);
+  return { open, setOpen, currentSupplier, setCurrentSupplier };
 }

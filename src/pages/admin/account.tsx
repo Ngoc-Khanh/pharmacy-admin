@@ -74,6 +74,11 @@ export default function AccountPage() {
     setOpen("bulk-delete");
   };
 
+  // Handle bulk delete success - reset checkbox
+  const handleBulkDeleteSuccess = () => {
+    // Callback này sẽ được gọi từ AccountDataTable để reset checkbox
+  };
+
   return (
     <div className="flex-col md:flex">
       <Helmet>
@@ -149,6 +154,7 @@ export default function AccountPage() {
                     isLoadingMore={isLoadingMore}
                     isChangingPage={isChangingPage}
                     onBulkDelete={handleBulkDelete}
+                    onBulkDeleteSuccess={handleBulkDeleteSuccess}
                     statsData={statsData}
                     pagination={searchTerm ? undefined : {
                       currentPage: paginationInfo.currentPage,
@@ -164,7 +170,7 @@ export default function AccountPage() {
             </div>
           )}
         </div>
-        <AccountDialog />
+        <AccountDialog onBulkDeleteSuccess={handleBulkDeleteSuccess} />
       </div>
     </div>
   );
