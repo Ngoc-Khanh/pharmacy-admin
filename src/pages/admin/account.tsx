@@ -40,7 +40,6 @@ export default function AccountPage() {
   // Memoize pagination props để tránh re-render không cần thiết
   const paginationProps = useMemo(() => {
     if (searchTerm) return undefined; // Không hiển thị pagination khi đang search
-    
     return {
       currentPage: paginationInfo.currentPage,
       totalPages: paginationInfo.totalPages,

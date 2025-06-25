@@ -30,10 +30,10 @@ export function AccountRowActions({ row }: AccountRowActionsProps) {
             <Button
               variant="ghost"
               size="icon"
-              className="h-8 w-8 hover:bg-emerald-50 dark:hover:bg-emerald-900/20"
+              className="h-8 w-8 hover:bg-cyan-50 dark:hover:bg-cyan-900/20"
               onClick={() => handleAction("detail")}
             >
-              <ArrowUpRightFromCircle className="h-4 w-4 text-emerald-600" />
+              <ArrowUpRightFromCircle className="h-4 w-4 text-cyan-600" />
             </Button>
           </TooltipTrigger>
           <TooltipContent side="left">
@@ -48,7 +48,7 @@ export function AccountRowActions({ row }: AccountRowActionsProps) {
           <Button
             variant="ghost"
             size="icon"
-            className="h-8 w-8 hover:bg-emerald-50 dark:hover:bg-emerald-900/20"
+            className="h-8 w-8 hover:bg-cyan-50 dark:hover:bg-cyan-900/20"
           >
             <MoreHorizontal className="h-4 w-4" />
           </Button>
@@ -59,7 +59,7 @@ export function AccountRowActions({ row }: AccountRowActionsProps) {
             onClick={() => handleAction("edit")}
             className="cursor-pointer"
           >
-            <Edit2 className="h-4 w-4 mr-2 text-emerald-600" />
+            <Edit2 className="h-4 w-4 mr-2 text-cyan-600" />
             Chỉnh sửa
           </DropdownMenuItem>
           
@@ -67,7 +67,7 @@ export function AccountRowActions({ row }: AccountRowActionsProps) {
             onClick={() => handleAction(isActive ? "suspend" : "activate")}
             className={cn(
               "cursor-pointer",
-              isActive ? "text-amber-600" : "text-emerald-600"
+              isActive ? "text-amber-600" : "text-destructive"
             )}
           >
             {isActive ? (

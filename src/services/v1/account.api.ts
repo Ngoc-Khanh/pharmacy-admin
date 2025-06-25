@@ -10,7 +10,7 @@ export const AccountAPI = {
     if (params?.page) searchParams.append('page', params.page.toString());
     if (params?.limit) searchParams.append('per_page', params.limit.toString());
     const queryString = searchParams.toString();
-    const url = queryString ? `v1/admin/users?${queryString}` : "v1/admin/users?sort_order=asc";
+    const url = queryString ? `v1/admin/users?${queryString}&sort_order=asc` : "v1/admin/users?sort_order=asc";
     const res = await apiGet<SRO<Paginated<UserResponse>>>(url);
     return res.data.data;
   },
