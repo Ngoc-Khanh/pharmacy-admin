@@ -1,11 +1,12 @@
 import { DataTablePagination } from "@/components/table/data-table-pagination";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { PaginationProps, SupplierResponse } from "@/data/interfaces";
+import { InvoiceResponse, PaginationProps } from "@/data/interfaces";
+import { fadeInUpVariants } from "@/lib/motion-vartiant";
 import { cn } from "@/lib/utils";
 import { ColumnDef, ColumnFiltersState, flexRender, getCoreRowModel, getFacetedRowModel, getFacetedUniqueValues, getFilteredRowModel, getPaginationRowModel, getSortedRowModel, RowData, SortingState, useReactTable, VisibilityState } from "@tanstack/react-table";
 import { motion, Variants } from 'motion/react';
 import { useState } from "react";
-import { SupplierTableToolbar } from "./supplier.table-toolbar";
+import { InvoiceTableToolbar } from "./invoice.table-toolbar";
 
 declare module "@tanstack/react-table" {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -15,8 +16,8 @@ declare module "@tanstack/react-table" {
 }
 
 interface DataTableProps {
-  columns: ColumnDef<SupplierResponse>[];
-  data: SupplierResponse[];
+  columns: ColumnDef<InvoiceResponse>[];
+  data: InvoiceResponse[];
   searchTerm: string;
   onSearchChange: (search: string) => void;
   isLoading: boolean;
@@ -24,15 +25,7 @@ interface DataTableProps {
   pagination?: PaginationProps;
 }
 
-export function SupplierDataTable({
-  columns,
-  data,
-  searchTerm,
-  onSearchChange,
-  isLoading,
-  isChangingPage = false,
-  pagination,
-}: DataTableProps) {
+export function InvoiceDataTable({ columns, data, searchTerm, onSearchChange, isLoading, isChangingPage = false, pagination }: DataTableProps) {
   const [rowSelection, setRowSelection] = useState({});
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
@@ -58,32 +51,18 @@ export function SupplierDataTable({
     getSortedRowModel: getSortedRowModel(),
     getFacetedRowModel: getFacetedRowModel(),
     getFacetedUniqueValues: getFacetedUniqueValues(),
-    // Disable internal pagination if external pagination is provided
     manualPagination: !!pagination,
   });
 
-  const fadeInUpVariants = {
-    hidden: { opacity: 0, y: 10 },
-    visible: (i: number) => ({
-      opacity: 1,
-      y: 0,
-      transition: {
-        delay: i * 0.03,
-        duration: 0.25,
-        ease: "easeOut"
-      }
-    })
-  };
-
   return (
     <div className="space-y-4">
-      <SupplierTableToolbar
+      <InvoiceTableToolbar
         table={table}
         searchTerm={searchTerm}
         onSearchChange={onSearchChange}
       />
 
-      <div className="bg-white dark:bg-slate-950 rounded-xl border border-violet-100 dark:border-violet-800/30 shadow-sm p-2">
+      <div className="bg-white dark:bg-slate-950 rounded-xl border border-emerald-100 dark:border-emerald-800/30 shadow-sm p-2">
         {pagination ? (
           <DataTablePagination
             table={table}
@@ -99,30 +78,31 @@ export function SupplierDataTable({
         )}
       </div>
 
-      <div className="overflow-hidden rounded-xl border border-violet-100 dark:border-violet-800/30 bg-white dark:bg-slate-950 shadow-sm">
+      <div className="overflow-hidden rounded-xl border border-emerald-100 dark:border-emerald-800/30 bg-white dark:bg-slate-950 shadow-sm">
         <motion.div
           initial={{ opacity: 0.7 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.3 }}
           className="relative"
         >
-          {/* Loading overlay */}
+          {/* Loading overlay đơn giản */}
           {(isLoading || isChangingPage) && (
             <div className="absolute inset-0 bg-white/80 dark:bg-slate-950/80 z-20 flex items-center justify-center">
               <div className="flex items-center gap-2">
-                <div className="w-4 h-4 border-2 border-violet-500 border-t-transparent rounded-full animate-spin"></div>
-                <span className="text-violet-600 dark:text-violet-400 text-sm font-medium">
+                <div className="w-4 h-4 border-2 border-emerald-500 border-t-transparent rounded-full animate-spin"></div>
+                <span className="text-emerald-600 dark:text-emerald-400 text-sm font-medium">
                   Đang tải...
                 </span>
               </div>
             </div>
+
           )}
 
           <div className="overflow-x-auto">
             <Table className="w-full table-fixed">
-              <TableHeader className="bg-violet-50/80 dark:bg-violet-950/40 sticky top-0 z-10">
+              <TableHeader className="bg-emerald-50/80 dark:bg-emerald-950/40 sticky top-0 z-10">
                 {table.getHeaderGroups().map((headerGroup) => (
-                  <TableRow key={headerGroup.id} className="border-b border-violet-100 dark:border-violet-800/20">
+                  <TableRow key={headerGroup.id} className="border-b border-emerald-100 dark:border-emerald-800/20">
                     {headerGroup.headers.map((header) => {
                       return (
                         <TableHead
@@ -154,7 +134,7 @@ export function SupplierDataTable({
                       initial="hidden"
                       animate="visible"
                       variants={fadeInUpVariants as Variants}
-                      className="group border-b border-violet-50 dark:border-violet-800/10 hover:bg-violet-50/70 dark:hover:bg-violet-900/20 data-[state=selected]:bg-violet-100 dark:data-[state=selected]:bg-violet-800/30 transition-colors"
+                      className="group border-b border-emerald-50 dark:border-emerald-800/10 hover:bg-emerald-50/70 dark:hover:bg-emerald-900/20 data-[state=selected]:bg-emerald-100 dark:data-[state=selected]:bg-emerald-800/30 transition-colors"
                       data-state={row.getIsSelected() && "selected"}
                     >
                       {row.getVisibleCells().map((cell) => (
@@ -192,5 +172,5 @@ export function SupplierDataTable({
         </motion.div>
       </div>
     </div>
-  )
+  );
 }
