@@ -15,16 +15,14 @@ interface AccountTableToolbarProps {
   searchTerm: string;
   onSearchChange: (search: string) => void;
   onBulkDelete?: (selectedAccounts: UserResponse[]) => void;
-  onBulkDeleteSuccess?: () => void;
   statsData?: UserStatsResponse;
 }
 
-export function AccountTableToolbar({ 
-  table, 
-  searchTerm, 
+export function AccountTableToolbar({
+  table,
+  searchTerm,
   onSearchChange,
   onBulkDelete,
-  onBulkDeleteSuccess,
   statsData
 }: AccountTableToolbarProps) {
   const [localSearchTerm, setLocalSearchTerm] = useState(searchTerm);
@@ -67,7 +65,7 @@ export function AccountTableToolbar({
       initial={{ opacity: 0.9, y: 5 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.2 }}
-      className="flex flex-col sm:flex-row items-center justify-between gap-3 bg-white dark:bg-slate-950 rounded-lg p-2 shadow-sm border border-emerald-100 dark:border-emerald-900/20"
+      className="flex flex-col sm:flex-row items-center justify-between gap-3 bg-white dark:bg-slate-950 rounded-lg p-2 shadow-sm border border-cyan-100 dark:border-cyan-900/20"
     >
       <div className="flex w-full sm:w-auto items-center gap-2">
         {/* Bulk Delete Button - chỉ hiển thị khi có rows được chọn */}
@@ -81,7 +79,7 @@ export function AccountTableToolbar({
             <Button
               variant="destructive"
               size="sm"
-              className="h-10 px-3 bg-rose-500 hover:bg-rose-600 text-white"
+              className="h-10 px-3 bg-cyan-500 hover:bg-cyan-600 text-white"
               onClick={handleBulkDelete}
             >
               <Trash2 className="mr-2 h-4 w-4" />
@@ -91,18 +89,18 @@ export function AccountTableToolbar({
         )}
 
         <div className="relative w-full sm:w-72 md:w-80">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-emerald-500 dark:text-emerald-400" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-cyan-500 dark:text-cyan-400" />
           <Input
             placeholder="Tìm kiếm tài khoản theo tên, email, username..."
             value={localSearchTerm}
             onChange={(e) => setLocalSearchTerm(e.target.value)}
-            className="w-full pl-9 h-10 shadow-none bg-emerald-50/50 dark:bg-slate-900 border border-emerald-100 dark:border-emerald-800/40 rounded-lg focus-visible:ring-emerald-500"
+            className="w-full pl-9 h-10 shadow-none bg-cyan-50/50 dark:bg-slate-900 border border-cyan-100 dark:border-cyan-800/40 rounded-lg focus-visible:ring-cyan-500"
           />
           {localSearchTerm && (
             <Button
               variant="ghost"
               size="sm"
-              className="absolute right-1 top-1/2 -translate-y-1/2 h-6 w-6 p-0 text-emerald-500 hover:text-emerald-600 dark:hover:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 rounded-full"
+              className="absolute right-1 top-1/2 -translate-y-1/2 h-6 w-6 p-0 text-cyan-500 hover:text-cyan-600 dark:hover:text-cyan-400 hover:bg-cyan-50 dark:hover:bg-cyan-900/20 rounded-full"
               onClick={handleClearSearch}
             >
               <X className="h-3.5 w-3.5" />
@@ -117,18 +115,18 @@ export function AccountTableToolbar({
               column={table.getColumn("status")}
               title="Trạng thái"
               options={[
-                { 
-                  label: "Hoạt động", 
+                {
+                  label: "Hoạt động",
                   value: AccountStatus.ACTIVE,
                   count: statsData?.activeUsers ?? 0
                 },
-                { 
-                  label: "Chờ xác thực", 
+                {
+                  label: "Chờ xác thực",
                   value: AccountStatus.PENDING,
                   count: statsData?.pendingUsers ?? 0
                 },
-                { 
-                  label: "Không hoạt động", 
+                {
+                  label: "Không hoạt động",
                   value: AccountStatus.SUSPENDED,
                   count: statsData?.suspendedUsers ?? 0
                 },
@@ -140,11 +138,11 @@ export function AccountTableToolbar({
             <AccountDataTableFacetedFilter
               column={table.getColumn("role")}
               title="Vai trò"
-              options={userTypes.map((t) => ({ 
+              options={userTypes.map((t) => ({
                 ...t,
                 count: t.value === AccountRole.ADMIN ? (statsData?.adminAccounts ?? 0) :
-                       t.value === AccountRole.PHARMACIST ? (statsData?.pharmacistAccounts ?? 0) :
-                       t.value === AccountRole.CUSTOMER ? (statsData?.customerAccounts ?? 0) : 0
+                  t.value === AccountRole.PHARMACIST ? (statsData?.pharmacistAccounts ?? 0) :
+                    t.value === AccountRole.CUSTOMER ? (statsData?.customerAccounts ?? 0) : 0
               }))}
             />
           )}
@@ -162,7 +160,7 @@ export function AccountTableToolbar({
             <Button
               variant="ghost"
               size="sm"
-              className="h-10 px-3 text-emerald-700 dark:text-emerald-400 hover:bg-rose-50 dark:hover:bg-rose-900/20 hover:text-rose-600 dark:hover:text-rose-400"
+              className="h-10 px-3 text-destructive hover:bg-destructive/10 hover:text-destructive"
               onClick={handleClearFilters}
             >
               <RotateCcw className="mr-2 h-3.5 w-3.5" />
@@ -173,7 +171,7 @@ export function AccountTableToolbar({
 
         <Button
           variant="outline"
-          className="h-10 border-emerald-200 dark:border-emerald-800/40 bg-white dark:bg-slate-900 text-emerald-700 dark:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-900/20"
+          className="h-10 border-cyan-200 dark:border-cyan-800/40 bg-white dark:bg-slate-900 text-cyan-700 dark:text-cyan-400 hover:bg-cyan-50 dark:hover:bg-cyan-900/20"
         >
           <FileDown className="h-4 w-4 mr-2" />
           <span>Xuất Excel</span>
