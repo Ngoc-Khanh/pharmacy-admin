@@ -7,3 +7,7 @@ export interface SupplierResponse {
   readonly createdAt?: string;
   readonly updatedAt?: string;
 }
+
+export interface SupplierStatsResponse {
+  totalSuppliers: number;
+}

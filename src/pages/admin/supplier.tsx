@@ -1,8 +1,8 @@
 import SupplierDialog from "@/components/dialogs/supplier.dialog";
-import { SuppliersPrimaryButtons } from "@/components/pages/supplier";
+import { SuppliersPrimaryButtons, SupplierStats } from "@/components/pages/supplier";
 import { supplierColumns, SupplierDataTable } from "@/components/table/suppiler";
 import { routeNames, routes, siteConfig } from "@/config";
-import { SupplierResponse } from "@/data/interfaces";
+import { SupplierResponse, SupplierStatsResponse } from "@/data/interfaces";
 import { useTable } from "@/hooks";
 import { SupplierAPI } from "@/services/v1";
 import { Building2 } from "lucide-react";
@@ -13,6 +13,8 @@ import { Helmet } from "react-helmet-async";
 export default function SupplierPage() {
   const {
     data: supplierData,
+    statsData,
+    isStatsLoading,
     isLoading,
     isChangingPage,
     paginationInfo,
@@ -21,9 +23,10 @@ export default function SupplierPage() {
     handlePageChange,
     handlePageSizeChange,
     pageSize,
-  } = useTable<SupplierResponse>({
+  } = useTable<SupplierResponse, SupplierStatsResponse>({
     queryKey: "suppliers",
     dataFetcher: SupplierAPI.SupplierList,
+    statsFetcher: SupplierAPI.SupplierStats,
   });
 
   // Memoize pagination props để tránh re-render không cần thiết
@@ -72,6 +75,8 @@ export default function SupplierPage() {
             Quản lý thông tin nhà cung cấp, hợp đồng và lịch sử giao dịch
           </p>
         </motion.div>
+
+        <SupplierStats statsData={statsData} isLoading={isStatsLoading} />
 
         {/* Table Section */}
         <div className="flex flex-col gap-6">

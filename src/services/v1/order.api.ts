@@ -1,5 +1,5 @@
 import { OrderAdminChangeStatusDto } from "@/data/dto";
-import { ListParams, OrderDetailsResponse, OrderResponse } from "@/data/interfaces";
+import { ListParams, OrderDetailsResponse, OrderResponse, OrderStatsResponse } from "@/data/interfaces";
 import { Paginated, SRO } from "@/data/sro";
 import { apiDelete, apiGet, apiPatch } from "@/services/api";
 
@@ -15,18 +15,23 @@ export const OrderAPI = {
     return res.data.data;
   },
 
+  async OrderStats() {
+    const res = await apiGet<SRO<OrderStatsResponse>>("v1/admin/orders/statistic");
+    return res.data.data;
+  },
+
   async OrderDetail(orderId: string) {
-    const res = await apiGet<SRO<OrderDetailsResponse>>(`/v1/admin/orders/${orderId}/details`);
+    const res = await apiGet<SRO<OrderDetailsResponse>>(`v1/admin/orders/${orderId}/details`);
     return res.data.data;
   },
 
   async OrderChangeStatus(data: OrderAdminChangeStatusDto, orderId: string) {
-    const res = await apiPatch<OrderAdminChangeStatusDto, SRO<OrderResponse>>(`/v1/admin/orders/${orderId}/status`, data);
+    const res = await apiPatch<OrderAdminChangeStatusDto, SRO<OrderResponse>>(`v1/admin/orders/${orderId}/status`, data);
     return res.data.data;
   },
 
   async OrderDelete(orderId: string) {
-    const res = await apiDelete<SRO<OrderResponse>>(`/v1/admin/orders/${orderId}/delete`);
+    const res = await apiDelete<SRO<OrderResponse>>(`v1/admin/orders/${orderId}/delete`);
     return res.data.data;
   }
 };

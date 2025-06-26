@@ -1,5 +1,5 @@
 import { AddSupplierDto, UpdateSupplierDto } from "@/data/dto";
-import { ListParams, SupplierResponse } from "@/data/interfaces";
+import { ListParams, SupplierResponse, SupplierStatsResponse } from "@/data/interfaces";
 import { Paginated, SRO } from "@/data/sro";
 import { apiDelete, apiGet, apiPatch, apiPost } from "@/services/api";
 
@@ -12,6 +12,11 @@ export const SupplierAPI = {
     const queryString = searchParams.toString();
     const url = queryString ? `v1/admin/suppliers?${queryString}` : "v1/admin/suppliers";
     const res = await apiGet<SRO<Paginated<SupplierResponse>>>(url);
+    return res.data.data;
+  },
+
+  async SupplierStats() {
+    const res = await apiGet<SRO<SupplierStatsResponse>>("v1/admin/suppliers/statistics");
     return res.data.data;
   },
 
