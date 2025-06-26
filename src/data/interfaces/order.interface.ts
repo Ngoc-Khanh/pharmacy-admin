@@ -64,3 +64,8 @@ export interface OrderAdminDetailsItem {
   itemTotal: number;
   medicine: MedicineResponse;
 }
+
+export interface OrderStatsResponse {
+  totalOrders: number;
+  totalOrdersToday: number;
+}

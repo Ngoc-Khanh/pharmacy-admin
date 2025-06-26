@@ -1,7 +1,8 @@
 import { OrderDialog } from "@/components/dialogs/order.dialog";
+import { OrderStats } from "@/components/pages/order";
 import { orderColumns, OrderDataTable } from "@/components/table/order";
 import { routeNames, routes, siteConfig } from "@/config";
-import { OrderResponse } from "@/data/interfaces";
+import { OrderResponse, OrderStatsResponse } from "@/data/interfaces";
 import { useTable } from "@/hooks";
 import { OrderAPI } from "@/services/v1";
 import { ShoppingCart } from "lucide-react";
@@ -12,6 +13,8 @@ import { Helmet } from "react-helmet-async";
 export default function OrderPage() {
   const {
     data: orderData,
+    statsData,
+    isStatsLoading,
     isLoading,
     isChangingPage,
     paginationInfo,
@@ -20,9 +23,10 @@ export default function OrderPage() {
     handlePageChange,
     handlePageSizeChange,
     pageSize,
-  } = useTable<OrderResponse>({
+  } = useTable<OrderResponse, OrderStatsResponse>({
     queryKey: "orders",
     dataFetcher: OrderAPI.OrderList,
+    statsFetcher: OrderAPI.OrderStats,
   });
 
   const paginationProps = useMemo(() => {
@@ -70,6 +74,8 @@ export default function OrderPage() {
             Quản lý đơn hàng, đơn đặt hàng và lịch sử giao dịch
           </p>
         </motion.div>
+
+        <OrderStats statsData={statsData} isLoading={isStatsLoading} />
 
         {/* Table Section */}
         <div className="flex flex-col gap-6">
