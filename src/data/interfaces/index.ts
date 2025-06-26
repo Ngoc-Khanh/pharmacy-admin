@@ -3,6 +3,7 @@ export * from "./category.interface";
 export * from "./dashboard.interface";
 export * from "./invoice.interface";
 export * from "./medicine.interface";
+export * from "./order.interface";
 export * from "./pagination.interface";
 export * from "./params.interface";
 export * from "./supplier.interface";

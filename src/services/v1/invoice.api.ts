@@ -1,7 +1,7 @@
-import { InvoiceUpdateStatusDto } from "@/data/dto";
-import { InvoiceDetailResponse, InvoiceResponse, ListParams } from "@/data/interfaces";
+import { InvoiceCreateWithNoOrderDto, InvoiceUpdateStatusDto } from "@/data/dto";
+import { InvoiceCreateWithNoOrderResponse, InvoiceDetailResponse, InvoiceResponse, ListParams } from "@/data/interfaces";
 import { Paginated, SRO } from "@/data/sro";
-import { apiDelete, apiGet, apiPatch } from "@/services/api";
+import { apiDelete, apiGet, apiPatch, apiPost } from "@/services/api";
 
 export const InvoiceAPI = {
   async InvoiceList(params?: ListParams) {
@@ -15,13 +15,18 @@ export const InvoiceAPI = {
     return res.data.data;
   },
 
+  async InvoiceCreateWithNoOrder(dto: InvoiceCreateWithNoOrderDto) {
+    const res = await apiPost<InvoiceCreateWithNoOrderDto, SRO<InvoiceCreateWithNoOrderResponse>>(`v1/admin/invoices/create-with-no-order`, dto)
+    return res.data.data;
+  },
+
   async InvoiceDetail(id: string) {
     const res = await apiGet<SRO<InvoiceDetailResponse>>(`v1/admin/invoices/${id}/detail`);
     return res.data.data;
   },
 
   async InvoiceUpdateStatus(id: string, dto: InvoiceUpdateStatusDto) {
-    const res = await apiPatch<InvoiceUpdateStatusDto, SRO<InvoiceResponse>>(`v1/admin/invoices/${id}/update-status`, dto)
+    const res = await apiPatch<InvoiceUpdateStatusDto, SRO<InvoiceResponse>>(`v1/admin/invoices/${id}/change-status`, dto)
     return res.data.data;
   },
 

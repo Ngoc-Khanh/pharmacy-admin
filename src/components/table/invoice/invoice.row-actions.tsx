@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { routes } from "@/config";
 import { InvoiceResponse } from "@/data/interfaces";
 import { Row } from "@tanstack/react-table";
-import { Eye, Trash } from "lucide-react";
+import { Edit, Eye, Trash } from "lucide-react";
 import { Link } from "react-router-dom";
 
 interface InvoiceRowActionsProps {
@@ -26,6 +26,20 @@ export function InvoiceRowActions({ row }: InvoiceRowActionsProps) {
           <span className="sr-only">Xem chi tiết hóa đơn</span>
         </Link>
       </Button>
+      
+      <Button
+        variant="ghost"
+        size="icon"
+        className="h-8 w-8 p-0 text-blue-600 hover:text-blue-700 hover:bg-blue-50 rounded-full"
+        onClick={() => {
+          setOpen("change-status");
+          setCurrentInvoice(row.original);
+        }}
+      >
+        <Edit className="h-4 w-4" />
+        <span className="sr-only">Thay đổi trạng thái hóa đơn</span>
+      </Button>
+      
       <Button
         variant="ghost"
         size="icon"
