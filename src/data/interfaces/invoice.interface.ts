@@ -1,5 +1,5 @@
 import { InvoiceStatus, PaymentMethod } from "@/data/enum";
-import { MedicineResponse, ProfileImage } from "@/data/interfaces";
+import { MedicineResponse, OrderResponse, ProfileImage } from "@/data/interfaces";
 
 export interface InvoiceResponse {
   readonly id: string;
@@ -64,4 +64,9 @@ export interface InvoiceDetailsItem {
   price: number;
   itemTotal: number;
   medicine: MedicineResponse;
+}
+
+export interface InvoiceCreateWithNoOrderResponse {
+  order: OrderResponse;
+  invoice: InvoiceResponse;
 }

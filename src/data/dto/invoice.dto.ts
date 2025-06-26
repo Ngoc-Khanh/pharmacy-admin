@@ -9,7 +9,8 @@ export type InvoiceCreateWithNoOrderDto = {
     price: number;
   }[];
   paymentMethod: PaymentMethod;
-  issuedAt: string;
+  shippingAddressId: string
+  issuedAt?: string;
   status: InvoiceStatus;
 }
 

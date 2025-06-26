@@ -52,9 +52,13 @@ export default function InvoiceDetailPage() {
       toast.error("Vui lòng chọn trạng thái mới");
       return;
     }
-
+    if (invoice && newStatus === invoice.status) {
+      toast.info("Trạng thái không có thay đổi");
+      setEditingStatus(false);
+      return;
+    }
     updateStatusMutation.mutate({ status: newStatus });
-  }, [newStatus, updateStatusMutation]);
+  }, [newStatus, updateStatusMutation, invoice]);
 
   // Start editing status
   const startEditingStatus = useCallback(() => {

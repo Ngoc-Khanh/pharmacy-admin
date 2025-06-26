@@ -49,7 +49,7 @@ export const useSupplierDialog = () => {
 }
 
 // Invoice Dialog
-export type InvoiceDialogType = DialogType | "detail" | "pay";
+export type InvoiceDialogType = DialogType | "change-status" | "detail";
 
 export const openInvoiceDialogAtom = atom<InvoiceDialogType | null>(null);
 export const currentInvoiceAtom = atom<InvoiceResponse | null>(null);
