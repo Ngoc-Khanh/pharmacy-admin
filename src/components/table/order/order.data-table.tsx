@@ -1,23 +1,16 @@
 import { DataTablePagination } from "@/components/table/data-table-pagination";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { PaginationProps, SupplierResponse } from "@/data/interfaces";
+import { OrderResponse, PaginationProps } from "@/data/interfaces";
 import { fadeInUpVariants } from "@/lib/motion-vartiant";
 import { cn } from "@/lib/utils";
-import { ColumnDef, ColumnFiltersState, flexRender, getCoreRowModel, getFacetedRowModel, getFacetedUniqueValues, getFilteredRowModel, getPaginationRowModel, getSortedRowModel, RowData, SortingState, useReactTable, VisibilityState } from "@tanstack/react-table";
+import { ColumnDef, ColumnFiltersState, flexRender, getCoreRowModel, getFacetedRowModel, getFacetedUniqueValues, getFilteredRowModel, getPaginationRowModel, getSortedRowModel, SortingState, useReactTable, VisibilityState } from "@tanstack/react-table";
 import { motion, Variants } from 'motion/react';
 import { useState } from "react";
-import { SupplierTableToolbar } from "./supplier.table-toolbar";
-
-declare module "@tanstack/react-table" {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  interface ColumnMeta<TData extends RowData, TValue> {
-    className: string;
-  }
-}
+import { OrderTableToolbar } from "./order.table-toolbar";
 
 interface DataTableProps {
-  columns: ColumnDef<SupplierResponse>[];
-  data: SupplierResponse[];
+  columns: ColumnDef<OrderResponse>[];
+  data: OrderResponse[];
   searchTerm: string;
   onSearchChange: (search: string) => void;
   isLoading: boolean;
@@ -25,7 +18,7 @@ interface DataTableProps {
   pagination?: PaginationProps;
 }
 
-export function SupplierDataTable({
+export function OrderDataTable({
   columns,
   data,
   searchTerm,
@@ -65,13 +58,13 @@ export function SupplierDataTable({
 
   return (
     <div className="space-y-4">
-      <SupplierTableToolbar
+      <OrderTableToolbar
         table={table}
         searchTerm={searchTerm}
         onSearchChange={onSearchChange}
       />
 
-      <div className="bg-white dark:bg-slate-950 rounded-xl border border-violet-100 dark:border-violet-800/30 shadow-sm p-2">
+      <div className="bg-white dark:bg-slate-950 rounded-xl border border-rose-100 dark:border-rose-800/30 shadow-sm p-2">
         {pagination ? (
           <DataTablePagination
             table={table}
@@ -87,7 +80,7 @@ export function SupplierDataTable({
         )}
       </div>
 
-      <div className="overflow-hidden rounded-xl border border-violet-100 dark:border-violet-800/30 bg-white dark:bg-slate-950 shadow-sm">
+      <div className="overflow-hidden rounded-xl border border-rose-100 dark:border-rose-800/30 bg-white dark:bg-slate-950 shadow-sm">
         <motion.div
           initial={{ opacity: 0.7 }}
           animate={{ opacity: 1 }}
@@ -98,8 +91,8 @@ export function SupplierDataTable({
           {(isLoading || isChangingPage) && (
             <div className="absolute inset-0 bg-white/80 dark:bg-slate-950/80 z-20 flex items-center justify-center">
               <div className="flex items-center gap-2">
-                <div className="w-4 h-4 border-2 border-violet-500 border-t-transparent rounded-full animate-spin"></div>
-                <span className="text-violet-600 dark:text-violet-400 text-sm font-medium">
+                <div className="w-4 h-4 border-2 border-rose-500 border-t-transparent rounded-full animate-spin"></div>
+                <span className="text-rose-600 dark:text-rose-400 text-sm font-medium">
                   Đang tải...
                 </span>
               </div>
@@ -108,16 +101,16 @@ export function SupplierDataTable({
 
           <div className="overflow-x-auto">
             <Table className="w-full table-fixed">
-              <TableHeader className="bg-violet-50/80 dark:bg-violet-950/40 sticky top-0 z-10">
+              <TableHeader className="bg-rose-50/80 dark:bg-rose-950/40 sticky top-0 z-10">
                 {table.getHeaderGroups().map((headerGroup) => (
-                  <TableRow key={headerGroup.id} className="border-b border-violet-100 dark:border-violet-800/20">
+                  <TableRow key={headerGroup.id} className="border-b border-rose-100 dark:border-rose-800/20">
                     {headerGroup.headers.map((header) => {
                       return (
                         <TableHead
                           key={header.id}
                           colSpan={header.colSpan}
                           className={cn(
-                            "h-11 font-medium text-violet-800 dark:text-violet-300 text-sm px-4 py-3 text-left",
+                            "h-11 font-medium text-rose-800 dark:text-rose-300 text-sm px-4 py-3 text-left",
                             header.column.columnDef.meta?.className
                           )}
                         >
@@ -142,7 +135,7 @@ export function SupplierDataTable({
                       initial="hidden"
                       animate="visible"
                       variants={fadeInUpVariants as Variants}
-                      className="group border-b border-violet-50 dark:border-violet-800/10 hover:bg-violet-50/70 dark:hover:bg-violet-900/20 data-[state=selected]:bg-violet-100 dark:data-[state=selected]:bg-violet-800/30 transition-colors"
+                      className="group border-b border-rose-50 dark:border-rose-800/10 hover:bg-rose-50/70 dark:hover:bg-rose-900/20 data-[state=selected]:bg-rose-100 dark:data-[state=selected]:bg-rose-800/30 transition-colors"
                       data-state={row.getIsSelected() && "selected"}
                     >
                       {row.getVisibleCells().map((cell) => (
@@ -163,7 +156,7 @@ export function SupplierDataTable({
                     <TableCell colSpan={columns.length} className="h-32 text-center">
                       <div className="flex flex-col items-center justify-center gap-2 text-gray-500 dark:text-gray-400">
                         <span className="text-sm">
-                          {searchTerm ? `Không tìm thấy kết quả cho "${searchTerm}"` : "Không có nhà cung cấp nào."}
+                          {searchTerm ? `Không tìm thấy kết quả cho "${searchTerm}"` : "Không có đơn hàng nào."}
                         </span>
                         {searchTerm && (
                           <span className="text-xs opacity-75">
@@ -180,5 +173,5 @@ export function SupplierDataTable({
         </motion.div>
       </div>
     </div>
-  )
+  );
 }

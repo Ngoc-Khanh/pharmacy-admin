@@ -1,10 +1,12 @@
 import { DataTableViewOptions } from "@/components/table/data-table-view-options";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { InvoiceStatus } from "@/data/enum";
 import { InvoiceResponse } from "@/data/interfaces";
 import { Table } from "@tanstack/react-table";
-import { FileDown, RotateCcw, Search, X } from "lucide-react";
+import { Ban, CheckCircle2, Clock, FileDown, RotateCcw, Search, X } from "lucide-react";
 import { motion } from 'motion/react';
+import { InvoiceDataTableFacetedFilter } from "./invoice.data-table-faceted-filter";
 
 interface InvoiceTableToolbarProps {
   table: Table<InvoiceResponse>
@@ -50,13 +52,33 @@ export function InvoiceTableToolbar({ table, searchTerm, onSearchChange }: Invoi
         </div>
 
         <div className="flex items-center gap-2">
-          {/* {table.getColumn("status") && (
+          {table.getColumn("status") && (
             <InvoiceDataTableFacetedFilter
               column={table.getColumn("status")}
               title="Trạng thái"
-              options={[]}
+              options={[{
+                label: "Đã thanh toán",
+                value: InvoiceStatus.PAID,
+                icon: CheckCircle2,
+                color: "bg-green-100 dark:bg-green-900/50 text-green-700 dark:text-green-400",
+              }, {
+                label: "Chờ thanh toán",
+                value: InvoiceStatus.PENDING,
+                icon: Clock,
+                color: "bg-yellow-100 dark:bg-yellow-900/50 text-yellow-700 dark:text-yellow-400",
+              }, {
+                label: "Đã hủy",
+                value: InvoiceStatus.CANCELLED,
+                icon: Ban,
+                color: "bg-red-100 dark:bg-red-900/50 text-red-700 dark:text-red-400",
+              }, {
+                label: "Đã hoàn tiền",
+                value: InvoiceStatus.REFUNDED,
+                icon: RotateCcw,
+                color: "bg-blue-100 dark:bg-blue-900/50 text-blue-700 dark:text-blue-400",
+              }]}
             />
-          )} */}
+          )}
         </div>
       </div>
 

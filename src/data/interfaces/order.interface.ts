@@ -1,5 +1,5 @@
 import { OrderStatus } from "@/data/enum";
-import { UserAddress } from "@/data/interfaces";
+import { MedicineResponse, UserAddress } from "@/data/interfaces";
 
 export interface OrderResponse {
   readonly id: string;
@@ -12,6 +12,17 @@ export interface OrderResponse {
   totalPrice: number;
   shippingAddress: UserAddress;
   paymentMethod: string;
+  user: {
+    username: string;
+    email: string;
+    firstname: string;
+    lastname: string;
+    profileImage: {
+      publicId: string;
+      url: string;
+      alt: string;
+    };
+  };
   readonly createdAt: string;
   readonly updatedAt: string;
 }
@@ -29,4 +40,27 @@ export interface OrderItem {
       alt: string;
     };
   };
+}
+
+export interface OrderDetailsResponse {
+  readonly id: string;
+  readonly userId: string;
+  status: OrderStatus;
+  items: OrderAdminDetailsItem[];
+  subTotal: number;
+  shippingFee: number;
+  discount: number;
+  totalPrice: number;
+  shippingAddress: UserAddress;
+  paymentMethod: string;
+  readonly createdAt: string;
+  readonly updatedAt: string;
+}
+
+export interface OrderAdminDetailsItem {
+  medicineId: string;
+  quantity: number;
+  price: number;
+  itemTotal: number;
+  medicine: MedicineResponse;
 }

@@ -26,7 +26,7 @@ export function SupplierRowActions({ row }: SupplierRowActionsProps) {
           <Button
             variant="ghost"
             size="sm"
-            className="h-8 w-8 p-0 rounded-full hover:bg-rose-50 dark:hover:bg-rose-900/30 hover:text-rose-600 dark:hover:text-rose-400 transition-colors"
+            className="h-8 w-8 p-0 rounded-full hover:bg-purple-50 dark:hover:bg-purple-900/30 hover:text-purple-600 dark:hover:text-purple-400 transition-colors"
           >
             <span className="sr-only">Mở menu</span>
             <MoreHorizontal className="h-4 w-4" />
@@ -62,7 +62,7 @@ export function SupplierRowActions({ row }: SupplierRowActionsProps) {
               setCurrentSupplier(row.original);
             }}
           >
-            <Edit className="h-3.5 w-3.5 text-rose-500" />
+            <Edit className="h-3.5 w-3.5 text-purple-500" />
             <span>Chỉnh sửa</span>
           </DropdownMenuItem>
 

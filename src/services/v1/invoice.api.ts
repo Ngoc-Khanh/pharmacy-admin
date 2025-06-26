@@ -38,5 +38,10 @@ export const InvoiceAPI = {
   async InvoiceDelete(id: string) {
     const res = await apiDelete<SRO<InvoiceResponse>>(`v1/admin/invoices/${id}/delete`);
     return res.data.data;
+  },
+
+  async InvoiceByOrderId(orderId: string) {
+    const res = await apiGet<SRO<InvoiceDetailResponse>>(`v1/store/invoices/${orderId}/details-with-orders-id`);
+    return res.data.data;
   }
 }
