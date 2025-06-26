@@ -1,1 +1,1 @@
-w
+export * from "./invoice.delete-dialog";

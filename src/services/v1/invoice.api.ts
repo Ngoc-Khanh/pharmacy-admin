@@ -1,7 +1,7 @@
 import { InvoiceUpdateStatusDto } from "@/data/dto";
 import { InvoiceDetailResponse, InvoiceResponse, ListParams } from "@/data/interfaces";
 import { Paginated, SRO } from "@/data/sro";
-import { apiGet, apiPatch } from "@/services/api";
+import { apiDelete, apiGet, apiPatch } from "@/services/api";
 
 export const InvoiceAPI = {
   async InvoiceList(params?: ListParams) {
@@ -22,6 +22,11 @@ export const InvoiceAPI = {
 
   async InvoiceUpdateStatus(id: string, dto: InvoiceUpdateStatusDto) {
     const res = await apiPatch<InvoiceUpdateStatusDto, SRO<InvoiceResponse>>(`v1/admin/invoices/${id}/update-status`, dto)
+    return res.data.data;
+  },
+
+  async InvoiceDelete(id: string) {
+    const res = await apiDelete<SRO<InvoiceResponse>>(`v1/admin/invoices/${id}/delete`);
     return res.data.data;
   }
 }

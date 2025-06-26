@@ -58,7 +58,6 @@ export function SupplierDeleteDialog({ currentSupplier, open, onOpenChange }: Pr
   return (
     <AlertDialog open={open} onOpenChange={(newOpen) => {
       if (isPending) return;
-      
       onOpenChange(newOpen);
       if (!newOpen) {
         setNameConfirmation("");
