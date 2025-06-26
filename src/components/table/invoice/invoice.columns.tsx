@@ -49,7 +49,7 @@ export const invoiceColumns: ColumnDef<InvoiceResponse>[] = [
   {
     accessorKey: "orderId",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Order ID" />
+      <DataTableColumnHeader column={column} title="Mã đơn hàng" />
     ),
     cell: ({ row }) => (
       <div className="text-sm font-normal text-gray-600 dark:text-gray-400 max-w-[180px] truncate">
@@ -62,7 +62,7 @@ export const invoiceColumns: ColumnDef<InvoiceResponse>[] = [
   {
     accessorKey: "totalPrice",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Amount" />
+      <DataTableColumnHeader column={column} title="Tổng tiền" />
     ),
     cell: ({ row }) => (
       <div className="font-medium text-emerald-800 dark:text-emerald-300">
@@ -75,7 +75,7 @@ export const invoiceColumns: ColumnDef<InvoiceResponse>[] = [
   {
     accessorKey: "paymentMethod",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Payment Method" />
+      <DataTableColumnHeader column={column} title="Phương thức thanh toán" />
     ),
     cell: ({ row }) => {
       const paymentMethod: PaymentMethod = row.getValue("paymentMethod");
@@ -87,6 +87,9 @@ export const invoiceColumns: ColumnDef<InvoiceResponse>[] = [
         </div>
       );
     },
+    meta: {
+      className: "w-[240px]",
+    },
     enableSorting: false,
     enableHiding: true,
     filterFn: (row, id, value) => {
@@ -96,7 +99,7 @@ export const invoiceColumns: ColumnDef<InvoiceResponse>[] = [
   {
     accessorKey: "status",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Status" />
+      <DataTableColumnHeader column={column} title="Trạng thái" />
     ),
     cell: ({ row }) => {
       const status: InvoiceStatus = row.getValue("status");
@@ -119,7 +122,7 @@ export const invoiceColumns: ColumnDef<InvoiceResponse>[] = [
   {
     accessorKey: "issuedAt",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Issued Date" />
+      <DataTableColumnHeader column={column} title="Ngày hóa đơn" />
     ),
     cell: ({ row }) => {
       const date = new Date(row.getValue("issuedAt"));
