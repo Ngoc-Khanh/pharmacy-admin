@@ -1,5 +1,5 @@
 import { InvoiceCreateWithNoOrderDto, InvoiceUpdateStatusDto } from "@/data/dto";
-import { InvoiceCreateWithNoOrderResponse, InvoiceDetailResponse, InvoiceResponse, ListParams } from "@/data/interfaces";
+import { InvoiceCreateWithNoOrderResponse, InvoiceDetailResponse, InvoiceResponse, InvoiceStatsResponse, ListParams } from "@/data/interfaces";
 import { Paginated, SRO } from "@/data/sro";
 import { apiDelete, apiGet, apiPatch, apiPost } from "@/services/api";
 
@@ -12,6 +12,11 @@ export const InvoiceAPI = {
     const queryString = searchParams.toString();
     const url = queryString ? `v1/admin/invoices/list?${queryString}&sort_order=asc` : "v1/admin/invoices/list?sort_order=asc";
     const res = await apiGet<SRO<Paginated<InvoiceResponse>>>(url);
+    return res.data.data;
+  },
+
+  async InvoiceStats() {
+    const res = await apiGet<SRO<InvoiceStatsResponse>>(`v1/admin/invoices/statistics`);
     return res.data.data;
   },
 

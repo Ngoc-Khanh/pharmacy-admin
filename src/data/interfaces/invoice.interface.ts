@@ -70,3 +70,13 @@ export interface InvoiceCreateWithNoOrderResponse {
   order: OrderResponse;
   invoice: InvoiceResponse;
 }
+
+export interface InvoiceStatsResponse {
+  totalInvoices: number;
+  totalRevenue: number;
+  totalAverageRevenue: number;
+  totalPaidInvoices: number;
+  totalPendingInvoices: number;
+  totalCancelledInvoices: number;
+  totalRefundedInvoices: number;
+}

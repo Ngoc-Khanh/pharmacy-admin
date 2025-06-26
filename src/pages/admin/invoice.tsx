@@ -1,7 +1,8 @@
 import InvoiceDialog from "@/components/dialogs/invoice.dialog";
+import { InvoiceStats } from "@/components/pages/invoice";
 import { invoiceColumns, InvoiceDataTable, InvoicePrimaryButtons } from "@/components/table/invoice";
 import { routeNames, routes, siteConfig } from "@/config";
-import { InvoiceResponse } from "@/data/interfaces";
+import { InvoiceResponse, InvoiceStatsResponse } from "@/data/interfaces";
 import { useTable } from "@/hooks";
 import { InvoiceAPI } from "@/services/v1";
 import { Receipt } from "lucide-react";
@@ -12,7 +13,9 @@ import { Helmet } from "react-helmet-async";
 export default function InvoicePage() {
   const {
     data: invoiceData,
+    statsData,
     isLoading,
+    isStatsLoading,
     isChangingPage,
     paginationInfo,
     searchTerm,
@@ -20,9 +23,10 @@ export default function InvoicePage() {
     handlePageChange,
     handlePageSizeChange,
     pageSize,
-  } = useTable<InvoiceResponse>({
+  } = useTable<InvoiceResponse, InvoiceStatsResponse>({
     queryKey: "invoices",
     dataFetcher: InvoiceAPI.InvoiceList,
+    statsFetcher: InvoiceAPI.InvoiceStats,
   });
 
   // Memoize pagination props để tránh re-render không cần thiết
@@ -73,7 +77,10 @@ export default function InvoicePage() {
         </motion.div>
 
         {/* Statistics */}
-        {/* <InvoiceStats /> */}
+        <InvoiceStats
+          statsData={statsData}
+          isStatsLoading={isStatsLoading}
+        />
 
         <div className="flex flex-col gap-6">
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
