@@ -1,5 +1,5 @@
 import { LoginCredentials } from "@/data/dto";
-import { AuthResponse, UserResponse } from "@/data/interfaces";
+import { AuthResponse, RefreshTokenResponse, UserResponse } from "@/data/interfaces";
 import { SRO } from "@/data/sro";
 import { apiGet, apiPost } from "@/services/api";
 
@@ -11,6 +11,11 @@ export const AuthAPI = {
 
   async fetchUserInfo() {
     const res = await apiGet<SRO<UserResponse>>("/v1/auth/me");
+    return res.data.data;
+  },
+
+  async refreshTokenUser() {
+    const res = await apiPost<Record<string, never>, SRO<RefreshTokenResponse>>("v1/auth/refresh-token", {});
     return res.data.data;
   }
 };

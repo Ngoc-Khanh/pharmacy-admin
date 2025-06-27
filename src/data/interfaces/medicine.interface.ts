@@ -59,3 +59,7 @@ export interface UsageGuide {
   directions: string[];
   precautions: string[];
 }
+
+export interface MedicineStatsResponse {
+  totalMedicine: number;
+}
