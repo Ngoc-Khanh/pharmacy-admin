@@ -1,4 +1,5 @@
 import { activeStepAtom, steps } from "@/atoms";
+import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
 import { Sheet, SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { Stepper, StepperItem } from "@/components/ui/stepper";
@@ -8,12 +9,16 @@ import { medicineSchema, MedicineSchema } from "@/data/schemas";
 import { MedicineAPI } from "@/services/v1";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { motion } from 'framer-motion';
 import { useAtom } from "jotai";
 import { ChevronLeft, ChevronRight, Pill, Save } from "lucide-react";
+import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { MedicineActionStepOne } from "./medicine.action-step-one";
-import { Button } from "@/components/ui/button";
+import { MedicineActionStepTwo } from "./medicine.action-step-two";
+import { MedicineActionStepThree } from "./medicine.action-step-three";
+import { MedicineActionStepFour } from "./medicine.action-step-four";
 
 interface MedicineCreateDialogProps {
   currentMedicine?: MedicineResponse;
@@ -21,9 +26,8 @@ interface MedicineCreateDialogProps {
   onOpenChange: (open: boolean) => void;
 }
 
-export function MedicineCreateDialog({ currentMedicine, open, onOpenChange }: MedicineCreateDialogProps) {
+export function MedicineCreateDialog({ open, onOpenChange }: MedicineCreateDialogProps) {
   const queryClient = useQueryClient();
-  const isEdit = !!currentMedicine;
   const [activeStep, setActiveStep] = useAtom(activeStepAtom);
 
   const form = useForm<MedicineSchema>({
@@ -63,6 +67,17 @@ export function MedicineCreateDialog({ currentMedicine, open, onOpenChange }: Me
     }
   });
 
+  // Auto-calculate price based on originalPrice and discountPercent
+  const originalPrice = form.watch("variants.originalPrice");
+  const discountPercent = form.watch("variants.discountPercent");
+
+  useEffect(() => {
+    if (originalPrice && discountPercent >= 0) {
+      const calculatedPrice = originalPrice * (1 - discountPercent / 100);
+      form.setValue("variants.price", Number(calculatedPrice.toFixed(0)));
+    }
+  }, [originalPrice, discountPercent, form]);
+
   const addMedicineMutation = useMutation({
     mutationFn: MedicineAPI.MedicineCreate,
     onSuccess: () => {
@@ -94,7 +109,7 @@ export function MedicineCreateDialog({ currentMedicine, open, onOpenChange }: Me
       case 1:
         return ["categoryId", "supplierId", "name", "description"];
       case 2:
-        return ["variants.originalPrice", "variants.discountPercent", "variants.limitQuantity", "variants.stockStatus"];
+        return ["variants.originalPrice", "variants.discountPercent", "variants.quantity", "variants.limitQuantity", "variants.stockStatus"];
       case 3:
         return ["details.ingredients", "details.paramaters.origin", "details.paramaters.packaging"];
       case 4:
@@ -109,11 +124,11 @@ export function MedicineCreateDialog({ currentMedicine, open, onOpenChange }: Me
       case 1:
         return <MedicineActionStepOne form={form} />;
       case 2:
-        return <div>Biến thể</div>;
+        return <MedicineActionStepTwo form={form} />;
       case 3:
-        return <div>Chi tiết</div>;
+        return <MedicineActionStepThree form={form} />;
       case 4:
-        return <div>Hướng dẫn sử dụng</div>;
+        return <MedicineActionStepFour form={form} />;
       default:
         return null;
     }
@@ -185,7 +200,15 @@ export function MedicineCreateDialog({ currentMedicine, open, onOpenChange }: Me
             }}
             className="space-y-6 py-4"
           >
-            {renderCurrentStep()}
+            <motion.div
+              key={activeStep}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.3 }}
+            >
+              {renderCurrentStep()}
+            </motion.div>
 
             <SheetFooter className="mt-8 pt-4 border-t border-teal-50 flex flex-col sm:flex-row gap-2">
               {activeStep > 1 && (
@@ -229,10 +252,16 @@ export function MedicineCreateDialog({ currentMedicine, open, onOpenChange }: Me
                   disabled={addMedicineMutation.isPending}
                 >
                   {(addMedicineMutation.isPending) ? (
-                    "Đang xử lý..."
+                    <>
+                      <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                      </svg>
+                      Đang thêm thuốc...
+                    </>
                   ) : (
                     <>
-                      {isEdit ? "Cập nhật" : "Tạo mới"}
+                      {"Thêm thuốc"}
                       <Save className="h-4 w-4 ml-1" />
                     </>
                   )}
