@@ -1,4 +1,4 @@
-import { CategoryResponse, InvoiceResponse, OrderResponse, SupplierResponse, UserResponse } from "@/data/interfaces";
+import { CategoryResponse, InvoiceResponse, MedicineResponse, OrderResponse, SupplierResponse, UserResponse } from "@/data/interfaces";
 import { atom, useAtom } from "jotai";
 
 export type DialogType = "add" | "edit" | "delete" | "bulk-delete";
@@ -34,6 +34,18 @@ export const useCategoryDialog = () => {
   const [open, setOpen] = useAtom(openCategoryDialogAtom);
   const [currentCategory, setCurrentCategory] = useAtom(currentCategoryAtom);
   return { open, setOpen, currentCategory, setCurrentCategory };
+}
+
+// Medicine Dialog
+export type MedicineDialogType = DialogType | "detail";
+
+export const openMedicineDialogAtom = atom<MedicineDialogType | null>(null);
+export const currentMedicineAtom = atom<MedicineResponse | null>(null);
+
+export const useMedicineDialog = () => {
+  const [open, setOpen] = useAtom(openMedicineDialogAtom);
+  const [currentMedicine, setCurrentMedicine] = useAtom(currentMedicineAtom);
+  return { open, setOpen, currentMedicine, setCurrentMedicine };
 }
 
 // Supplier Dialog

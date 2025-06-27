@@ -5,6 +5,7 @@ import { getLocale } from "@/lib/get-locales";
 import { getAccessToken } from "@/lib/get-token";
 import { toCamelCase } from "@/lib/to-camel-case";
 import { toSnakeCase } from "@/lib/to-snake-case";
+import { refreshTokenHandler } from "@/lib/refresh-token";
 
 // Create an Axios instance
 const api = axios.create({
@@ -17,7 +18,7 @@ const aiApi = axios.create({
   headers: siteConfig.backend.base_headers,
 });
 
-// Add a request interceptor to include the JWT token in the headers
+// Thêm request interceptor để bao gồm JWT token trong headers
 api.interceptors.request.use(
   async (config) => {
     const [token, locale] = await Promise.all([getAccessToken(), getLocale()]);
@@ -28,23 +29,41 @@ api.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
-// Add a response interceptor (optional, for handling errors or specific responses globally)
+// Thêm response interceptor (tùy chọn, để xử lý lỗi hoặc các phản hồi cụ thể toàn cục)
 api.interceptors.response.use(
   (response) => {
     return response;
   },
-  (error) => {
-    if (error?.response?.status === 401) {
-      // Handle 401 Unauthorized errors
-      if (!error.config.url?.includes("auth"))
+  async (error) => {
+    const originalRequest = error.config;
+    if (error?.response?.status === 401 && !originalRequest._retry) {
+      // Nếu là lỗi 401 và chưa retry
+      if (originalRequest.url?.includes("auth/refresh-token")) {
+        localStorage.removeItem(siteConfig.auth.jwt_key);
         window.location.href = routes.auth.login;
+        return Promise.reject(error);
+      }
+      if (!originalRequest.url?.includes("auth/credentials")) {
+        // Nếu không phải là request refresh token
+        originalRequest._retry = true;
+        try {
+          const newToken = await refreshTokenHandler();
+          originalRequest.headers.Authorization = `Bearer ${newToken}`;
+          return api(originalRequest);
+        } catch (refreshError) {
+          // Refresh thất bại, đã được xử lý trong refreshTokenHandler
+          return Promise.reject(refreshError);
+        }
+      } else {
+        // Đối với login endpoint bị 401, chuyển về login
+        window.location.href = routes.auth.login;
+      }
     }
     return Promise.reject(error);
   }
 );
 
 // Interceptor để convert response từ snake_case -> camelCase
-// Interceptor để convert response từ snake_case -> camelCase cho cả api và aiApi
 [api, aiApi].forEach((instance) => {
   instance.interceptors.response.use((response) => {
     if (response.data) response.data = toCamelCase(response.data);
