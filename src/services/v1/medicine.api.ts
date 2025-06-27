@@ -35,8 +35,11 @@ export const MedicineAPI = {
     return res.data.data;
   },
 
-  async MedicineUploadImage(data: FormData) {
-    const res = await apiPost<FormData, SRO<MedicineResponse>>("v1/admin/medicines/upload-image", data);
+  async MedicineUploadImage(medicineId: string, data: FormData) {
+    const res = await apiPost<FormData, SRO<MedicineResponse>>(
+      `v1/admin/medicines/${medicineId}/upload-image`, 
+      data
+    );
     return res.data.data;
   },
 }

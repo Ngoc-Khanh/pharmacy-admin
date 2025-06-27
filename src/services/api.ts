@@ -74,7 +74,10 @@ api.interceptors.response.use(
 // Interceptor để convert request từ camelCase -> snake_case
 [api, aiApi].forEach((instance) => {
   instance.interceptors.request.use((config) => {
-    if (config.data) config.data = toSnakeCase(config.data);
+    // Không convert FormData để tránh làm hỏng multipart/form-data
+    if (config.data && !(config.data instanceof FormData)) {
+      config.data = toSnakeCase(config.data);
+    }
     return config;
   });
 });
