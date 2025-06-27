@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { SearchableInfiniteSelect } from "@/components/ui/searchable-infinite-select";
+import { SearchableInfiniteSelect } from "@/components/custom/searchable-infinite-select";
 import { UserResponse } from "@/data/interfaces";
 import { InvoiceSchema } from "@/data/schemas";
 import { cn } from "@/lib/utils";

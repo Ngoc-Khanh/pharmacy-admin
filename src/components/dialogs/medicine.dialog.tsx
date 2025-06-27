@@ -1,5 +1,5 @@
 import { useMedicineDialog } from "@/atoms";
-import { MedicineCreateDialog } from "@/components/dialogs/medicine";
+import { MedicineCreateDialog, MedicineUploadImage } from "@/components/dialogs/medicine";
 import { MedicineDeleteDialog } from "./medicine/medicine.delete-dialog";
 
 export default function MedicineDialog() {
@@ -30,6 +30,20 @@ export default function MedicineDialog() {
               }
             }}
             currentMedicine={currentMedicine}
+          />
+
+          <MedicineUploadImage
+            key={`medicine-upload-image-${currentMedicine.id}`}
+            open={open === "thumbnail"}
+            onOpenChange={(isOpen) => {
+              if (!isOpen) {
+                setOpen(null);
+                setTimeout(() => {
+                  setCurrentMedicine(null);
+                }, 300);
+              }
+            }}
+            medicineId={currentMedicine.id}
           />
         </>
       )}

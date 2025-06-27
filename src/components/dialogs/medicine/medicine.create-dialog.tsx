@@ -2,7 +2,7 @@ import { activeStepAtom, steps } from "@/atoms";
 import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
 import { Sheet, SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetTitle } from "@/components/ui/sheet";
-import { Stepper, StepperItem } from "@/components/ui/stepper";
+import { Stepper, StepperItem } from "@/components/custom/stepper";
 import { StockStatus } from "@/data/enum";
 import { MedicineResponse } from "@/data/interfaces";
 import { medicineSchema, MedicineSchema } from "@/data/schemas";

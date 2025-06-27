@@ -1,7 +1,7 @@
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { SearchableInfiniteSelect } from "@/components/ui/searchable-infinite-select";
+import { SearchableInfiniteSelect } from "@/components/custom/searchable-infinite-select";
 import { MedicineSchema } from "@/data/schemas";
 import { CategoryAPI, SupplierAPI } from "@/services/v1";
 import { CategoryResponse, SupplierResponse } from "@/data/interfaces";
