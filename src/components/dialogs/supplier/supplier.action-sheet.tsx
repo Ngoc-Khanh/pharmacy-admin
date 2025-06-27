@@ -83,7 +83,7 @@ export function SupplierActionSheet({ currentSupplier, open, onOpenChange }: Pro
           <motion.div
             initial={{ opacity: 0.8 }}
             animate={{ opacity: 1 }}
-            className="px-6 py-5 border-b bg-gradient-to-r from-rose-600 to-rose-500 shadow-md"
+            className="px-6 py-5 border-b bg-gradient-to-r from-violet-600 to-violet-500 shadow-md"
           >
             <SheetHeader className="flex flex-row items-center justify-between">
               <div className="flex items-center gap-3">
@@ -122,19 +122,19 @@ export function SupplierActionSheet({ currentSupplier, open, onOpenChange }: Pro
                     control={form.control}
                     name="name"
                     render={({ field }) => (
-                      <FormItem className="bg-white dark:bg-gray-800/40 p-4 rounded-lg shadow-sm border border-rose-100 dark:border-rose-900/50">
-                        <FormLabel className="text-rose-700 dark:text-rose-300 font-medium flex items-center gap-2">
-                          <Building2 className="h-4 w-4 text-rose-500" />
+                      <FormItem className="bg-white dark:bg-gray-800/40 p-4 rounded-lg shadow-sm border border-violet-100 dark:border-violet-900/50">
+                        <FormLabel className="text-violet-700 dark:text-violet-300 font-medium flex items-center gap-2">
+                          <Building2 className="h-4 w-4 text-violet-500" />
                           Tên nhà cung cấp
                         </FormLabel>
                         <FormControl>
                           <Input
                             placeholder="Nhập tên nhà cung cấp"
-                            className="border-rose-200 dark:border-rose-800 focus-visible:ring-rose-500 rounded-md mt-1.5 bg-rose-50/50 dark:bg-rose-950/30"
+                            className="border-violet-200 dark:border-violet-800 focus-visible:ring-violet-500 rounded-md mt-1.5 bg-violet-50/50 dark:bg-violet-950/30"
                             {...field}
                           />
                         </FormControl>
-                        <FormDescription className="text-sm text-rose-500/80 mt-1.5">
+                        <FormDescription className="text-sm text-violet-500/80 mt-1.5">
                           Tên nhà cung cấp sẽ hiển thị trên trang web
                         </FormDescription>
                         <FormMessage />
@@ -153,15 +153,15 @@ export function SupplierActionSheet({ currentSupplier, open, onOpenChange }: Pro
                     control={form.control}
                     name="address"
                     render={({ field }) => (
-                      <FormItem className="bg-white dark:bg-gray-800/40 p-4 rounded-lg shadow-sm border border-rose-100 dark:border-rose-900/50">
-                        <FormLabel className="text-rose-700 dark:text-rose-300 font-medium flex items-center gap-2">
-                          <MapPin className="h-4 w-4 text-rose-500" />
+                      <FormItem className="bg-white dark:bg-gray-800/40 p-4 rounded-lg shadow-sm border border-violet-100 dark:border-violet-900/50">
+                        <FormLabel className="text-violet-700 dark:text-violet-300 font-medium flex items-center gap-2">
+                          <MapPin className="h-4 w-4 text-violet-500" />
                           Địa chỉ
                         </FormLabel>
                         <FormControl>
                           <Input
                             placeholder="Nhập địa chỉ của nhà cung cấp"
-                            className="border-rose-200 dark:border-rose-800 focus-visible:ring-rose-500 rounded-md mt-1.5 bg-rose-50/50 dark:bg-rose-950/30"
+                            className="border-violet-200 dark:border-violet-800 focus-visible:ring-violet-500 rounded-md mt-1.5 bg-violet-50/50 dark:bg-violet-950/30"
                             {...field}
                           />
                         </FormControl>
@@ -181,15 +181,15 @@ export function SupplierActionSheet({ currentSupplier, open, onOpenChange }: Pro
                     control={form.control}
                     name="contactPhone"
                     render={({ field }) => (
-                      <FormItem className="bg-white dark:bg-gray-800/40 p-4 rounded-lg shadow-sm border border-rose-100 dark:border-rose-900/50">
-                        <FormLabel className="text-rose-700 dark:text-rose-300 font-medium flex items-center gap-2">
-                          <Phone className="h-4 w-4 text-rose-500" />
+                      <FormItem className="bg-white dark:bg-gray-800/40 p-4 rounded-lg shadow-sm border border-violet-100 dark:border-violet-900/50">
+                        <FormLabel className="text-violet-700 dark:text-violet-300 font-medium flex items-center gap-2">
+                          <Phone className="h-4 w-4 text-violet-500" />
                           Số điện thoại liên hệ
                         </FormLabel>
                         <FormControl>
                           <Input
                             placeholder="Nhập số điện thoại liên hệ"
-                            className="border-rose-200 dark:border-rose-800 focus-visible:ring-rose-500 rounded-md mt-1.5 bg-rose-50/50 dark:bg-rose-950/30"
+                            className="border-violet-200 dark:border-violet-800 focus-visible:ring-violet-500 rounded-md mt-1.5 bg-violet-50/50 dark:bg-violet-950/30"
                             {...field}
                           />
                         </FormControl>
@@ -209,16 +209,16 @@ export function SupplierActionSheet({ currentSupplier, open, onOpenChange }: Pro
                     control={form.control}
                     name="contactEmail"
                     render={({ field }) => (
-                      <FormItem className="bg-white dark:bg-gray-800/40 p-4 rounded-lg shadow-sm border border-rose-100 dark:border-rose-900/50">
-                        <FormLabel className="text-rose-700 dark:text-rose-300 font-medium flex items-center gap-2">
-                          <Mail className="h-4 w-4 text-rose-500" />
+                      <FormItem className="bg-white dark:bg-gray-800/40 p-4 rounded-lg shadow-sm border border-violet-100 dark:border-violet-900/50">
+                        <FormLabel className="text-violet-700 dark:text-violet-300 font-medium flex items-center gap-2">
+                          <Mail className="h-4 w-4 text-violet-500" />
                           Email liên hệ
                         </FormLabel>
                         <FormControl>
                           <Input
                             type="email"
                             placeholder="Nhập email liên hệ"
-                            className="border-rose-200 dark:border-rose-800 focus-visible:ring-rose-500 rounded-md mt-1.5 bg-rose-50/50 dark:bg-rose-950/30"
+                            className="border-violet-200 dark:border-violet-800 focus-visible:ring-violet-500 rounded-md mt-1.5 bg-violet-50/50 dark:bg-violet-950/30"
                             {...field}
                           />
                         </FormControl>
@@ -240,7 +240,7 @@ export function SupplierActionSheet({ currentSupplier, open, onOpenChange }: Pro
                   <Button
                     type="button"
                     variant="outline"
-                    className="border-rose-200 hover:bg-rose-50 dark:border-rose-800 dark:hover:bg-rose-950 rounded-full px-5 font-medium transition-all hover:shadow-sm"
+                    className="border-violet-200 hover:bg-violet-50 dark:border-violet-800 dark:hover:bg-violet-950 rounded-full px-5 font-medium transition-all hover:shadow-sm"
                     onClick={() => onOpenChange(false)}
                     disabled={isPending}
                   >
@@ -248,7 +248,7 @@ export function SupplierActionSheet({ currentSupplier, open, onOpenChange }: Pro
                   </Button>
                   <Button
                     type="submit"
-                    className="bg-gradient-to-r from-rose-600 to-rose-500 hover:from-rose-700 hover:to-rose-600 text-white rounded-full px-5 font-medium transition-all hover:shadow-md"
+                    className="bg-gradient-to-r from-violet-600 to-violet-500 hover:from-violet-700 hover:to-violet-600 text-white rounded-full px-5 font-medium transition-all hover:shadow-md"
                     disabled={isPending}
                   >
                     {isPending ? (

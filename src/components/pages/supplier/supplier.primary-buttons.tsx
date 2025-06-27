@@ -15,7 +15,7 @@ export function SuppliersPrimaryButtons() {
         transition={{ type: "spring", stiffness: 300, damping: 20 }}
       >
         <Button
-          className="gap-2 bg-gradient-to-r from-rose-500 to-rose-600 hover:from-rose-600 hover:to-rose-700 text-white font-medium px-5 py-2.5 rounded-lg transition-all duration-300 border-0 shadow-md hover:shadow-lg"
+          className="gap-2 bg-gradient-to-r from-violet-500 to-violet-600 hover:from-violet-600 hover:to-violet-700 text-white font-medium px-5 py-2.5 rounded-lg transition-all duration-300 border-0 shadow-md hover:shadow-lg"
           onClick={() => setOpen("add")}
         >
           <BadgePlus size={16} className="stroke-[2.5px]" />
@@ -37,12 +37,12 @@ export function SuppliersPrimaryButtons() {
 
           <DropdownMenuContent className="bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 shadow-lg rounded-xl p-1 min-w-[200px]">
             <DropdownMenuItem className="flex items-center gap-2 text-sm cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-800 rounded-md transition-colors py-2.5">
-              <Building2 className="h-4 w-4 text-rose-600" />
+              <Building2 className="h-4 w-4 text-violet-600" />
               <span>Thêm nhà cung cấp mới</span>
             </DropdownMenuItem>
 
             <DropdownMenuItem className="flex items-center gap-2 text-sm cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-800 rounded-md transition-colors py-2.5">
-              <FilePlus2 className="h-4 w-4 text-blue-600" />
+              <FilePlus2 className="h-4 w-4 text-violet-600" />
               <span>Tạo đơn đặt hàng</span>
             </DropdownMenuItem>
 

@@ -82,7 +82,7 @@ export function SupplierTableToolbar<TData>({
               className="h-10 px-3 text-violet-700 dark:text-violet-400 hover:bg-violet-50 dark:hover:bg-violet-900/20 hover:text-violet-600 dark:hover:text-violet-400"
               onClick={handleClearFilters}
             >
-              <RotateCcw className="mr-2 h-3.5 w-3.5" />
+              <RotateCcw className="mr-2 h-3.5 w-3.5" />bu
               Xóa bộ lọc
             </Button>
           </motion.div>

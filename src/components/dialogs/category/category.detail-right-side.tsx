@@ -2,11 +2,13 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { routes } from "@/config";
 import { StockStatus } from "@/data/enum";
 import { MedicineResponse } from "@/data/interfaces";
 import { cn, formatCurrency } from "@/lib/utils";
 import { Eye, Pill, Star } from "lucide-react";
 import { motion } from 'motion/react';
+import { Link } from "react-router-dom";
 
 interface CategoryDetailRightSideProps {
   getMedicines: () => MedicineResponse[];
@@ -106,9 +108,12 @@ export function CategoryDetailRightSide({ getMedicines }: CategoryDetailRightSid
                         variant="outline"
                         size="sm"
                         className="w-full text-xs h-7"
+                        asChild
                       >
-                        <Eye className="h-2.5 w-2.5 mr-1" />
-                        Xem chi tiết
+                        <Link to={routes.admin.medicineDetails(medicine.id)}>
+                          <Eye className="h-2.5 w-2.5 mr-1" />
+                          Xem chi tiết
+                        </Link>
                       </Button>
                     </div>
                   </CardContent>
