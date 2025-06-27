@@ -2,19 +2,18 @@ import { Button } from "@/components/ui/button"
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Form } from "@/components/ui/form"
 import { InvoiceCreateWithNoOrderDto } from "@/data/dto"
-import { AccountStatus, InvoiceStatus, PaymentMethod } from "@/data/enum"
+import { InvoiceStatus, PaymentMethod } from "@/data/enum"
 import { UserResponse } from "@/data/interfaces"
 import { invoiceSchema, InvoiceSchema } from "@/data/schemas"
 import { formSectionVariants } from "@/lib/motion-vartiant"
 import { cn } from "@/lib/utils"
-import { AccountAPI, InvoiceAPI, MedicineAPI } from "@/services/v1"
+import { InvoiceAPI } from "@/services/v1"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { useInfiniteQuery, useMutation, useQueryClient } from "@tanstack/react-query"
+import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { Receipt, Sparkles } from "lucide-react"
 import { motion } from 'motion/react'
 import { useEffect, useState } from "react"
 import { useForm } from "react-hook-form"
-import { useInView } from "react-intersection-observer"
 import { toast } from "sonner"
 import { InvoiceInformationForm } from "./invoice-information-form"
 import { InvoiceMedicineInformation } from "./invoice.medicine-information"
@@ -29,10 +28,6 @@ export function InvoiceCreateDialog({ open, onOpenChange }: Props) {
   const queryClient = useQueryClient()
   const [selectedUser, setSelectedUser] = useState<UserResponse | null>(null)
 
-  // Intersection observer refs for infinite scroll
-  const { ref: userLoadMoreRef, inView: userInView } = useInView()
-  const { ref: medicineLoadMoreRef, inView: medicineInView } = useInView()
-
   const form = useForm<InvoiceSchema>({
     resolver: zodResolver(invoiceSchema),
     defaultValues: {
@@ -46,43 +41,16 @@ export function InvoiceCreateDialog({ open, onOpenChange }: Props) {
     }
   })
 
-  // Infinite Query cho Users
-  const {
-    data: usersData,
-    fetchNextPage: fetchNextUsers,
-    hasNextPage: hasNextUsers,
-    isFetchingNextPage: isFetchingNextUsers,
-  } = useInfiniteQuery({
-    queryKey: ["users-infinite"],
-    queryFn: ({ pageParam = 1 }) => AccountAPI.AccountList({ page: pageParam, limit: 20 }),
-    getNextPageParam: (lastPage, pages) => {
-      if (!lastPage?.total || !pages?.length) return undefined
-      const totalPages = Math.ceil(lastPage.total / 20)
-      return pages.length < totalPages ? pages.length + 1 : undefined
-    },
-    initialPageParam: 1,
-  })
-
-  // Infinite Query cho Medicines
-  const {
-    data: medicinesData,
-    fetchNextPage: fetchNextMedicines,
-    hasNextPage: hasNextMedicines,
-    isFetchingNextPage: isFetchingNextMedicines,
-  } = useInfiniteQuery({
-    queryKey: ["medicines-infinite"],
-    queryFn: ({ pageParam = 1 }) => MedicineAPI.MedicineList({ page: pageParam, limit: 20 }),
-    getNextPageParam: (lastPage, pages) => {
-      if (!lastPage?.total || !pages?.length) return undefined
-      const totalPages = Math.ceil(lastPage.total / 20)
-      return pages.length < totalPages ? pages.length + 1 : undefined
-    },
-    initialPageParam: 1,
-  })
-
-  // Flatten data with safe checks and filter active users only
-  const users = usersData?.pages?.flatMap(page => page?.data || []).filter(user => user.status === AccountStatus.ACTIVE) ?? []
-  const medicines = medicinesData?.pages?.flatMap(page => page?.data || []) ?? []
+  // Watch userId để clear selectedUser khi userId bị xóa
+  const userId = form.watch("userId")
+  
+  useEffect(() => {
+    if (!userId) {
+      setSelectedUser(null)
+      // Clear shipping address khi không có user
+      form.setValue("shippingAddressId", "")
+    }
+  }, [userId, form])
 
   const createInvoiceMutation = useMutation({
     mutationFn: InvoiceAPI.InvoiceCreateWithNoOrder,
@@ -104,36 +72,10 @@ export function InvoiceCreateDialog({ open, onOpenChange }: Props) {
       ...values,
       invoiceNumber: values.invoiceNumber || `INV-${Date.now()}`,
       issuedAt: values.issuedAt || new Date().toISOString(),
+      shippingAddressId: values.shippingAddressId || "",
     }
     createInvoiceMutation.mutate(dto)
   }
-
-  useEffect(() => {
-    const userId = form.watch("userId")
-    const user = users.find(u => u.id === userId)
-    setSelectedUser(user || null)
-    if (user && user.addresses && user.addresses.length > 0) {
-      const defaultAddress = user.addresses.find(addr => addr.isDefault) || user.addresses[0]
-      form.setValue("shippingAddressId", defaultAddress.id)
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [form.watch("userId"), users])
-
-  // Auto-fetch more users when scrolled to bottom
-  useEffect(() => {
-    if (userInView && hasNextUsers && !isFetchingNextUsers) {
-      fetchNextUsers()
-    }
-  }, [userInView, hasNextUsers, isFetchingNextUsers, fetchNextUsers])
-
-  // Auto-fetch more medicines when scrolled to bottom
-  useEffect(() => {
-    if (medicineInView && hasNextMedicines && !isFetchingNextMedicines) {
-      fetchNextMedicines()
-    }
-  }, [medicineInView, hasNextMedicines, isFetchingNextMedicines, fetchNextMedicines])
-
-
 
   return (
     <Dialog open={open} onOpenChange={(state) => {
@@ -177,10 +119,7 @@ export function InvoiceCreateDialog({ open, onOpenChange }: Props) {
                 {/* Thông tin khách hàng */}
                 <InvoiceInformationForm
                   form={form}
-                  users={users}
-                  hasNextUsers={hasNextUsers}
-                  userLoadMoreRef={userLoadMoreRef}
-                  isFetchingNextUsers={isFetchingNextUsers}
+                  onUserSelect={setSelectedUser}
                 />
 
                 {/* Phương thức thanh toán & settings */}
@@ -201,10 +140,6 @@ export function InvoiceCreateDialog({ open, onOpenChange }: Props) {
                 {/* Danh sách sản phẩm */}
                 <InvoiceMedicineInformation
                   form={form}
-                  medicines={medicines}
-                  hasNextMedicines={hasNextMedicines}
-                  medicineLoadMoreRef={medicineLoadMoreRef}
-                  isFetchingNextMedicines={isFetchingNextMedicines}
                 />
               </motion.div>
             </div>

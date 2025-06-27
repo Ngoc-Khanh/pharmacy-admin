@@ -45,7 +45,7 @@ export function MedicineTableToolbar({ table, searchTerm, onSearchChange }: Medi
         <div className="relative w-full sm:w-72 md:w-80">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-fuchsia-500 dark:text-fuchsia-400" />
           <Input
-            placeholder="Tìm kiếm đơn hàng (nhấn Enter)..."
+            placeholder="Tìm kiếm thuốc (nhấn Enter)..."
             value={inputValue}
             onChange={(e) => setInputValue(e.target.value)}
             onKeyPress={handleKeyPress}

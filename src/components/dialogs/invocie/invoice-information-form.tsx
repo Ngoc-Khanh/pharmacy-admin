@@ -5,24 +5,22 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { SearchableInfiniteSelect } from "@/components/ui/searchable-infinite-select";
 import { UserResponse } from "@/data/interfaces";
 import { InvoiceSchema } from "@/data/schemas";
 import { cn } from "@/lib/utils";
+import { AccountAPI } from "@/services/v1";
 import { format } from "date-fns";
 import { vi } from "date-fns/locale";
-import { CalendarIcon, Loader2, User } from "lucide-react";
+import { CalendarIcon, User } from "lucide-react";
 import { UseFormReturn } from "react-hook-form";
 
 interface Props {
   form: UseFormReturn<InvoiceSchema>
-  users: UserResponse[]
-  hasNextUsers: boolean
-  userLoadMoreRef: (node?: Element | null) => void
-  isFetchingNextUsers: boolean
+  onUserSelect?: (user: UserResponse | null) => void
 }
 
-export function InvoiceInformationForm({ form, users, hasNextUsers, userLoadMoreRef, isFetchingNextUsers }: Props) {
+export function InvoiceInformationForm({ form, onUserSelect }: Props) {
   return (
     <Card className="border-emerald-200/50 dark:border-emerald-800/30">
       <CardHeader className="pb-3">
@@ -32,52 +30,40 @@ export function InvoiceInformationForm({ form, users, hasNextUsers, userLoadMore
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
-        {/* Chọn khách hàng với infinite scroll */}
+        {/* Chọn khách hàng với search và infinite scroll */}
         <FormField
           control={form.control}
           name="userId"
           render={({ field }) => (
             <FormItem>
               <FormLabel>Khách hàng *</FormLabel>
-              <Select onValueChange={field.onChange} value={field.value}>
-                <FormControl>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Chọn khách hàng" />
-                  </SelectTrigger>
-                </FormControl>
-                <SelectContent className="max-h-[400px] min-w-[400px]">
-                  {users.map((user) => (
-                    <SelectItem key={user.id} value={user.id}>
-                      <div className="flex items-center justify-between w-full">
-                        <div className="flex items-center gap-2">
-                          <span>{user.firstname} {user.lastname}</span>
-                          <Badge variant="outline" className="text-xs">
-                            {user.email}
-                          </Badge>
-                        </div>
-                        <span className="text-xs text-muted-foreground ml-2">
-                          {user.phone}
-                        </span>
+              <FormControl>
+                <SearchableInfiniteSelect<UserResponse>
+                  placeholder="Chọn khách hàng"
+                  value={field.value}
+                  onValueChange={field.onChange}
+                  onSelectItem={(user) => onUserSelect?.(user)}
+                  queryKey={["users-infinite"]}
+                  queryFn={AccountAPI.AccountList}
+                  getItemId={(user) => user.id}
+                  getItemLabel={(user) => `${user.firstname} ${user.lastname}`}
+                  renderItem={(user) => (
+                    <div className="flex items-center justify-between w-full">
+                      <div className="flex items-center gap-2">
+                        <span>{user.firstname} {user.lastname}</span>
+                        <Badge variant="outline" className="text-xs">
+                          {user.email}
+                        </Badge>
                       </div>
-                    </SelectItem>
-                  ))}
-                  {hasNextUsers && (
-                    <div
-                      ref={userLoadMoreRef}
-                      className="flex items-center justify-center py-2"
-                    >
-                      {isFetchingNextUsers ? (
-                        <>
-                          <Loader2 className="h-4 w-4 animate-spin" />
-                          <span className="ml-2 text-sm">Đang tải...</span>
-                        </>
-                      ) : (
-                        <span className="text-xs text-muted-foreground">Cuộn để tải thêm</span>
-                      )}
+                      <span className="text-xs text-muted-foreground ml-2">
+                        {user.phone}
+                      </span>
                     </div>
                   )}
-                </SelectContent>
-              </Select>
+                  searchPlaceholder="Tìm kiếm khách hàng..."
+                  className="min-w-[400px]"
+                />
+              </FormControl>
               <FormMessage />
             </FormItem>
           )}

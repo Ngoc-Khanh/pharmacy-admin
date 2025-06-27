@@ -32,6 +32,7 @@ interface Ratings {
 
 interface Variant {
   price: number;
+  quantity?: number;
   limitQuantity?: number;
   stockStatus?: StockStatus;
   originalPrice?: number;

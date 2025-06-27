@@ -2,25 +2,22 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { SearchableInfiniteSelect } from "@/components/ui/searchable-infinite-select"
 import { Separator } from "@/components/ui/separator"
 import { MedicineResponse } from "@/data/interfaces"
 import { InvoiceSchema } from "@/data/schemas"
 import { itemVariants } from "@/lib/motion-vartiant"
 import { formatCurrency } from "@/lib/utils"
-import { Loader2, Package, Plus, Trash2 } from "lucide-react"
+import { MedicineAPI } from "@/services/v1"
+import { Package, Plus, Trash2 } from "lucide-react"
 import { motion } from 'motion/react'
 import { useFieldArray, UseFormReturn } from "react-hook-form"
 
 interface Props {
   form: UseFormReturn<InvoiceSchema>
-  medicines: MedicineResponse[]
-  hasNextMedicines: boolean
-  medicineLoadMoreRef: (node?: Element | null) => void
-  isFetchingNextMedicines: boolean
 }
 
-export function InvoiceMedicineInformation({ form, medicines, hasNextMedicines, medicineLoadMoreRef, isFetchingNextMedicines }: Props) {
+export function InvoiceMedicineInformation({ form }: Props) {
   const { fields, append, remove } = useFieldArray({
     control: form.control,
     name: "items"
@@ -28,6 +25,11 @@ export function InvoiceMedicineInformation({ form, medicines, hasNextMedicines, 
 
   const items = form.watch("items")
   const totalAmount = items.reduce((sum, item) => sum + (item.quantity * item.price), 0)
+
+  const handleMedicineSelect = (medicine: MedicineResponse, index: number) => {
+    // Auto-set price when selecting medicine
+    form.setValue(`items.${index}.price`, medicine.variants.price)
+  }
 
   return (
     <Card className="border-purple-200/50 dark:border-purple-800/30">
@@ -75,7 +77,7 @@ export function InvoiceMedicineInformation({ form, medicines, hasNextMedicines, 
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
-              {/* Chọn thuốc với infinite scroll */}
+              {/* Chọn thuốc với search và infinite scroll */}
               <div className="md:col-span-2">
                 <FormField
                   control={form.control}
@@ -83,60 +85,38 @@ export function InvoiceMedicineInformation({ form, medicines, hasNextMedicines, 
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel className="text-xs">Thuốc *</FormLabel>
-                      <Select
-                        onValueChange={(value) => {
-                          field.onChange(value)
-                          // Tự động set giá khi chọn thuốc
-                          const selectedMedicine = medicines.find(m => m.id === value)
-                          if (selectedMedicine) {
-                            form.setValue(`items.${index}.price`, selectedMedicine.variants.price)
-                          }
-                        }}
-                        value={field.value}
-                      >
-                        <FormControl>
-                          <SelectTrigger className="h-9">
-                            <SelectValue placeholder="Chọn thuốc" />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent className="max-h-[400px] min-w-[500px]">
-                          {medicines.map((medicine) => (
-                            <SelectItem key={medicine.id} value={medicine.id}>
-                              <div className="flex items-start justify-between text-left w-full">
-                                <div className="flex items-center gap-3">
-                                  <div className="w-6 h-6 bg-blue-100 rounded flex items-center justify-center">
-                                    <Package className="h-3 w-3 text-blue-600" />
-                                  </div>
-                                  <div className="flex flex-col">
-                                    <div className="font-medium text-xs">{medicine.name}</div>
-                                    <div className="text-xs text-muted-foreground">
-                                      {medicine.description}
-                                    </div>
-                                  </div>
+                      <FormControl>
+                        <SearchableInfiniteSelect<MedicineResponse>
+                          placeholder="Chọn thuốc"
+                          value={field.value}
+                          onValueChange={field.onChange}
+                          onSelectItem={(medicine) => handleMedicineSelect(medicine, index)}
+                          queryKey={["medicines-infinite"]}
+                          queryFn={MedicineAPI.MedicineList}
+                          getItemId={(medicine) => medicine.id}
+                          getItemLabel={(medicine) => medicine.name}
+                          renderItem={(medicine) => (
+                            <div className="flex items-start justify-between text-left w-full">
+                              <div className="flex items-center gap-3">
+                                <div className="w-6 h-6 bg-blue-100 rounded flex items-center justify-center">
+                                  <Package className="h-3 w-3 text-blue-600" />
                                 </div>
-                                <div className="text-xs text-emerald-600 font-medium">
-                                  {formatCurrency(medicine.variants.price)}
+                                <div className="flex flex-col">
+                                  <div className="font-medium text-xs">{medicine.name}</div>
+                                  <div className="text-xs text-muted-foreground">
+                                    {medicine.description}
+                                  </div>
                                 </div>
                               </div>
-                            </SelectItem>
-                          ))}
-                          {hasNextMedicines && (
-                            <div
-                              ref={medicineLoadMoreRef}
-                              className="flex items-center justify-center py-2"
-                            >
-                              {isFetchingNextMedicines ? (
-                                <>
-                                  <Loader2 className="h-4 w-4 animate-spin" />
-                                  <span className="ml-2 text-sm">Đang tải...</span>
-                                </>
-                              ) : (
-                                <span className="text-xs text-muted-foreground">Cuộn để tải thêm</span>
-                              )}
+                              <div className="text-xs text-emerald-600 font-medium">
+                                {formatCurrency(medicine.variants.price)}
+                              </div>
                             </div>
                           )}
-                        </SelectContent>
-                      </Select>
+                          searchPlaceholder="Tìm kiếm thuốc..."
+                          className="min-w-[500px]"
+                        />
+                      </FormControl>
                       <FormMessage />
                     </FormItem>
                   )}
@@ -179,7 +159,9 @@ export function InvoiceMedicineInformation({ form, medicines, hasNextMedicines, 
                         className="h-9"
                         {...field}
                         onChange={(e) => field.onChange(Number(e.target.value))}
-                        disabled={true}
+                        readOnly={!!field.value}
+                        placeholder="Chọn thuốc để tự động điền giá"
+                        disabled={!!field.value}
                       />
                     </FormControl>
                     <FormMessage />

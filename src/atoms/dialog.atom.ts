@@ -37,7 +37,7 @@ export const useCategoryDialog = () => {
 }
 
 // Medicine Dialog
-export type MedicineDialogType = DialogType | "detail";
+export type MedicineDialogType = DialogType | "detail" | "thumbnail";
 
 export const openMedicineDialogAtom = atom<MedicineDialogType | null>(null);
 export const currentMedicineAtom = atom<MedicineResponse | null>(null);

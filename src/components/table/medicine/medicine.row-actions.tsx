@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { routes } from "@/config";
 import { MedicineResponse } from "@/data/interfaces";
 import { Row } from "@tanstack/react-table";
-import { Edit, Eye, Trash } from "lucide-react";
+import { Edit, Eye, Image, Trash } from "lucide-react";
 import { Link } from "react-router-dom";
 
 interface MedicineRowActionsProps {
@@ -25,6 +25,19 @@ export function MedicineRowActions({ row }: MedicineRowActionsProps) {
           <Eye className="h-4 w-4" />
           <span className="sr-only">Xem chi tiết</span>
         </Link>
+      </Button>
+
+      <Button
+        variant="ghost"
+        size="icon"
+        className="h-8 w-8 p-0 text-teal-600 hover:text-teal-700 hover:bg-teal-50 rounded-full"
+        onClick={() => {
+          setOpen("thumbnail");
+          setCurrentMedicine(row.original);
+        }}
+      >
+        <Image className="h-4 w-4" />
+        <span className="sr-only">Ảnh đại diện</span>
       </Button>
 
       <Button
