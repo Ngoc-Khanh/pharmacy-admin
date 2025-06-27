@@ -34,4 +34,9 @@ export const MedicineAPI = {
     const res = await apiDelete<SRO<MedicineResponse>>(`v1/admin/medicines/delete/${id}`);
     return res.data.data;
   },
+
+  async MedicineUploadImage(data: FormData) {
+    const res = await apiPost<FormData, SRO<MedicineResponse>>("v1/admin/medicines/upload-image", data);
+    return res.data.data;
+  },
 }

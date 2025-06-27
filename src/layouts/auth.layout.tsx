@@ -1,5 +1,5 @@
 import { isAuthenticatedAtom } from "@/atoms";
-import { Spotlight } from "@/components/ui/spotlight";
+import { Spotlight } from "@/components/custom/spotlight";
 import { routes } from "@/config";
 import { cn } from "@/lib/utils";
 import { useAtomValue } from "jotai";

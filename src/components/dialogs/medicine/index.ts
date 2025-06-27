@@ -3,3 +3,4 @@ export * from "./medicine.action-step-one";
 export * from "./medicine.action-step-three";
 export * from "./medicine.action-step-two";
 export * from "./medicine.create-dialog";
+export * from "./medicine.upload-image";
