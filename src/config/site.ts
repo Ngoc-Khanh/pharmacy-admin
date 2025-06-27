@@ -1,4 +1,17 @@
-import { Building2, FileText, FolderIcon, LayoutDashboardIcon, Package, PillIcon, SettingsIcon, UsersIcon } from "lucide-react";
+import {
+  Building2,
+  FileText,
+  FolderIcon,
+  LayoutDashboardIcon,
+  Lock,
+  Package,
+  Palette,
+  PillIcon,
+  SettingsIcon,
+  UserIcon,
+  UsersIcon,
+  Wrench,
+} from "lucide-react";
 import { routeNames, routes } from "./routes";
 
 export const siteConfig = {
@@ -80,7 +93,7 @@ export const sidebarConfig = {
       title: routeNames[routes.admin.invoices],
       url: routes.admin.invoices,
       icon: FileText,
-    }
+    },
   ],
   navSecondary: [
     {
@@ -90,3 +103,26 @@ export const sidebarConfig = {
     },
   ],
 };
+
+export const settingSidebarConfig = [
+  {
+    title: "Hồ sơ",
+    icon: UserIcon,
+    href: routes.admin.settings.profile,
+  },
+  {
+    title: "Tài khoản",
+    icon: Wrench,
+    href: routes.admin.settings.account,
+  },
+  {
+    title: "Giao diện",
+    icon: Palette,
+    href: routes.admin.settings.appearance,
+  },
+  {
+    title: "Mật khẩu",
+    icon: Lock,
+    href: routes.admin.settings.password,
+  },
+];

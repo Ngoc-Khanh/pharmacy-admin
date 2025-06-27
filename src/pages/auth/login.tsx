@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { routeNames, routes, siteConfig } from "@/config";
+import { AccountRole } from "@/data/enum";
 import { CredentialForm, credentialSchema } from "@/data/schemas";
 import { cn } from "@/lib/utils";
 import { AuthAPI } from "@/services/v1";
@@ -34,6 +35,15 @@ export default function LoginPage({ className, ...props }: React.ComponentProps<
   const { mutate: login, isPending } = useMutation({
     mutationFn: AuthAPI.fetchLogin,
     onSuccess: (data) => {
+      // Kiểm tra role có được phép truy cập admin không
+      const allowedRoles = [AccountRole.ADMIN, AccountRole.PHARMACIST];
+      if (!allowedRoles.includes(data.user.role)) {
+        toast.error("Không có quyền truy cập", {
+          description: "Chỉ quản trị viên và dược sĩ mới có thể truy cập hệ thống quản lý",
+        });
+        return;
+      }
+
       toast.success("Đăng nhập thành công", {
         description: "Chào mừng bạn đến với hệ thống quản lý bán hàng",
       });
