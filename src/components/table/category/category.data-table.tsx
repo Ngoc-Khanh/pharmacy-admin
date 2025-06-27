@@ -1,6 +1,7 @@
 import { DataTablePagination } from "@/components/table/data-table-pagination";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { CategoryResponse } from "@/data/interfaces";
+import { CategoryResponse, PaginationProps } from "@/data/interfaces";
+import { fadeInUpVariants } from "@/lib/motion-vartiant";
 import { cn } from "@/lib/utils";
 import { ColumnDef, ColumnFiltersState, flexRender, getCoreRowModel, getFacetedRowModel, getFacetedUniqueValues, getFilteredRowModel, getPaginationRowModel, getSortedRowModel, RowData, SortingState, useReactTable, VisibilityState } from "@tanstack/react-table";
 import { motion, Variants } from 'motion/react';
@@ -15,16 +16,28 @@ declare module "@tanstack/react-table" {
 }
 
 interface DataTableProps {
-  columns: ColumnDef<CategoryResponse>[]
-  data: CategoryResponse[]
+  columns: ColumnDef<CategoryResponse>[];
+  data: CategoryResponse[];
+  searchTerm: string;
+  onSearchChange: (search: string) => void;
+  isLoading: boolean;
+  isChangingPage?: boolean;
+  pagination?: PaginationProps;
 }
 
-export function CategoryDataTable({ columns, data }: DataTableProps) {
+export function CategoryDataTable({
+  columns,
+  data,
+  searchTerm,
+  onSearchChange,
+  isLoading,
+  isChangingPage = false,
+  pagination
+}: DataTableProps) {
   const [rowSelection, setRowSelection] = useState({});
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [sorting, setSorting] = useState<SortingState>([]);
-  const [globalFilter, setGlobalFilter] = useState('');
 
   const table = useReactTable({
     data,
@@ -34,13 +47,11 @@ export function CategoryDataTable({ columns, data }: DataTableProps) {
       columnVisibility,
       rowSelection,
       columnFilters,
-      globalFilter,
     },
     enableRowSelection: true,
     onRowSelectionChange: setRowSelection,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
-    onGlobalFilterChange: setGlobalFilter,
     onColumnVisibilityChange: setColumnVisibility,
     getCoreRowModel: getCoreRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
@@ -48,37 +59,32 @@ export function CategoryDataTable({ columns, data }: DataTableProps) {
     getSortedRowModel: getSortedRowModel(),
     getFacetedRowModel: getFacetedRowModel(),
     getFacetedUniqueValues: getFacetedUniqueValues(),
-    globalFilterFn: (row, value) => {
-      const search = value.toLowerCase();
-      const title = row.original.title?.toLowerCase() || '';
-      const description = row.original.description?.toLowerCase() || '';
-      const slug = row.original.slug?.toLowerCase() || '';
-
-      return title.includes(search) ||
-        description.includes(search) ||
-        slug.includes(search);
-    },
+    // Disable internal pagination if external pagination is provided
+    manualPagination: !!pagination,
   });
-
-  const fadeInUpVariants = {
-    hidden: { opacity: 0, y: 10 },
-    visible: (i: number) => ({
-      opacity: 1,
-      y: 0,
-      transition: {
-        delay: i * 0.03,
-        duration: 0.25,
-        ease: "easeOut"
-      }
-    })
-  };
 
   return (
     <div className="space-y-4">
-      <CategoriesTableToolbar table={table} />
+      <CategoriesTableToolbar
+        table={table}
+        searchTerm={searchTerm}
+        onSearchChange={onSearchChange}
+      />
 
       <div className="bg-white dark:bg-slate-950 rounded-xl border border-amber-100 dark:border-amber-800/30 shadow-sm p-2">
-        <DataTablePagination table={table} />
+        {pagination ? (
+          <DataTablePagination
+            table={table}
+            onPageChange={pagination.onPageChange}
+            onPageSizeChange={pagination.onPageSizeChange}
+            currentPage={pagination.currentPage}
+            totalPages={pagination.totalPages}
+            pageSize={pagination.pageSize}
+            totalItems={pagination.totalItems}
+          />
+        ) : (
+          <DataTablePagination table={table} />
+        )}
       </div>
 
       <div className="overflow-hidden rounded-xl border border-amber-100 dark:border-amber-800/30 bg-white dark:bg-slate-950 shadow-sm">
@@ -88,19 +94,30 @@ export function CategoryDataTable({ columns, data }: DataTableProps) {
           transition={{ duration: 0.3 }}
           className="relative"
         >
+          {/* Loading overlay */}
+          {(isLoading || isChangingPage) && (
+            <div className="absolute inset-0 bg-white/80 dark:bg-slate-950/80 z-20 flex items-center justify-center">
+              <div className="flex items-center gap-2">
+                <div className="w-4 h-4 border-2 border-amber-500 border-t-transparent rounded-full animate-spin"></div>
+                <span className="text-amber-600 dark:text-amber-400 text-sm font-medium">
+                  Đang tải...
+                </span>
+              </div>
+            </div>
+          )}
+
           <div className="overflow-x-auto">
-            <Table className="table-fixed">
-              <TableHeader className="bg-amber-50/70 dark:bg-amber-950/40 sticky top-0 z-10">
+            <Table className="w-full table-fixed">
+              <TableHeader className="bg-amber-50/80 dark:bg-amber-950/40 sticky top-0 z-10">
                 {table.getHeaderGroups().map((headerGroup) => (
                   <TableRow key={headerGroup.id} className="border-b border-amber-100 dark:border-amber-800/20">
                     {headerGroup.headers.map((header) => {
                       return (
                         <TableHead
                           key={header.id}
-                          style={{ width: `${header.getSize()}px` }}
                           colSpan={header.colSpan}
                           className={cn(
-                            "font-semibold text-amber-800 dark:text-amber-300 text-sm py-4 px-4",
+                            "h-11 font-medium text-amber-800 dark:text-amber-300 text-sm px-4 py-3 text-left",
                             header.column.columnDef.meta?.className
                           )}
                         >
@@ -117,7 +134,7 @@ export function CategoryDataTable({ columns, data }: DataTableProps) {
                 ))}
               </TableHeader>
               <TableBody>
-                {table.getRowModel().rows?.length ? (
+                {table.getRowModel().rows?.length > 0 ? (
                   table.getRowModel().rows.map((row, i) => (
                     <motion.tr
                       key={row.id}
@@ -125,38 +142,35 @@ export function CategoryDataTable({ columns, data }: DataTableProps) {
                       initial="hidden"
                       animate="visible"
                       variants={fadeInUpVariants as Variants}
-                      transition={{
-                        duration: 0.2,
-                        delay: i * 0.05,
-                        ease: "easeOut"
-                      }}
-                      className="group border-b border-amber-100 dark:border-amber-800/10 hover:bg-amber-50/70 dark:hover:bg-amber-900/20 data-[state=selected]:bg-amber-100 dark:data-[state=selected]:bg-amber-800/30 transition-colors"
+                      className="group border-b border-amber-50 dark:border-amber-800/10 hover:bg-amber-50/70 dark:hover:bg-amber-900/20 data-[state=selected]:bg-amber-100 dark:data-[state=selected]:bg-amber-800/30 transition-colors"
                       data-state={row.getIsSelected() && "selected"}
                     >
                       {row.getVisibleCells().map((cell) => (
                         <TableCell
                           key={cell.id}
-                          style={{ width: `${cell.column.getSize()}px` }}
                           className={cn(
-                            "border-b border-amber-100/70 dark:border-amber-800/20 h-auto py-4 px-4 align-middle group-last:border-0",
+                            "h-14 px-4 py-3 align-middle text-left",
                             cell.column.columnDef.meta?.className
                           )}
                         >
-                          {flexRender(
-                            cell.column.columnDef.cell,
-                            cell.getContext()
-                          )}
+                          {flexRender(cell.column.columnDef.cell, cell.getContext())}
                         </TableCell>
                       ))}
                     </motion.tr>
                   ))
                 ) : (
                   <TableRow>
-                    <TableCell
-                      colSpan={columns.length}
-                      className="h-24 text-center px-4"
-                    >
-                      Không có kết quả.
+                    <TableCell colSpan={columns.length} className="h-32 text-center">
+                      <div className="flex flex-col items-center justify-center gap-2 text-gray-500 dark:text-gray-400">
+                        <span className="text-sm">
+                          {searchTerm ? `Không tìm thấy kết quả cho "${searchTerm}"` : "Không có nhà cung cấp nào."}
+                        </span>
+                        {searchTerm && (
+                          <span className="text-xs opacity-75">
+                            Thử thay đổi từ khóa tìm kiếm hoặc xóa bộ lọc
+                          </span>
+                        )}
+                      </div>
                     </TableCell>
                   </TableRow>
                 )}

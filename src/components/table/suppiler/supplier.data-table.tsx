@@ -1,6 +1,6 @@
 import { DataTablePagination } from "@/components/table/data-table-pagination";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { PaginationProps, SupplierResponse } from "@/data/interfaces";
+import { PaginationProps, SupplierResponse, SupplierStatsResponse } from "@/data/interfaces";
 import { fadeInUpVariants } from "@/lib/motion-vartiant";
 import { cn } from "@/lib/utils";
 import { ColumnDef, ColumnFiltersState, flexRender, getCoreRowModel, getFacetedRowModel, getFacetedUniqueValues, getFilteredRowModel, getPaginationRowModel, getSortedRowModel, RowData, SortingState, useReactTable, VisibilityState } from "@tanstack/react-table";
@@ -23,6 +23,7 @@ interface DataTableProps {
   isLoading: boolean;
   isChangingPage?: boolean;
   pagination?: PaginationProps;
+  statsData?: SupplierStatsResponse;
 }
 
 export function SupplierDataTable({
@@ -33,6 +34,7 @@ export function SupplierDataTable({
   isLoading,
   isChangingPage = false,
   pagination,
+  statsData
 }: DataTableProps) {
   const [rowSelection, setRowSelection] = useState({});
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
@@ -69,6 +71,7 @@ export function SupplierDataTable({
         table={table}
         searchTerm={searchTerm}
         onSearchChange={onSearchChange}
+        statsData={statsData}
       />
 
       <div className="bg-white dark:bg-slate-950 rounded-xl border border-violet-100 dark:border-violet-800/30 shadow-sm p-2">

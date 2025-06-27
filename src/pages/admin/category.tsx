@@ -3,22 +3,53 @@ import { CategoryPrimaryButtons, CategoryStats } from "@/components/pages/catego
 import { categoryColumns, CategoryDataTable } from "@/components/table/category";
 import { Skeleton } from "@/components/ui/skeleton";
 import { routeNames, routes, siteConfig } from "@/config";
+import { CategoryResponse, CategoryStatsResponse } from "@/data/interfaces";
+import { useTable } from "@/hooks";
 import { CategoryAPI } from "@/services/v1";
-import { useQuery } from "@tanstack/react-query";
 import { FolderTree } from "lucide-react";
 import { motion } from 'motion/react';
+import { useMemo } from "react";
 import { Helmet } from "react-helmet-async";
 
 export default function CategoryPage() {
-  const { data: categoriesList, isLoading } = useQuery({
-    queryKey: ["categories"],
-    queryFn: CategoryAPI.CategoryList,
-    refetchOnWindowFocus: false,
-    refetchOnMount: false,
-    refetchOnReconnect: false,
+  const {
+    data: categoriesData,
+    statsData,
+    isStatsLoading,
+    isLoading,
+    isChangingPage,
+    paginationInfo,
+    searchTerm,
+    setSearchTerm,
+    handlePageChange,
+    handlePageSizeChange,
+    pageSize,
+  } = useTable<CategoryResponse, CategoryStatsResponse>({
+    queryKey: "categories",
+    dataFetcher: CategoryAPI.CategoryList,
+    statsFetcher: CategoryAPI.CategoryStats,
   });
 
-  const categoriesData = categoriesList || [];
+  // Memoize pagination props để tránh re-render không cần thiết
+  const paginationProps = useMemo(() => {
+    if (searchTerm) return undefined; // Không hiển thị pagination khi đang search
+    return {
+      currentPage: paginationInfo.currentPage,
+      totalPages: paginationInfo.totalPages,
+      onPageChange: handlePageChange,
+      onPageSizeChange: handlePageSizeChange,
+      pageSize,
+      totalItems: paginationInfo.totalItems
+    };
+  }, [
+    searchTerm,
+    paginationInfo.currentPage,
+    paginationInfo.totalPages,
+    paginationInfo.totalItems,
+    handlePageChange,
+    handlePageSizeChange,
+    pageSize
+  ]);
 
   return (
     <div className="flex-col md:flex">
@@ -46,7 +77,7 @@ export default function CategoryPage() {
         </motion.div>
 
         {/* Statistics Cards */}
-        <CategoryStats categoriesData={categoriesData} isLoading={isLoading} />
+        <CategoryStats categoriesData={statsData} isLoading={isStatsLoading} />
 
         <div className="grid gap-4 grid-cols-1">
           {isLoading ? (
@@ -85,7 +116,15 @@ export default function CategoryPage() {
                 className="bg-white dark:bg-slate-950 rounded-xl shadow-sm border border-amber-100 dark:border-amber-800/30"
               >
                 <div className="p-4 md:p-6">
-                  <CategoryDataTable columns={categoryColumns} data={categoriesData} />
+                  <CategoryDataTable
+                    columns={categoryColumns}
+                    data={categoriesData}
+                    searchTerm={searchTerm}
+                    onSearchChange={setSearchTerm}
+                    isLoading={isLoading}
+                    isChangingPage={isChangingPage}
+                    pagination={paginationProps}
+                  />
                 </div>
               </motion.div>
             </div>

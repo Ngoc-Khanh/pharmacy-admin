@@ -1,5 +1,5 @@
 import { AddCategoryDto, UpdateCategoryDto } from "@/data/dto";
-import { CategoryResponse, ListParams } from "@/data/interfaces";
+import { CategoryDetailResponse, CategoryResponse, CategoryStatsResponse, ListParams } from "@/data/interfaces";
 import { Paginated, SRO } from "@/data/sro";
 import { apiDelete, apiGet, apiPatch, apiPost } from "@/services/api";
 
@@ -12,6 +12,16 @@ export const CategoryAPI = {
     const queryString = searchParams.toString();
     const url = queryString ? `v1/admin/categories?${queryString}` : "v1/admin/categories";
     const res = await apiGet<SRO<Paginated<CategoryResponse>>>(url);
+    return res.data.data;
+  },
+
+  async CategoryStats() {
+    const res = await apiGet<SRO<CategoryStatsResponse>>("v1/admin/categories/statistics");
+    return res.data.data;
+  },
+
+  async CategoryDetail(id: string) {
+    const res = await apiGet<SRO<CategoryDetailResponse>>(`v1/admin/categories/${id}/detail`);
     return res.data.data;
   },
 

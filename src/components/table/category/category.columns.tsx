@@ -42,16 +42,16 @@ export const categoryColumns: ColumnDef<CategoryResponse>[] = [
     ),
     cell: ({ row }) => (
       <div className="flex items-center group">
-        <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-cyan-50 to-teal-100 dark:from-cyan-950/60 dark:to-teal-900/60 flex items-center justify-center mr-3 group-hover:shadow-md transition-all duration-300 border border-teal-100 dark:border-teal-800/30">
-          <Pill className="h-5 w-5 text-teal-600 dark:text-teal-400" />
+        <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-amber-50 to-amber-100 dark:from-amber-950/60 dark:to-amber-900/60 flex items-center justify-center mr-3 group-hover:shadow-md transition-all duration-300 border border-amber-100 dark:border-amber-800/30">
+          <Pill className="h-5 w-5 text-amber-600 dark:text-amber-400" />
         </div>
         <div className="flex flex-col">
-          <span className="truncate max-w-[180px] font-semibold text-slate-800 dark:text-slate-200 transition-colors group-hover:text-teal-600 dark:group-hover:text-teal-400">
+          <span className="truncate max-w-[180px] font-semibold text-slate-800 dark:text-slate-200 transition-colors group-hover:text-amber-600 dark:group-hover:text-amber-400">
             {row.getValue("title") || "Danh mục chưa có tên"}
           </span>
           <div className="flex flex-col gap-1 mt-1">
             <span className="text-xs text-muted-foreground truncate max-w-[180px] flex items-center gap-1">
-              <Tag className="h-3 w-3 text-teal-500 dark:text-teal-400 flex-shrink-0" />
+              <Tag className="h-3 w-3 text-amber-500 dark:text-amber-400 flex-shrink-0" />
               <span className="truncate">{row.original.slug || "N/A"}</span>
             </span>
             <span className="text-xs text-muted-foreground truncate max-w-[180px] flex items-center gap-1">
@@ -77,10 +77,10 @@ export const categoryColumns: ColumnDef<CategoryResponse>[] = [
         <Tooltip>
           <TooltipTrigger asChild>
             <div className="flex items-center gap-2 cursor-help group">
-              <div className="rounded-full p-2 bg-teal-50 dark:bg-teal-900/20 group-hover:bg-teal-100 dark:group-hover:bg-teal-900/30 transition-all duration-200">
-                <FileText className="h-4 w-4 text-teal-600 dark:text-teal-400" />
+              <div className="rounded-full p-2 bg-amber-50 dark:bg-amber-900/20 group-hover:bg-amber-100 dark:group-hover:bg-amber-900/30 transition-all duration-200">
+                <FileText className="h-4 w-4 text-amber-600 dark:text-amber-400" />
               </div>
-              <div className="line-clamp-2 text-sm text-slate-600 dark:text-slate-300 group-hover:text-teal-600 dark:group-hover:text-teal-400 transition-colors">
+              <div className="line-clamp-2 text-sm text-slate-600 dark:text-slate-300 group-hover:text-amber-600 dark:group-hover:text-amber-400 transition-colors">
                 {description}
               </div>
             </div>
@@ -89,17 +89,17 @@ export const categoryColumns: ColumnDef<CategoryResponse>[] = [
             side="bottom"
             align="start"
             sideOffset={6}
-            className="p-0 max-w-md shadow-xl border border-teal-100 dark:border-teal-800/30 rounded-lg overflow-hidden animate-in zoom-in-95 duration-100"
+            className="p-0 max-w-md shadow-xl border border-amber-100 dark:border-amber-800/30 rounded-lg overflow-hidden animate-in zoom-in-95 duration-100"
           >
             <div className="bg-white dark:bg-gray-900">
-              <div className="bg-gradient-to-r from-cyan-500 to-teal-500 px-4 py-2.5 text-white">
+              <div className="bg-gradient-to-r from-amber-500 to-amber-500 px-4 py-2.5 text-white">
                 <div className="flex items-center gap-2">
                   <Info className="h-4 w-4" />
                   <p className="text-sm font-medium">Mô tả danh mục</p>
                 </div>
               </div>
 
-              <div className="p-4 space-y-2 bg-gradient-to-b from-cyan-50/50 to-white dark:from-cyan-950/20 dark:to-gray-900">
+              <div className="p-4 space-y-2 bg-gradient-to-b from-amber-50/50 to-white dark:from-amber-950/20 dark:to-gray-900">
                 <p className="text-sm leading-relaxed text-gray-700 dark:text-gray-300">
                   {description}
                 </p>
@@ -148,9 +148,9 @@ export const categoryColumns: ColumnDef<CategoryResponse>[] = [
         </div>
       );
     },
-    filterFn: (row, value) => {
+    filterFn: (row, _id, value) => {
       const rowValue = row.original.isActive !== false;
-      return value.includes(rowValue.toString());
+      return value.includes(rowValue);
     },
     size: 160,
     enableSorting: false,
