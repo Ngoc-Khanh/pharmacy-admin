@@ -17,7 +17,6 @@ export function SupplierTableToolbar<TData>({
   table, 
   searchTerm, 
   onSearchChange,
-  statsData
 }: SupplierTableToolbarProps<TData>) {
   const isFiltered = table.getState().columnFilters.length > 0 || searchTerm !== "";
 
