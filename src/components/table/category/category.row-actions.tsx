@@ -5,7 +5,7 @@ import { CategoryResponse } from "@/data/interfaces";
 import { cn } from "@/lib/utils";
 import { Row } from "@tanstack/react-table";
 import { motion } from "framer-motion";
-import { Ban, Edit, MoreHorizontal, Shield, Trash } from "lucide-react";
+import { Ban, Edit, Info, MoreHorizontal, Shield, Trash } from "lucide-react";
 
 interface CategoryRowActionsProps {
   row: Row<CategoryResponse>;
@@ -14,7 +14,7 @@ interface CategoryRowActionsProps {
 export function CategoryRowActions({ row }: CategoryRowActionsProps) {
   const { setOpen, setCurrentCategory } = useCategoryDialog();
   const isActive = row.original.isActive === true;
-  
+
   return (
     <div className="flex justify-end items-center gap-1">
       <DropdownMenu modal={false}>
@@ -28,8 +28,8 @@ export function CategoryRowActions({ row }: CategoryRowActionsProps) {
             <span className="sr-only">Mở menu</span>
           </Button>
         </DropdownMenuTrigger>
-        <DropdownMenuContent 
-          align="end" 
+        <DropdownMenuContent
+          align="end"
           className="w-[180px] bg-white dark:bg-slate-900 border border-amber-100 dark:border-amber-800/30 shadow-lg rounded-md overflow-hidden p-1"
           sideOffset={5}
         >
@@ -38,6 +38,18 @@ export function CategoryRowActions({ row }: CategoryRowActionsProps) {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.15 }}
           >
+
+            <DropdownMenuItem
+              onClick={() => {
+                setCurrentCategory(row.original);
+                setOpen("detail");
+              }}
+              className="cursor-pointer flex items-center gap-2 py-1.5 px-2 text-sm hover:bg-amber-50 dark:hover:bg-amber-900/20 hover:text-amber-700 dark:hover:text-amber-400 rounded-sm group"
+            >
+              <Info className="h-3.5 w-3.5 text-amber-500 dark:text-amber-400 group-hover:text-amber-600 dark:group-hover:text-amber-300" />
+              <span>Chi tiết</span>
+            </DropdownMenuItem>
+
             <DropdownMenuItem
               onClick={() => {
                 setCurrentCategory(row.original);
@@ -48,7 +60,7 @@ export function CategoryRowActions({ row }: CategoryRowActionsProps) {
               <Edit className="h-3.5 w-3.5 text-amber-500 dark:text-amber-400 group-hover:text-amber-600 dark:group-hover:text-amber-300" />
               <span>Chỉnh sửa</span>
             </DropdownMenuItem>
-            
+
             <DropdownMenuItem
               onClick={() => {
                 setCurrentCategory(row.original);
@@ -57,7 +69,7 @@ export function CategoryRowActions({ row }: CategoryRowActionsProps) {
               }}
               className={cn(
                 "cursor-pointer flex items-center gap-2 py-1.5 px-2 text-sm rounded-sm group",
-                isActive 
+                isActive
                   ? "hover:bg-amber-50 dark:hover:bg-amber-900/20 hover:text-amber-700 dark:hover:text-amber-400"
                   : "hover:bg-emerald-50 dark:hover:bg-emerald-900/20 hover:text-emerald-700 dark:hover:text-emerald-400"
               )}
@@ -74,9 +86,9 @@ export function CategoryRowActions({ row }: CategoryRowActionsProps) {
                 </>
               )}
             </DropdownMenuItem>
-            
+
             <DropdownMenuSeparator className="my-1 bg-emerald-100/70 dark:bg-emerald-800/30" />
-            
+
             <DropdownMenuItem
               onClick={() => {
                 setCurrentCategory(row.original);

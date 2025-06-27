@@ -68,16 +68,24 @@ export function InvoicePaymentSettings({ form, selectedUser }: Props) {
         />
 
         {/* Địa chỉ giao hàng */}
-        {userAddresses && userAddresses.length > 0 && (
-          <FormField
-            control={form.control}
-            name="shippingAddressId"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel className="flex items-center gap-2">
-                  <MapPin className="h-3 w-3" />
-                  Địa chỉ giao hàng *
-                </FormLabel>
+        <FormField
+          control={form.control}
+          name="shippingAddressId"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel className="flex items-center gap-2">
+                <MapPin className="h-3 w-3" />
+                Địa chỉ giao hàng
+              </FormLabel>
+              {!selectedUser ? (
+                <div className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm text-muted-foreground">
+                  Vui lòng chọn khách hàng trước
+                </div>
+              ) : userAddresses.length === 0 ? (
+                <div className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm text-muted-foreground">
+                  Khách hàng chưa có địa chỉ giao hàng
+                </div>
+              ) : (
                 <Select onValueChange={field.onChange} value={field.value}>
                   <FormControl>
                     <SelectTrigger>
@@ -102,11 +110,11 @@ export function InvoicePaymentSettings({ form, selectedUser }: Props) {
                     ))}
                   </SelectContent>
                 </Select>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-        )}
+              )}
+              <FormMessage />
+            </FormItem>
+          )}
+        />
 
         {/* Trạng thái */}
         <FormField

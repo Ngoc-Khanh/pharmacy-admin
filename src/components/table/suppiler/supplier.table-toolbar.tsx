@@ -1,6 +1,7 @@
 import { DataTableViewOptions } from "@/components/table/data-table-view-options";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { SupplierStatsResponse } from "@/data/interfaces";
 import { Table } from "@tanstack/react-table";
 import { FileDown, RotateCcw, Search, X } from "lucide-react";
 import { motion } from 'motion/react';
@@ -9,12 +10,13 @@ interface SupplierTableToolbarProps<TData> {
   table: Table<TData>;
   searchTerm: string;
   onSearchChange: (search: string) => void;
+  statsData?: SupplierStatsResponse;
 }
 
 export function SupplierTableToolbar<TData>({ 
   table, 
   searchTerm, 
-  onSearchChange 
+  onSearchChange,
 }: SupplierTableToolbarProps<TData>) {
   const isFiltered = table.getState().columnFilters.length > 0 || searchTerm !== "";
 

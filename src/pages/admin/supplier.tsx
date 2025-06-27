@@ -106,6 +106,7 @@ export default function SupplierPage() {
                 onSearchChange={setSearchTerm}
                 isLoading={isLoading}
                 isChangingPage={isChangingPage}
+                statsData={statsData}
                 pagination={paginationProps}
               />
             </div>

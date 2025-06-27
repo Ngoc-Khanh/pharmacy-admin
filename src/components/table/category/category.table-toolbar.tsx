@@ -1,18 +1,41 @@
 import { DataTableViewOptions } from '@/components/table/data-table-view-options';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { CategoryResponse } from '@/data/interfaces';
 import { Table } from '@tanstack/react-table';
-
 import { motion } from 'framer-motion';
 import { FileDown, RotateCcw, Search, X } from 'lucide-react';
+import { useState } from 'react';
 import { CategoryDataTableFacetedFilter } from './category.data-table-faceted-filter';
 
-interface CategoriesTableToolbarProps<TData> {
-  table: Table<TData>;
+interface CategoriesTableToolbarProps {
+  table: Table<CategoryResponse>;
+  searchTerm: string;
+  onSearchChange: (search: string) => void;
 }
 
-export function CategoriesTableToolbar<TData>({ table }: CategoriesTableToolbarProps<TData>) {
-  const isFiltered = table.getState().columnFilters.length > 0 || table.getState().globalFilter !== "";
+export function CategoriesTableToolbar({ table, searchTerm, onSearchChange }: CategoriesTableToolbarProps) {
+  const [inputValue, setInputValue] = useState(searchTerm);
+  
+  // Kiểm tra có filter nào đang active không (bao gồm cả search term và column filters)
+  const isFiltered = table.getState().columnFilters.length > 0 || searchTerm.length > 0;
+
+  const handleClearFilters = () => {
+    table.resetColumnFilters();
+    onSearchChange('');
+    setInputValue('');
+  };
+
+  const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      onSearchChange(inputValue);
+    }
+  };
+
+  const handleClearSearch = () => {
+    setInputValue('');
+    onSearchChange('');
+  };
 
   return (
     <motion.div
@@ -25,17 +48,18 @@ export function CategoriesTableToolbar<TData>({ table }: CategoriesTableToolbarP
         <div className="relative w-full sm:w-72 md:w-80">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-amber-500 dark:text-amber-400" />
           <Input
-            placeholder="Tìm kiếm danh mục..."
-            value={table.getState().globalFilter}
-            onChange={(e) => table.setGlobalFilter(e.target.value)}
+            placeholder="Tìm kiếm danh mục (nhấn Enter)..."
+            value={inputValue}
+            onChange={(e) => setInputValue(e.target.value)}
+            onKeyPress={handleKeyPress}
             className="w-full pl-9 h-10 shadow-none bg-amber-50/50 dark:bg-slate-900 border border-amber-100 dark:border-amber-800/40 rounded-lg focus-visible:ring-amber-500"
           />
-          {table.getState().globalFilter && (
+          {inputValue && (
             <Button
               variant="ghost"
               size="sm"
               className="absolute right-1 top-1/2 -translate-y-1/2 h-6 w-6 p-0 text-amber-500 hover:text-amber-600 dark:hover:text-amber-400 hover:bg-amber-50 dark:hover:bg-amber-900/20 rounded-full"
-              onClick={() => table.setGlobalFilter('')}
+              onClick={handleClearSearch}
             >
               <X className="h-3.5 w-3.5" />
               <span className="sr-only">Clear search</span>
@@ -68,11 +92,8 @@ export function CategoriesTableToolbar<TData>({ table }: CategoriesTableToolbarP
             <Button
               variant="ghost"
               size="sm"
-              className="h-10 px-3 text-amber-700 dark:text-amber-400 hover:bg-rose-50 dark:hover:bg-rose-900/20 hover:text-rose-600 dark:hover:text-rose-400"
-              onClick={() => {
-                table.resetColumnFilters();
-                table.setGlobalFilter('');
-              }}
+              className="h-10 px-3 text-amber-700 dark:text-amber-400 hover:bg-amber-50 dark:hover:bg-amber-900/20 hover:text-amber-600 dark:hover:text-amber-400"
+              onClick={handleClearFilters}
             >
               <RotateCcw className="mr-2 h-3.5 w-3.5" />
               Xóa bộ lọc

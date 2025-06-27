@@ -14,7 +14,7 @@ export const invoiceSchema = z.object({
   paymentMethod: z.nativeEnum(PaymentMethod, {
     errorMap: () => ({ message: "Vui lòng chọn phương thức thanh toán" }),
   }),
-  shippingAddressId: z.string().min(1, "Vui lòng chọn địa chỉ giao hàng"),
+  shippingAddressId: z.string().optional(),
   issuedAt: z.string().optional(),
   status: z.nativeEnum(InvoiceStatus, {
     errorMap: () => ({ message: "Vui lòng chọn trạng thái hóa đơn" }),

@@ -1,3 +1,4 @@
+import MedicineDialog from "@/components/dialogs/medicine.dialog";
 import { MedicinePrimaryButtons, MedicineStats } from "@/components/pages/medicine";
 import { medicineColumns, MedicineDataTable } from "@/components/table/medicine";
 import { routeNames, routes, siteConfig } from "@/config";
@@ -110,6 +111,8 @@ export default function MedicinePage() {
             </div>
           </motion.div>
         </div>
+
+        <MedicineDialog />
       </div>
     </div>
   );

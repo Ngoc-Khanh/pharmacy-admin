@@ -1,5 +1,5 @@
 import { useCategoryDialog } from "@/atoms";
-import { CategoryActionDialog, CategoryChangeStatusDialog, CategoryDeleteDialog } from "@/components/dialogs/category";
+import { CategoryActionDialog, CategoryChangeStatusDialog, CategoryDeleteDialog, CategoryDetailDialog } from "@/components/dialogs/category";
 
 export default function CategoryDialog() {
   const { open, setOpen, currentCategory, setCurrentCategory } = useCategoryDialog();
@@ -25,6 +25,20 @@ export default function CategoryDialog() {
                 setOpen(null);
                 setTimeout(() => {
                   setCurrentCategory(null);
+                }, 300);
+              }
+            }}
+            currentCategory={currentCategory}
+          />
+
+          <CategoryDetailDialog
+            key={`category-detail-${currentCategory.id}`}
+            open={open === "detail"}
+            onOpenChange={(isOpen) => {
+              if (!isOpen) {
+                setOpen(null);
+                setTimeout(() => {
+                  setCurrentCategory(null)
                 }, 300);
               }
             }}
