@@ -62,3 +62,11 @@ export const isPharmacistUserAtom = atom(
 export const isCustomerUserAtom = atom(
   (get) => get(userAtom)?.role === AccountRole.CUSTOMER
 );
+
+// Atom kiểm tra xem người dùng có quyền truy cập admin hay không (admin hoặc pharmacist)
+export const hasAdminAccessAtom = atom(
+  (get) => {
+    const user = get(userAtom);
+    return user?.role === AccountRole.ADMIN || user?.role === AccountRole.PHARMACIST;
+  }
+);

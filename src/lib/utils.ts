@@ -1,6 +1,8 @@
 import { routeNames } from "@/config";
+import { AxiosError } from "axios";
 import { clsx, type ClassValue } from "clsx";
 import { format } from "date-fns";
+import { toast } from "sonner";
 import { twMerge } from "tailwind-merge";
 
 export function cn(...inputs: ClassValue[]) {
@@ -29,4 +31,19 @@ export function formatDate(date: Date | string | null | undefined): string {
 export function getPageTitle(route: string, siteName: string, fallback: string = "Trang"): string {
   const routeName = routeNames[route];
   return `${routeName || fallback} | ${siteName}`;
+}
+
+export function handleServerError(error: unknown) {
+  console.log(error)
+  let errMsg = 'Something went wrong!'
+  if (
+    error &&
+    typeof error === 'object' &&
+    'status' in error &&
+    Number(error.status) === 204
+  ) {
+    errMsg = 'Content not found.'
+  }
+  if (error instanceof AxiosError) errMsg = error.response?.data.title
+  toast.error(errMsg)
 }
