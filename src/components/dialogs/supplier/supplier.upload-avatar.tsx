@@ -15,19 +15,19 @@ import { ImageUploadArea } from "@/components/custom/image-upload-area"
 import { ImageCropDialog } from "@/components/custom/image-crop-dialog"
 import { siteConfig } from "@/config"
 
-interface MedicineUploadImageProps {
+interface SupplierUploadAvatarProps {
   open: boolean
   onOpenChange: (open: boolean) => void
-  medicineId: string
+  supplierId: string
   onUploadSuccess?: () => void
 }
 
-export function MedicineUploadImage({ 
+export function SupplierUploadAvatar({ 
   open, 
   onOpenChange, 
-  medicineId,
+  supplierId,
   onUploadSuccess 
-}: MedicineUploadImageProps) {
+}: SupplierUploadAvatarProps) {
   // File upload hook
   const [
     { files, isDragging },
@@ -42,9 +42,10 @@ export function MedicineUploadImage({
     },
   ] = useFileUpload({
     accept: "image/*",
+    maxSize: 2 * 1024 * 1024, // 2MB limit for avatar
   })
 
-  // Image crop hook
+  // Image crop hook with different settings for avatar
   const {
     zoom,
     isCropDialogOpen,
@@ -56,7 +57,11 @@ export function MedicineUploadImage({
     applyCrop,
     removeFinalImage,
     reset: resetCrop,
-  } = useImageCrop()
+  } = useImageCrop({
+    outputWidth: 300,
+    outputHeight: 300,
+    quality: 0.9,
+  })
 
   // Upload hook
   const { isUploading, upload, reset: resetUpload } = useUpload()
@@ -103,36 +108,37 @@ export function MedicineUploadImage({
       const blob = await response.blob()
 
       const baseUrl = siteConfig.backend.base_api_url
-      const uploadUrl = `${baseUrl}/v1/admin/medicines/${medicineId}/upload-image`
+      const uploadUrl = `${baseUrl}/v1/admin/suppliers/${supplierId}/upload-avatar`
 
       await upload(blob, {
         url: uploadUrl,
-        fieldName: 'thumbnail',
-        fileName: 'medicine-thumbnail.jpg',
+        method: "POST",
+        fieldName: 'avatar', // Different field name for supplier
+        fileName: 'supplier-avatar.jpg',
         invalidateQueries: [
-          ["medicines"],
-          ["medicines-stats"],
-          ["medicine", medicineId]
+          ["suppliers"],
+          ["suppliers-stats"],
+          ["supplier", supplierId]
         ],
         onSuccess: () => {
-          toast.success("Upload ảnh thành công!")
+          toast.success("Upload avatar thành công!")
           handleRemoveFinalImage()
           resetCrop()
           onOpenChange(false)
           onUploadSuccess?.()
         },
         onError: (error) => {
-          toast.error(error.message || "Có lỗi xảy ra khi upload ảnh")
+          toast.error(error.message || "Có lỗi xảy ra khi upload avatar")
         }
       })
     } catch (error) {
       console.error("Upload error:", error)
-      toast.error("Có lỗi xảy ra khi upload ảnh")
+      toast.error("Có lỗi xảy ra khi upload avatar")
     }
   }, [
     finalImageUrl, 
     fileId, 
-    medicineId, 
+    supplierId, 
     upload, 
     handleRemoveFinalImage, 
     resetCrop,
@@ -161,11 +167,11 @@ export function MedicineUploadImage({
       <Dialog open={open} onOpenChange={onOpenChange}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader className="pb-2">
-            <DialogTitle className="text-xl font-semibold bg-gradient-to-r from-blue-600 to-violet-600 bg-clip-text text-transparent">
-              Upload ảnh thuốc
+            <DialogTitle className="text-xl font-semibold bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent">
+              Upload avatar nhà cung cấp
             </DialogTitle>
             <DialogDescription className="text-muted-foreground">
-              Chọn ảnh để upload làm hình đại diện cho thuốc
+              Chọn ảnh để upload làm avatar cho nhà cung cấp
             </DialogDescription>
           </DialogHeader>
           
@@ -180,9 +186,10 @@ export function MedicineUploadImage({
               onDrop={handleDrop}
               onRemoveImage={handleRemoveFinalImage}
               getInputProps={getInputProps}
-              uploadText="Chọn hoặc kéo thả ảnh"
+              size="sm" // Smaller size for avatar
+              uploadText="Chọn hoặc kéo thả avatar"
               uploadSubText="Nhấp để duyệt file"
-              supportText="Hỗ trợ: JPEG, PNG, JPG • Tối đa 5MB"
+              supportText="Hỗ trợ: JPEG, PNG, JPG • Tối đa 2MB"
             />
           </div>
 
@@ -198,7 +205,7 @@ export function MedicineUploadImage({
             <Button 
               onClick={handleUpload}
               disabled={!finalImageUrl || isUploading}
-              className="bg-gradient-to-r from-blue-600 to-violet-600 hover:from-blue-700 hover:to-violet-700 text-white shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
+              className="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {isUploading ? (
                 <>
@@ -208,7 +215,7 @@ export function MedicineUploadImage({
               ) : (
                 <>
                   <UploadIcon className="size-4 mr-2" />
-                  Upload ảnh
+                  Upload avatar
                 </>
               )}
             </Button>
@@ -225,10 +232,10 @@ export function MedicineUploadImage({
         onZoomChange={setZoom}
         onCropChange={handleCropChange}
         onApplyCrop={handleApplyCrop}
-        title="Cắt và chỉnh sửa ảnh"
-        description="Di chuyển và zoom để có được khu vực ảnh mong muốn"
+        title="Cắt và chỉnh sửa avatar"
+        description="Di chuyển và zoom để có được khu vực avatar mong muốn"
         applyButtonText="Áp dụng"
       />
     </>
   )
-}
+} 
