@@ -20,6 +20,11 @@ export const MedicineAPI = {
     return res.data.data;
   },
 
+  async MedicineDetail(id: string) {
+    const res = await apiGet<SRO<MedicineResponse>>(`v1/admin/medicines/${id}/details`);
+    return res.data.data;
+  },
+
   async MedicineCreate(data: MedicineCreateDto) {
     const res = await apiPost<MedicineCreateDto, SRO<MedicineResponse>>("v1/admin/medicines/add", data);
     return res.data.data;
