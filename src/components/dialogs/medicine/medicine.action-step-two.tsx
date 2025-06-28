@@ -18,9 +18,8 @@ export function MedicineActionStepTwo({ form }: MedicineActionStepTwoProps) {
   // Auto-calculate price based on originalPrice and discountPercent
   const originalPrice = form.watch("variants.originalPrice");
   const discountPercent = form.watch("variants.discountPercent");
-
   useEffect(() => {
-    if (originalPrice && discountPercent >= 0) {
+    if (originalPrice && discountPercent != null && discountPercent >= 0) {
       const calculatedPrice = originalPrice * (1 - discountPercent / 100);
       form.setValue("variants.price", Number(calculatedPrice.toFixed(0)));
     }

@@ -1,8 +1,9 @@
 import { activeStepAtom, steps } from "@/atoms";
+import { Stepper, StepperItem } from "@/components/custom/stepper";
 import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
 import { Sheet, SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetTitle } from "@/components/ui/sheet";
-import { Stepper, StepperItem } from "@/components/custom/stepper";
+import { MedicineCreateDto } from "@/data/dto";
 import { StockStatus } from "@/data/enum";
 import { MedicineResponse } from "@/data/interfaces";
 import { medicineSchema, MedicineSchema } from "@/data/schemas";
@@ -15,10 +16,10 @@ import { ChevronLeft, ChevronRight, Pill, Save } from "lucide-react";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
-import { MedicineActionStepOne } from "./medicine.action-step-one";
-import { MedicineActionStepTwo } from "./medicine.action-step-two";
-import { MedicineActionStepThree } from "./medicine.action-step-three";
 import { MedicineActionStepFour } from "./medicine.action-step-four";
+import { MedicineActionStepOne } from "./medicine.action-step-one";
+import { MedicineActionStepThree } from "./medicine.action-step-three";
+import { MedicineActionStepTwo } from "./medicine.action-step-two";
 
 interface MedicineCreateDialogProps {
   currentMedicine?: MedicineResponse;
@@ -72,7 +73,7 @@ export function MedicineCreateDialog({ open, onOpenChange }: MedicineCreateDialo
   const discountPercent = form.watch("variants.discountPercent");
 
   useEffect(() => {
-    if (originalPrice && discountPercent >= 0) {
+    if (originalPrice && discountPercent != null && discountPercent >= 0) {
       const calculatedPrice = originalPrice * (1 - discountPercent / 100);
       form.setValue("variants.price", Number(calculatedPrice.toFixed(0)));
     }
@@ -98,7 +99,7 @@ export function MedicineCreateDialog({ open, onOpenChange }: MedicineCreateDialo
         toast.error("Vui lòng kiểm tra lại thông tin");
         return;
       }
-      addMedicineMutation.mutate(data);
+      addMedicineMutation.mutate(data as MedicineCreateDto);
     } catch (error) {
       toast.error(`Thêm thuốc thất bại: ${error}`);
     }
