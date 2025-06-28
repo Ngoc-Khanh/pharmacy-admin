@@ -14,9 +14,7 @@ export const medicineSchema = z.object({
       message: "Trạng thái là bắt buộc",
     }),
     originalPrice: z.number().min(1, { message: "Giá gốc là bắt buộc" }),
-    discountPercent: z
-      .number()
-      .min(1, { message: "Phần trăm giảm giá là bắt buộc" }),
+    discountPercent: z.number().optional(),
     isFeatured: z.boolean().optional(),
     isActive: z.boolean().optional(),
   }),

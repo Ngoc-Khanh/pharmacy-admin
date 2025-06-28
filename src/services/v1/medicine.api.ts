@@ -1,7 +1,7 @@
-import { MedicineCreateDto } from "@/data/dto";
+import { MedicineCreateDto, MedicineUpdateDto } from "@/data/dto";
 import { ListParams, MedicineResponse, MedicineStatsResponse } from "@/data/interfaces";
 import { Paginated, SRO } from "@/data/sro";
-import { apiDelete, apiGet, apiPost } from "@/services/api";
+import { apiDelete, apiGet, apiPatch, apiPost } from "@/services/api";
 
 export const MedicineAPI = {
   async MedicineList(params?: ListParams) {
@@ -27,6 +27,11 @@ export const MedicineAPI = {
 
   async MedicineCreate(data: MedicineCreateDto) {
     const res = await apiPost<MedicineCreateDto, SRO<MedicineResponse>>("v1/admin/medicines/add", data);
+    return res.data.data;
+  },
+
+  async MedicineUpdate(id: string, data: MedicineUpdateDto) {
+    const res = await apiPatch<MedicineUpdateDto, SRO<MedicineResponse>>(`v1/admin/medicines/update/${id}`, data);
     return res.data.data;
   },
 
