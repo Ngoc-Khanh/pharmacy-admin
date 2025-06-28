@@ -1,4 +1,4 @@
-import { UpdateSettingAccountDto, UpdateSettingProfileDto } from "@/data/dto"
+import { UpdateSettingAccountDto, UpdateSettingPasswordDto, UpdateSettingProfileDto } from "@/data/dto"
 import { UserResponse } from "@/data/interfaces"
 import { SRO } from "@/data/sro"
 import { apiPatch, apiPost } from "@/services/api"
@@ -11,6 +11,11 @@ export const SettingAPI = {
   
   async UpdateAccount(data: UpdateSettingAccountDto) {
     const res = await apiPatch<UpdateSettingAccountDto, SRO<UserResponse>>("v1/admin/settings/account-update", data)
+    return res.data.data;
+  },
+
+  async UpdatePassword(data: UpdateSettingPasswordDto) {
+    const res = await apiPatch<UpdateSettingPasswordDto, SRO<UserResponse>>("v1/admin/settings/password-update", data)
     return res.data.data;
   },
 

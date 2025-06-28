@@ -8,3 +8,9 @@ export type UpdateSettingAccountDto = {
   username: string;
   email: string;
 };
+
+export type UpdateSettingPasswordDto = {
+  currentPassword: string;
+  newPassword: string;
+  newPasswordConfirmation: string;
+};
