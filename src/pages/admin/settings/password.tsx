@@ -210,13 +210,13 @@ export default function PasswordSettingPage() {
                                   animate={{ opacity: 1, x: 0 }}
                                   className={cn(
                                     "flex items-center gap-2 text-sm",
-                                    isValid ? "text-green-600 dark:text-green-400" : "text-muted-foreground"
+                                    isValid ? "text-emerald-600 dark:text-emerald-400" : "text-muted-foreground"
                                   )}
                                 >
                                   <CheckCircle 
                                     className={cn(
                                       "h-3 w-3",
-                                      isValid ? "text-green-600" : "text-muted-foreground"
+                                      isValid ? "text-emerald-600" : "text-muted-foreground"
                                     )} 
                                   />
                                   {req.label}

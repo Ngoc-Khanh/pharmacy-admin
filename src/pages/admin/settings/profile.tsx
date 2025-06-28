@@ -312,19 +312,19 @@ export default function ProfileSettingPage() {
                   <h4 className="font-medium mb-2">Hướng dẫn tải ảnh</h4>
                   <div className="space-y-2 text-sm text-muted-foreground">
                     <div className="flex items-center gap-2">
-                      <div className="w-1.5 h-1.5 rounded-full bg-primary" />
+                      <div className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
                       <span>Nhấp vào avatar để chọn ảnh</span>
                     </div>
                     <div className="flex items-center gap-2">
-                      <div className="w-1.5 h-1.5 rounded-full bg-primary" />
+                      <div className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
                       <span>Định dạng: JPEG, PNG, JPG</span>
                     </div>
                     <div className="flex items-center gap-2">
-                      <div className="w-1.5 h-1.5 rounded-full bg-primary" />
+                      <div className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
                       <span>Kích thước tối đa: 5MB</span>
                     </div>
                     <div className="flex items-center gap-2">
-                      <div className="w-1.5 h-1.5 rounded-full bg-primary" />
+                      <div className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
                       <span>Tỷ lệ khuyến nghị: 1:1 (vuông)</span>
                     </div>
                   </div>

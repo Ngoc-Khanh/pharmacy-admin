@@ -175,20 +175,20 @@ export default function AccountSettingPage() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.1 }}
       >
-        <Card className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-950/20 dark:to-indigo-950/20 border-blue-200 dark:border-blue-800">
+        <Card className="bg-gradient-to-r from-emerald-50 to-green-50 dark:from-emerald-950/20 dark:to-green-950/20 border-emerald-200 dark:border-emerald-800">
           <CardContent className="pt-6">
             <div className="flex items-start gap-4">
-              <div className="rounded-full bg-blue-100 dark:bg-blue-900/50 p-3">
-                <UserCheck className="h-6 w-6 text-blue-600 dark:text-blue-400" />
+              <div className="rounded-full bg-emerald-100 dark:bg-emerald-900/50 p-3">
+                <UserCheck className="h-6 w-6 text-emerald-600 dark:text-emerald-400" />
               </div>
               <div className="flex-1 space-y-2">
                 <div className="flex items-center justify-between">
-                  <h3 className="font-semibold text-blue-900 dark:text-blue-100">
+                  <h3 className="font-semibold text-emerald-900 dark:text-emerald-100">
                     Vai trò tài khoản
                   </h3>
                   {user?.role && getRoleBadge(user.role)}
                 </div>
-                <p className="text-sm text-blue-700 dark:text-blue-300">
+                <p className="text-sm text-emerald-700 dark:text-emerald-300">
                   {user?.role && getRoleDescription(user.role)}
                 </p>
               </div>
