@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button"
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Form } from "@/components/ui/form"
-import { AddAcccountDto, UpdateSettingAccountDto } from "@/data/dto"
+import { AddAcccountDto, UpdateAccountDto } from "@/data/dto"
 import { AccountRole, AccountStatus } from "@/data/enum"
 import { UserResponse } from "@/data/interfaces"
 import { accountSchema, AccountSchema } from "@/data/schemas"
@@ -83,7 +83,7 @@ export function AccountActionDialog({ currentAccount, open, onOpenChange }: Prop
 
   const onSubmit = useCallback((values: AccountSchema) => {
     if (!isEdit) addAccountMutation.mutate(values as AddAcccountDto);
-    else updateAccountMutation.mutate(values as UpdateSettingAccountDto);
+    else updateAccountMutation.mutate(values as UpdateAccountDto);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isEdit, onOpenChange, addAccountMutation, updateAccountMutation, form]);
 

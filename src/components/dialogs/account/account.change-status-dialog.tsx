@@ -4,7 +4,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { UpdateSettingAccountDto } from "@/data/dto";
+import { UpdateAccountDto } from "@/data/dto";
 import { AccountRole, AccountStatus } from "@/data/enum";
 import { UserResponse } from "@/data/interfaces";
 import { cn } from "@/lib/utils";
@@ -32,7 +32,7 @@ export const AccountChangeStatusDialog = memo(function AccountChangeStatusDialog
   const changeStatusMutation = useMutation({
     mutationFn: () => AccountAPI.AccountUpdate(
       currentAccount?.id || "",
-      { status: isActivating ? AccountStatus.ACTIVE : AccountStatus.SUSPENDED } as UpdateSettingAccountDto
+      { status: isActivating ? AccountStatus.ACTIVE : AccountStatus.SUSPENDED } as UpdateAccountDto
     ),
     onSuccess: () => {
       toast.success(
