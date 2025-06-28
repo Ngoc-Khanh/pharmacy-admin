@@ -26,23 +26,19 @@ export default function SettingLayout() {
                 </div>
               </div>
             </div>
-            
+
             <Separator />
-            
+
             {/* Main Content */}
             <div className='flex flex-1 flex-col gap-6 lg:flex-row'>
               {/* Sidebar */}
               <aside className='lg:w-60 lg:shrink-0'>
                 <SettingSidebar items={settingSidebarConfig} />
               </aside>
-              
+
               {/* Content Area */}
               <div className='flex-1 min-w-0'>
-                <div className='rounded-lg border bg-card text-card-foreground shadow-sm'>
-                  <div className="p-6">
-                    <Outlet />
-                  </div>
-                </div>
+                <Outlet />
               </div>
             </div>
           </div>

@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { siteConfig } from "@/config";
-import { profileSchema, ProfileSchema } from "@/data/schemas";
+import { profileSettingSchema, ProfileSettingSchema } from "@/data/schemas";
 import { useFileUpload } from "@/hooks/use-file-upload";
 import { useImageCrop } from "@/hooks/use-image-crop";
 import { useUpload } from "@/hooks/use-upload";
@@ -23,8 +23,8 @@ export default function ProfileSettingPage() {
   const user = useAtomValue(userAtom)
   const setUser = useSetAtom(userAtom)
   
-  const form = useForm<ProfileSchema>({
-    resolver: zodResolver(profileSchema),
+  const form = useForm<ProfileSettingSchema>({
+    resolver: zodResolver(profileSettingSchema),
     defaultValues: {
       firstname: user?.firstname || "",
       lastname: user?.lastname || "",
@@ -153,19 +153,19 @@ export default function ProfileSettingPage() {
   }, [avatarState.files, openCropDialog]);
 
   // Helper function để so sánh và lấy các field đã thay đổi
-  const getChangedFields = React.useCallback((formData: ProfileSchema) => {
+  const getChangedFields = React.useCallback((formData: ProfileSettingSchema) => {
     const originalData = {
       firstname: user?.firstname || "",
       lastname: user?.lastname || "",
       phone: user?.phone || "",
     };
 
-    const changedFields: Partial<ProfileSchema> = {};
+    const changedFields: Partial<ProfileSettingSchema> = {};
     let hasChanges = false;
 
     // So sánh từng field và chỉ thêm vào nếu có thay đổi
     Object.keys(formData).forEach((key) => {
-      const fieldKey = key as keyof ProfileSchema;
+      const fieldKey = key as keyof ProfileSettingSchema;
       if (formData[fieldKey] !== originalData[fieldKey]) {
         changedFields[fieldKey] = formData[fieldKey];
         hasChanges = true;
@@ -183,7 +183,7 @@ export default function ProfileSettingPage() {
     setHasFormChanges(hasChanges);
   }, [watchedValues, getChangedFields]);
 
-  const onSubmit = (data: ProfileSchema) => {
+  const onSubmit = (data: ProfileSettingSchema) => {
     const { changedFields, hasChanges } = getChangedFields(data);
 
     if (!hasChanges) {
@@ -191,7 +191,7 @@ export default function ProfileSettingPage() {
       return;
     }
 
-    updateProfile(changedFields as ProfileSchema);
+    updateProfile(changedFields as ProfileSettingSchema);
   };
 
   // Helper function để reset form về giá trị gốc

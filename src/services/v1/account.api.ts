@@ -1,4 +1,4 @@
-import { AddAcccountDto, UpdateAccountDto } from "@/data/dto";
+import { AddAcccountDto, UpdateSettingAccountDto } from "@/data/dto";
 import { ListParams, UserResponse, UserStatsResponse } from "@/data/interfaces";
 import { Paginated, SRO } from "@/data/sro";
 import { apiDelete, apiGet, apiPatch, apiPost } from "@/services/api";
@@ -25,8 +25,8 @@ export const AccountAPI = {
     return res.data.data;
   },
 
-  async AccountUpdate(accountId: string, data: UpdateAccountDto) {
-    const res = await apiPatch<UpdateAccountDto, SRO<UserResponse>>(`v1/admin/users/update/${accountId}`, data);
+  async AccountUpdate(accountId: string, data: UpdateSettingAccountDto) {
+    const res = await apiPatch<UpdateSettingAccountDto, SRO<UserResponse>>(`v1/admin/users/update/${accountId}`, data);
     return res.data.data;
   },
 
