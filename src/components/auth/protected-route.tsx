@@ -17,22 +17,29 @@ export default function ProtectedRoute({ children }: ProtectedRouteProps) {
   // Hiển thị loading khi đang fetch user info
   if (userLoading) {
     return (
-      <div className="flex h-screen items-center justify-center">
-        <div className="text-center">
-          <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent"></div>
-          <p className="mt-2 text-sm text-muted-foreground">Đang tải...</p>
+      <div className="flex h-screen items-center justify-center bg-background">
+        <div className="text-center space-y-4">
+          <div className="flex items-center justify-center">
+            <img 
+              src="/mona-loading-dark.gif" 
+              alt="Loading..." 
+              className="w-16 h-16 object-contain"
+            />
+          </div>
+          <div>
+            <h3 className="text-lg font-medium text-foreground">Đang tải...</h3>
+            <p className="text-sm text-muted-foreground">Vui lòng chờ trong giây lát</p>
+          </div>
         </div>
       </div>
     );
   }
 
   // Chưa đăng nhập -> chuyển về trang login
-  if (!isAuthenticated) {
-    return <Navigate to={routes.auth.login} state={{ from: location }} replace />;
-  }
-
-  // Tài khoản chưa được kích hoạt
-  if (!isActiveUser) {
+  if (!isAuthenticated) return <Navigate to={routes.auth.login} state={{ from: location }} replace />;
+  
+  // Tài khoản chưa được kích hoạt (chỉ áp dụng trong production)
+  if (!isActiveUser && import.meta.env.PROD) {
     return (
       <div className="flex h-screen items-center justify-center">
         <div className="text-center">

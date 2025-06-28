@@ -1,12 +1,13 @@
 import { userAtom } from "@/atoms";
 import { ImageCropDialog } from "@/components/custom/image-crop-dialog";
 import { PhoneInput } from "@/components/custom/phone-input";
-import SettingContentSection from "@/components/layouts/setting/content-section";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { siteConfig } from "@/config";
-import { profileSchema, ProfileSchema } from "@/data/schemas";
+import { profileSettingSchema, ProfileSettingSchema } from "@/data/schemas";
 import { useFileUpload } from "@/hooks/use-file-upload";
 import { useImageCrop } from "@/hooks/use-image-crop";
 import { useUpload } from "@/hooks/use-upload";
@@ -14,17 +15,18 @@ import { AuthAPI, SettingAPI } from "@/services/v1";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
 import { useAtomValue, useSetAtom } from "jotai";
-import { Camera, Loader2, Save, User } from "lucide-react";
+import { Camera, Loader2, Save, User, Upload, Image, UserCircle, Phone, FileText, Info } from "lucide-react";
 import React from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
+import { motion } from "framer-motion";
 
 export default function ProfileSettingPage() {
   const user = useAtomValue(userAtom)
   const setUser = useSetAtom(userAtom)
   
-  const form = useForm<ProfileSchema>({
-    resolver: zodResolver(profileSchema),
+  const form = useForm<ProfileSettingSchema>({
+    resolver: zodResolver(profileSettingSchema),
     defaultValues: {
       firstname: user?.firstname || "",
       lastname: user?.lastname || "",
@@ -153,19 +155,19 @@ export default function ProfileSettingPage() {
   }, [avatarState.files, openCropDialog]);
 
   // Helper function để so sánh và lấy các field đã thay đổi
-  const getChangedFields = React.useCallback((formData: ProfileSchema) => {
+  const getChangedFields = React.useCallback((formData: ProfileSettingSchema) => {
     const originalData = {
       firstname: user?.firstname || "",
       lastname: user?.lastname || "",
       phone: user?.phone || "",
     };
 
-    const changedFields: Partial<ProfileSchema> = {};
+    const changedFields: Partial<ProfileSettingSchema> = {};
     let hasChanges = false;
 
     // So sánh từng field và chỉ thêm vào nếu có thay đổi
     Object.keys(formData).forEach((key) => {
-      const fieldKey = key as keyof ProfileSchema;
+      const fieldKey = key as keyof ProfileSettingSchema;
       if (formData[fieldKey] !== originalData[fieldKey]) {
         changedFields[fieldKey] = formData[fieldKey];
         hasChanges = true;
@@ -183,7 +185,7 @@ export default function ProfileSettingPage() {
     setHasFormChanges(hasChanges);
   }, [watchedValues, getChangedFields]);
 
-  const onSubmit = (data: ProfileSchema) => {
+  const onSubmit = (data: ProfileSettingSchema) => {
     const { changedFields, hasChanges } = getChangedFields(data);
 
     if (!hasChanges) {
@@ -191,7 +193,7 @@ export default function ProfileSettingPage() {
       return;
     }
 
-    updateProfile(changedFields as ProfileSchema);
+    updateProfile(changedFields as ProfileSettingSchema);
   };
 
   // Helper function để reset form về giá trị gốc
@@ -206,213 +208,315 @@ export default function ProfileSettingPage() {
   const currentAvatarUrl = finalImageUrl || avatarState.files[0]?.preview || user?.profileImage.url || null;
   
   return (
-    <SettingContentSection
-      title="Hồ sơ cá nhân"
-      desc="Cập nhật thông tin hồ sơ cá nhân của bạn"
-    >
-      <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-          {/* Avatar Upload Section */}
-          <div className="flex items-start gap-4">
-            <div className="flex flex-col items-start space-y-2">
-              <div>
-                <h3 className="text-base font-medium text-black dark:text-white">
-                  Ảnh đại diện
-                </h3>
-              </div>
+    <div className="space-y-8">
+      {/* Header Section */}
+      <motion.div 
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="space-y-2"
+      >
+        <div className="flex items-center gap-2">
+          <UserCircle className="h-6 w-6 text-primary" />
+          <h1 className="text-2xl font-bold">Hồ sơ cá nhân</h1>
+          <Badge variant="secondary">Thông tin chi tiết</Badge>
+        </div>
+        <p className="text-muted-foreground">
+          Quản lý thông tin cá nhân và ảnh đại diện của bạn
+        </p>
+      </motion.div>
 
+      {/* Avatar Upload Section */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.1 }}
+      >
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Image className="h-5 w-5" />
+              Ảnh đại diện
+            </CardTitle>
+            <CardDescription>
+              Tải lên và chỉnh sửa ảnh đại diện của bạn
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="flex flex-col sm:flex-row items-start gap-6">
               {/* Avatar Display & Upload */}
-              <div className="relative group">
-                <div className="relative w-20 h-20 rounded-full overflow-hidden border-2 border-black dark:border-white">
-                  {currentAvatarUrl ? (
-                    <img
-                      src={currentAvatarUrl}
-                      alt="Avatar"
-                      className="w-full h-full object-cover"
-                    />
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center bg-white dark:bg-black">
-                      <User className="w-8 h-8 text-black dark:text-white" />
+              <div className="flex flex-col items-center space-y-4">
+                <div className="relative group">
+                  <div className="relative w-24 h-24 rounded-full overflow-hidden border-4 border-muted shadow-lg">
+                    {currentAvatarUrl ? (
+                      <img
+                        src={currentAvatarUrl}
+                        alt="Avatar"
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center bg-muted">
+                        <User className="w-10 h-10 text-muted-foreground" />
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Upload Overlay */}
+                  <div className="absolute inset-0 rounded-full bg-black/60 opacity-0 group-hover:opacity-100 transition-all duration-200 cursor-pointer flex items-center justify-center">
+                    {isUploadingAvatar ? (
+                      <Loader2 className="w-6 h-6 animate-spin text-white" />
+                    ) : (
+                      <Camera className="w-6 h-6 text-white" />
+                    )}
+                  </div>
+
+                  {/* Hidden Input */}
+                  <input
+                    {...avatarActions.getInputProps()}
+                    className="absolute inset-0 w-full h-full opacity-0 cursor-pointer rounded-full"
+                    disabled={isUploadingAvatar}
+                  />
+                </div>
+
+                {/* Upload Button - Show when image is cropped */}
+                {finalImageUrl && (
+                  <motion.div
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                  >
+                    <Button
+                      type="button"
+                      onClick={handleUpload}
+                      disabled={isUploadingAvatar}
+                      size="sm"
+                      className="gap-2"
+                    >
+                      {isUploadingAvatar ? (
+                        <>
+                          <Loader2 className="w-4 h-4 animate-spin" />
+                          Đang tải...
+                        </>
+                      ) : (
+                        <>
+                          <Upload className="w-4 h-4" />
+                          Tải lên
+                        </>
+                      )}
+                    </Button>
+                  </motion.div>
+                )}
+              </div>
+
+              {/* Upload Info */}
+              <div className="flex-1 space-y-4">
+                <div>
+                  <h4 className="font-medium mb-2">Hướng dẫn tải ảnh</h4>
+                  <div className="space-y-2 text-sm text-muted-foreground">
+                    <div className="flex items-center gap-2">
+                      <div className="w-1.5 h-1.5 rounded-full bg-primary" />
+                      <span>Nhấp vào avatar để chọn ảnh</span>
                     </div>
-                  )}
+                    <div className="flex items-center gap-2">
+                      <div className="w-1.5 h-1.5 rounded-full bg-primary" />
+                      <span>Định dạng: JPEG, PNG, JPG</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <div className="w-1.5 h-1.5 rounded-full bg-primary" />
+                      <span>Kích thước tối đa: 5MB</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <div className="w-1.5 h-1.5 rounded-full bg-primary" />
+                      <span>Tỷ lệ khuyến nghị: 1:1 (vuông)</span>
+                    </div>
+                  </div>
                 </div>
 
-                {/* Upload Overlay */}
-                <div className="absolute inset-0 rounded-full bg-black/70 dark:bg-white/70 opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer flex items-center justify-center">
-                  {isUploadingAvatar ? (
-                    <Loader2 className="w-5 h-5 animate-spin text-white dark:text-black" />
-                  ) : (
-                    <Camera className="w-5 h-5 text-white dark:text-black" />
-                  )}
+                {/* Error Messages */}
+                {avatarState.errors.length > 0 && (
+                  <div className="p-3 rounded-lg bg-destructive/10 border border-destructive/20">
+                    <p className="text-sm text-destructive font-medium">
+                      {avatarState.errors[0]}
+                    </p>
+                  </div>
+                )}
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </motion.div>
+
+      {/* Image Crop Dialog */}
+      <ImageCropDialog
+        open={isCropDialogOpen}
+        onOpenChange={closeCropDialog}
+        imageUrl={avatarState.files[0]?.preview || null}
+        zoom={zoom}
+        onZoomChange={setZoom}
+        onCropChange={handleCropChange}
+        onApplyCrop={handleApplyCrop}
+        title="Chỉnh sửa ảnh đại diện"
+        description="Điều chỉnh vùng ảnh mong muốn và zoom để có kết quả tốt nhất"
+        applyButtonText="Áp dụng"
+      />
+
+      {/* Profile Information Form */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.2 }}
+      >
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <FileText className="h-5 w-5" />
+              Thông tin cá nhân
+            </CardTitle>
+            <CardDescription>
+              Cập nhật thông tin cá nhân của bạn
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Form {...form}>
+              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+                {/* Name Fields */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <FormField
+                    control={form.control}
+                    name="firstname"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="flex items-center gap-2">
+                          <User className="h-4 w-4" />
+                          Tên <span className="text-destructive">*</span>
+                        </FormLabel>
+                        <FormControl>
+                          <Input
+                            placeholder="Nhập tên của bạn"
+                            {...field}
+                            disabled={isPending}
+                            className="h-11"
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="lastname"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="flex items-center gap-2">
+                          <User className="h-4 w-4" />
+                          Họ <span className="text-destructive">*</span>
+                        </FormLabel>
+                        <FormControl>
+                          <Input
+                            placeholder="Nhập họ của bạn"
+                            {...field}
+                            disabled={isPending}
+                            className="h-11"
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
                 </div>
 
-                {/* Hidden Input */}
-                <input
-                  {...avatarActions.getInputProps()}
-                  className="absolute inset-0 w-full h-full opacity-0 cursor-pointer rounded-full"
-                  disabled={isUploadingAvatar}
+                {/* Phone Field */}
+                <FormField
+                  control={form.control}
+                  name="phone"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="flex items-center gap-2">
+                        <Phone className="h-4 w-4" />
+                        Số điện thoại <span className="text-destructive">*</span>
+                      </FormLabel>
+                      <FormControl>
+                        <PhoneInput
+                          placeholder="Nhập số điện thoại"
+                          {...field}
+                          disabled={isPending}
+                          defaultCountry="VN"
+                          international={true}
+                          className="h-11"
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
                 />
-              </div>
 
-              {/* Error Messages */}
-              {avatarState.errors.length > 0 && (
-                <div className="text-xs text-black dark:text-white">
-                  {avatarState.errors[0]}
-                </div>
-              )}
-            </div>
-
-            {/* Upload Info */}
-            <div className="flex flex-col space-y-3 mt-6">
-              <p className="text-sm text-black dark:text-white font-medium">
-                Nhấp vào avatar để tải ảnh lên
-              </p>
-              <div className="text-xs text-gray-600 dark:text-gray-400">
-                <p>• Định dạng: JPEG, PNG, JPG</p>
-                <p>• Kích thước tối đa: 5MB</p>
-                <p>• Tỷ lệ khuyến nghị: 1:1 (vuông)</p>
-              </div>
-              
-              {/* Upload Button - Show when image is cropped */}
-              {finalImageUrl && (
-                <Button
-                  type="button"
-                  onClick={handleUpload}
-                  disabled={isUploadingAvatar}
-                  size="sm"
-                  className="w-fit bg-black text-white hover:bg-gray-800 dark:bg-white dark:text-black dark:hover:bg-gray-200"
+                {/* Submit Actions */}
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 0.4 }}
+                  className="flex items-center gap-3 pt-6 border-t"
                 >
-                  {isUploadingAvatar ? (
-                    <>
-                      <Loader2 className="w-3 h-3 mr-2 animate-spin" />
-                      Đang tải...
-                    </>
-                  ) : (
-                    "Tải lên"
-                  )}
-                </Button>
-              )}
-            </div>
-          </div>
-
-          {/* Image Crop Dialog */}
-          <ImageCropDialog
-            open={isCropDialogOpen}
-            onOpenChange={closeCropDialog}
-            imageUrl={avatarState.files[0]?.preview || null}
-            zoom={zoom}
-            onZoomChange={setZoom}
-            onCropChange={handleCropChange}
-            onApplyCrop={handleApplyCrop}
-            title="Crop ảnh đại diện"
-            description="Điều chỉnh vùng ảnh mong muốn"
-            applyButtonText="Áp dụng"
-          />
-
-          {/* Form Fields */}
-          <div className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <FormField
-                control={form.control}
-                name="firstname"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-sm font-medium">
-                      Tên <span className="text-red-500">*</span>
-                    </FormLabel>
-                    <FormControl>
-                      <Input
-                        placeholder="Nhập tên của bạn"
-                        {...field}
-                        disabled={isPending}
-                        className="h-10"
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="lastname"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-sm font-medium">
-                      Họ <span className="text-red-500">*</span>
-                    </FormLabel>
-                    <FormControl>
-                      <Input
-                        placeholder="Nhập họ của bạn"
-                        {...field}
-                        disabled={isPending}
-                        className="h-10"
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
-
-            <FormField
-              control={form.control}
-              name="phone"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="text-sm font-medium">
-                    Số điện thoại <span className="text-red-500">*</span>
-                  </FormLabel>
-                  <FormControl>
-                    <PhoneInput
-                      placeholder="Nhập số điện thoại"
-                      {...field}
+                  <Button 
+                    type="submit" 
+                    disabled={isPending || !hasFormChanges}
+                    size="lg"
+                    className="min-w-[140px]"
+                  >
+                    {isPending ? (
+                      <>
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        Đang lưu...
+                      </>
+                    ) : (
+                      <>
+                        <Save className="mr-2 h-4 w-4" />
+                        {hasFormChanges ? "Lưu thay đổi" : "Không có thay đổi"}
+                      </>
+                    )}
+                  </Button>
+                  
+                  {hasFormChanges && (
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={handleResetForm}
                       disabled={isPending}
-                      defaultCountry="VN"
-                      international={true}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </div>
+                    >
+                      Đặt lại
+                    </Button>
+                  )}
+                </motion.div>
+              </form>
+            </Form>
+          </CardContent>
+        </Card>
+      </motion.div>
 
-          {/* Submit Actions */}
-          <div className="flex items-center gap-3 pt-6 border-t border-gray-200 dark:border-gray-700">
-            <Button 
-              type="submit" 
-              disabled={isPending || !hasFormChanges}
-              className="min-w-[140px] bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white shadow-lg hover:shadow-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {isPending ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Đang lưu...
-                </>
-              ) : (
-                <>
-                  <Save className="mr-2 h-4 w-4" />
-                                    {hasFormChanges ? "Lưu thay đổi" : "Không có thay đổi"}
-                </>
-              )}
-            </Button>
-            
-            {hasFormChanges && (
-              <Button
-                type="button"
-                variant="outline"
-                onClick={handleResetForm}
-                disabled={isPending}
-                className="hover:bg-gray-50 dark:hover:bg-gray-800"
-              >
-                <User className="mr-2 h-4 w-4" />
-                Đặt lại
-              </Button>
-            )}
+      {/* Tips Card */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.3 }}
+      >
+        <Card className="bg-muted/50">
+          <CardContent className="pt-6">
+            <div className="flex items-start gap-3">
+              <div className="rounded-full bg-primary/10 p-2">
+                <Info className="h-4 w-4 text-primary" />
+              </div>
+              <div className="space-y-2">
+                <h3 className="font-medium">Mẹo hồ sơ</h3>
+                <ul className="text-sm text-muted-foreground space-y-1">
+                  <li>• Ảnh đại diện rõ nét giúp đồng nghiệp dễ nhận diện</li>
+                  <li>• Thông tin chính xác giúp hệ thống hoạt động tốt hơn</li>
+                  <li>• Số điện thoại được sử dụng cho thông báo quan trọng</li>
+                  <li>• Thường xuyên cập nhật thông tin để đảm bảo chính xác</li>
+                </ul>
+              </div>
             </div>
-        </form>
-      </Form>
-    </SettingContentSection>
+          </CardContent>
+        </Card>
+      </motion.div>
+    </div>
   );
 }
