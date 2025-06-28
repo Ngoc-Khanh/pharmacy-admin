@@ -8,7 +8,7 @@ import { AccountRole } from "@/data/enum";
 import { UserResponse } from "@/data/interfaces";
 import { cn } from "@/lib/utils";
 
-import { LogOut, MoreVerticalIcon, Settings, Shield, Sparkles, UserIcon } from "lucide-react";
+import { LogOut, MoreVerticalIcon, Settings, Shield, UserIcon } from "lucide-react";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 
@@ -92,7 +92,7 @@ export function AdminNavUser({ user }: { user: UserResponse }) {
               </div>
             </DropdownMenuLabel>
 
-            <DropdownMenuSeparator />
+            {/* <DropdownMenuSeparator />
 
             <div className="px-2 py-1.5">
               <DropdownMenuItem className="flex cursor-pointer items-center gap-3 rounded-lg p-2.5 focus:bg-gradient-to-br focus:from-purple-50 focus:to-pink-50 focus:text-purple-700 dark:focus:from-purple-900/30 dark:focus:to-pink-900/30 dark:focus:text-purple-300">
@@ -104,7 +104,7 @@ export function AdminNavUser({ user }: { user: UserResponse }) {
                   <span className="text-xs text-muted-foreground">Mở khóa tính năng cao cấp</span>
                 </div>
               </DropdownMenuItem>
-            </div>
+            </div> */}
 
             <DropdownMenuSeparator />
 

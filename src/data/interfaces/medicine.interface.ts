@@ -3,6 +3,8 @@ import { CategoryResponse, SupplierResponse } from "@/data/interfaces";
 
 export interface MedicineResponse {
   readonly id: string;
+  readonly categoryId: string;
+  readonly supplierId: string;
   name: string;
   slug: string;
   priority?: number;

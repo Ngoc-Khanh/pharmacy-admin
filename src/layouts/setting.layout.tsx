@@ -13,7 +13,7 @@ export default function SettingLayout() {
             {/* Header Section */}
             <div className='space-y-1'>
               <div className="flex items-center gap-3">
-                <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary text-primary-foreground">
+                <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-emerald-600 text-white dark:bg-emerald-700">
                   <Settings className="h-4 w-4" />
                 </div>
                 <div>

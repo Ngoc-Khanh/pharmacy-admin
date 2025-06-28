@@ -1,6 +1,5 @@
 import { useMedicineDialog } from "@/atoms";
-import { MedicineCreateDialog, MedicineUploadImage } from "@/components/dialogs/medicine";
-import { MedicineDeleteDialog } from "./medicine/medicine.delete-dialog";
+import { MedicineCreateDialog, MedicineDeleteDialog, MedicineUpdateDialog, MedicineUploadImage } from "@/components/dialogs/medicine";
 
 export default function MedicineDialog() {
   const { open, setOpen, currentMedicine, setCurrentMedicine } = useMedicineDialog();
@@ -18,6 +17,20 @@ export default function MedicineDialog() {
 
       {currentMedicine && (
         <>
+          <MedicineUpdateDialog
+            key={`medicine-update-${currentMedicine.id}`}
+            open={open === "edit"}
+            onOpenChange={(isOpen) => {
+              if (!isOpen) {
+                setOpen(null);
+                setTimeout(() => {
+                  setCurrentMedicine(null);
+                }, 300);
+              }
+            }}
+            currentMedicine={currentMedicine}
+          />
+
           <MedicineDeleteDialog
             key={`medicine-delete-${currentMedicine.id}`}
             open={open === "delete"}

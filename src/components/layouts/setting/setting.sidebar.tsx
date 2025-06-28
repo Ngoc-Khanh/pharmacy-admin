@@ -69,8 +69,8 @@ export function SettingSidebar({
                 className={cn(
                   'flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors',
                   pathname === item.href
-                    ? 'bg-primary text-primary-foreground'
-                    : 'hover:bg-accent hover:text-accent-foreground'
+                    ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300'
+                    : 'hover:bg-emerald-50 hover:text-emerald-600 dark:hover:bg-emerald-900/10 dark:hover:text-emerald-400'
                 )}
               >
                 <item.icon className="h-4 w-4" />

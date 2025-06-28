@@ -20,7 +20,7 @@ const themeOptions = [
     preview: {
       bg: "bg-white",
       cardBg: "bg-gray-50",
-      elementBg: "bg-gray-200",
+      elementBg: "bg-emerald-200",
       border: "border-gray-200"
     }
   },
@@ -32,7 +32,7 @@ const themeOptions = [
     preview: {
       bg: "bg-slate-900",
       cardBg: "bg-slate-800",
-      elementBg: "bg-slate-600",
+      elementBg: "bg-emerald-600",
       border: "border-slate-700"
     }
   },
@@ -44,7 +44,7 @@ const themeOptions = [
     preview: {
       bg: "bg-gradient-to-br from-white to-slate-900",
       cardBg: "bg-gradient-to-br from-gray-50 to-slate-800",
-      elementBg: "bg-gradient-to-r from-gray-200 to-slate-600",
+      elementBg: "bg-gradient-to-r from-emerald-200 to-emerald-600",
       border: "border-gradient"
     }
   }
@@ -181,7 +181,7 @@ export default function AppearanceSettingPage() {
                                     {/* Theme info */}
                                     <div className="space-y-2">
                                       <div className="flex items-center gap-2">
-                                        <Icon className="h-4 w-4 text-primary" />
+                                        <Icon className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
                                         <span className="font-medium">{option.label}</span>
                                       </div>
                                       <p className="text-sm text-muted-foreground">
