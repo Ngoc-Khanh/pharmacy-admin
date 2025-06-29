@@ -2,8 +2,9 @@ import { AccountDataTableFacetedFilter } from "@/components/table/account/accoun
 import { DataTableViewOptions } from "@/components/table/data-table-view-options";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { AccountStatus, AccountRole } from "@/data/enum";
+import { AccountRole, AccountStatus } from "@/data/enum";
 import { UserResponse, UserStatsResponse } from "@/data/interfaces";
+import { useExportExcel } from "@/hooks";
 import { Table } from "@tanstack/react-table";
 import { FileDown, RotateCcw, Search, Trash2, X } from "lucide-react";
 import { motion } from 'motion/react';
@@ -25,6 +26,7 @@ export function AccountTableToolbar({
   onBulkDelete,
   statsData
 }: AccountTableToolbarProps) {
+  const exportAccountExcel = useExportExcel();
   const [localSearchTerm, setLocalSearchTerm] = useState(searchTerm);
   const isFiltered = table.getState().columnFilters.length > 0 || searchTerm !== '';
   const selectedRows = table.getFilteredSelectedRowModel().rows;
@@ -38,6 +40,10 @@ export function AccountTableToolbar({
 
     return () => clearTimeout(timer);
   }, [localSearchTerm, onSearchChange]);
+
+  const handleExportExcel = useCallback(() => {
+    exportAccountExcel.mutate('users');
+  }, [exportAccountExcel]);
 
   // Sync với external search term
   useEffect(() => {
@@ -172,9 +178,23 @@ export function AccountTableToolbar({
         <Button
           variant="outline"
           className="h-10 border-cyan-200 dark:border-cyan-800/40 bg-white dark:bg-slate-900 text-cyan-700 dark:text-cyan-400 hover:bg-cyan-50 dark:hover:bg-cyan-900/20"
+          onClick={handleExportExcel}
+          disabled={exportAccountExcel.isPending}
         >
-          <FileDown className="h-4 w-4 mr-2" />
-          <span>Xuất Excel</span>
+          {exportAccountExcel.isPending ? (
+            <>
+              <svg className="animate-spin h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+              </svg>
+              Đang xuất...
+            </>
+          ) : (
+            <>
+              <FileDown className="h-4 w-4 mr-2" />
+              Xuất Excel
+            </>
+          )}
         </Button>
 
         <DataTableViewOptions table={table} />
