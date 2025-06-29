@@ -71,7 +71,9 @@ export function DashboardRevenueCalendar({ isLoading }: DashboardRevenueCalendar
     if (!range?.from || !range?.to) return revenueData;
     return revenueData.filter((item: RevenueData) => {
       const itemDate = new Date(item.date);
-      return itemDate >= range.from! && itemDate <= range.to!;
+      const nextDay = new Date(itemDate);
+      nextDay.setDate(nextDay.getDate() - 1);
+      return itemDate >= range.from! && nextDay <= range.to!;
     });
   }, [revenueData, range]);
 
