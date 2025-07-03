@@ -1,14 +1,16 @@
 import { AddAcccountDto, UpdateSettingAccountDto } from "@/data/dto";
-import { ListParams, UserResponse, UserStatsResponse } from "@/data/interfaces";
+import { AccountListParams, UserResponse, UserStatsResponse } from "@/data/interfaces";
 import { Paginated, SRO } from "@/data/sro";
 import { apiDelete, apiGet, apiPatch, apiPost } from "@/services/api";
 
 export const AccountAPI = {
-  async AccountList(params?: ListParams) {
+  async AccountList(params?: AccountListParams) {
     const searchParams = new URLSearchParams();
     if (params?.s) searchParams.append('s', params.s);
     if (params?.page) searchParams.append('page', params.page.toString());
     if (params?.limit) searchParams.append('per_page', params.limit.toString());
+    if (params?.role) searchParams.append('role', params.role.toString());
+    if (params?.status) searchParams.append('status', params.status.toString());
     const queryString = searchParams.toString();
     const url = queryString ? `v1/admin/users?${queryString}&sort_order=asc` : "v1/admin/users?sort_order=asc";
     const res = await apiGet<SRO<Paginated<UserResponse>>>(url);

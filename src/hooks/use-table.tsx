@@ -3,9 +3,9 @@ import { useQuery } from "@tanstack/react-query";
 import { useCallback, useMemo } from "react";
 import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 
-interface UseTableOptions<T, S = T> {
+interface UseTableOptions<T, S = T, F extends Record<string, unknown> = Record<string, unknown>> {
   queryKey: string;
-  dataFetcher: (params: ListParams) => Promise<{
+  dataFetcher: (params: ListParams & F) => Promise<{
     data: T[];
     total: number;
     lastPage: number;
@@ -14,15 +14,17 @@ interface UseTableOptions<T, S = T> {
   statsFetcher?: () => Promise<S>;
   enabled?: boolean;
   defaultLimit?: number;
+  defaultFilters?: F;
 }
 
-export function useTable<T, S = T>({ 
+export function useTable<T, S = T, F extends Record<string, unknown> = Record<string, unknown>>({ 
   queryKey, 
   dataFetcher, 
   statsFetcher, 
   enabled = true,
-  defaultLimit = 10 
-}: UseTableOptions<T, S>) {
+  defaultLimit = 10,
+  defaultFilters = {} as F
+}: UseTableOptions<T, S, F>) {
   const location = useLocation();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
@@ -42,11 +44,24 @@ export function useTable<T, S = T>({
     return searchParams.get("s") || "";
   }, [searchParams]);
 
+  // Lấy filters từ URL
+  const filters = useMemo(() => {
+    const filterParams = {} as F;
+    Object.keys(defaultFilters).forEach((key) => {
+      const value = searchParams.get(key);
+      if (value) {
+        filterParams[key as keyof F] = value as F[keyof F];
+      }
+    });
+    return filterParams;
+  }, [searchParams, defaultFilters]);
+
   // Function để update URL params
   const updateUrlParams = useCallback((params: { 
     page?: number; 
     limit?: number; 
     search?: string;
+    filters?: Partial<F>;
     replace?: boolean;
   }) => {
     const newSearchParams = new URLSearchParams(searchParams);
@@ -77,6 +92,19 @@ export function useTable<T, S = T>({
       }
     }
     
+    // Handle filters
+    if (params.filters) {
+      Object.entries(params.filters).forEach(([key, value]) => {
+        if (value) {
+          newSearchParams.set(key, String(value));
+        } else {
+          newSearchParams.delete(key);
+        }
+      });
+      // Reset về trang 1 khi thay đổi filters
+      newSearchParams.delete("page");
+    }
+    
     const newUrl = `${location.pathname}?${newSearchParams.toString()}`;
     navigate(newUrl, { replace: params.replace ?? true });
   }, [searchParams, location.pathname, navigate, defaultLimit]);
@@ -85,8 +113,9 @@ export function useTable<T, S = T>({
   const queryParams = useMemo(() => ({
     page: currentPage,
     limit,
-    ...(searchTerm && { s: searchTerm })
-  }), [currentPage, limit, searchTerm]);
+    ...(searchTerm && { s: searchTerm }),
+    ...filters // Thêm filters vào queryParams
+  }), [currentPage, limit, searchTerm, filters]);
 
   const { 
     data: tableData, 
@@ -140,6 +169,20 @@ export function useTable<T, S = T>({
     updateUrlParams({ search: "" });
   }, [updateUrlParams]);
 
+  // Handle filters change
+  const handleFiltersChange = useCallback((newFilters: Partial<F>) => {
+    updateUrlParams({ filters: newFilters });
+  }, [updateUrlParams]);
+
+  // Reset filters
+  const resetFilters = useCallback(() => {
+    const resetFilterParams = {} as Partial<F>;
+    Object.keys(defaultFilters).forEach((key) => {
+      resetFilterParams[key as keyof F] = undefined as F[keyof F];
+    });
+    updateUrlParams({ filters: resetFilterParams });
+  }, [defaultFilters, updateUrlParams]);
+
   return {
     // Data
     data: tableData?.data || [],
@@ -163,6 +206,11 @@ export function useTable<T, S = T>({
     setSearchTerm: handleSearchTermChange,
     resetSearch,
     
+    // Filters
+    filters,
+    handleFiltersChange,
+    resetFilters,
+    
     // Pagination handlers
     handlePageChange,
     handlePageSizeChange,
@@ -176,6 +224,7 @@ export function useTable<T, S = T>({
       currentPage,
       limit,
       searchTerm,
+      filters,
       queryParams
     }
   };
