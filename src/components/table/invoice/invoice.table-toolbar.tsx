@@ -14,21 +14,35 @@ interface InvoiceTableToolbarProps {
   table: Table<InvoiceResponse>
   searchTerm: string
   onSearchChange: (search: string) => void
+  filters?: Record<string, string>;
+  onFiltersChange?: (filters: Record<string, string>) => void;
+  onResetFilters?: () => void;
 }
 
-export function InvoiceTableToolbar({ table, searchTerm, onSearchChange }: InvoiceTableToolbarProps) {
+export function InvoiceTableToolbar({ table, searchTerm, onSearchChange, filters, onFiltersChange, onResetFilters }: InvoiceTableToolbarProps) {
   const exportInvoiceExcel = useExportExcel();
   const [inputValue, setInputValue] = useState(searchTerm);
-  const isFiltered = table.getState().columnFilters.length > 0 || searchTerm !== '';
+  const isFiltered = (filters?.status || searchTerm !== '');
 
   const handleExportExcel = useCallback(() => {
     exportInvoiceExcel.mutate('invoices');
   }, [exportInvoiceExcel]);
 
-  const handleClearFilters = () => {
+  const handleClearFilters = useCallback(() => {
     table.resetColumnFilters();
+    setInputValue('');
     onSearchChange('');
-  }
+    onResetFilters?.();
+  }, [table, onSearchChange, onResetFilters]);
+
+  const handleFilterChange = useCallback((filterKey: string, value: string | null) => {
+    if (onFiltersChange) {
+      onFiltersChange({
+        ...filters,
+        [filterKey]: value === "all" ? "" : value || ""
+      });
+    }
+  }, [filters, onFiltersChange]);
 
   const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') {
@@ -92,6 +106,8 @@ export function InvoiceTableToolbar({ table, searchTerm, onSearchChange }: Invoi
                 icon: RotateCcw,
                 color: "bg-blue-100 dark:bg-blue-900/50 text-blue-700 dark:text-blue-400",
               }]}
+              onValueChange={(value) => handleFilterChange("status", value)}
+              value={filters?.status || "all"}
             />
           )}
         </div>

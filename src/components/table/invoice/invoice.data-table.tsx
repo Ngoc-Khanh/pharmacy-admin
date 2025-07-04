@@ -23,9 +23,12 @@ interface DataTableProps {
   isLoading: boolean;
   isChangingPage?: boolean;
   pagination?: PaginationProps;
+  filters?: Record<string, string>;
+  onFiltersChange?: (filters: Record<string, string>) => void;
+  onResetFilters?: () => void;
 }
 
-export function InvoiceDataTable({ columns, data, searchTerm, onSearchChange, isLoading, isChangingPage = false, pagination }: DataTableProps) {
+export function InvoiceDataTable({ columns, data, searchTerm, onSearchChange, isLoading, isChangingPage = false, pagination, filters, onFiltersChange, onResetFilters }: DataTableProps) {
   const [rowSelection, setRowSelection] = useState({});
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
@@ -60,6 +63,9 @@ export function InvoiceDataTable({ columns, data, searchTerm, onSearchChange, is
         table={table}
         searchTerm={searchTerm}
         onSearchChange={onSearchChange}
+        filters={filters}
+        onFiltersChange={onFiltersChange}
+        onResetFilters={onResetFilters}
       />
 
       <div className="bg-white dark:bg-slate-950 rounded-xl border border-emerald-100 dark:border-emerald-800/30 shadow-sm p-2">
