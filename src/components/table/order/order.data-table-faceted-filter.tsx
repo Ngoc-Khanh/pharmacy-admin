@@ -18,14 +18,18 @@ interface OrderDataTableFacetedFilterProps<TData, TValue> {
     color?: string;
     count?: number; // Tổng số từ toàn bộ data
   }[];
+  onValueChange?: (value: string | null) => void;
+  value?: string;
 }
 
 export function OrderDataTableFacetedFilter<TData, TValue>({
   column,
   title,
   options,
+  onValueChange,
+  value = "all"
 }: OrderDataTableFacetedFilterProps<TData, TValue>) {
-  const selectedValues = new Set(column?.getFilterValue() as (string | boolean)[]);
+  const isValueSelected = value !== "all";
 
   return (
     <Popover>
@@ -35,49 +39,35 @@ export function OrderDataTableFacetedFilter<TData, TValue>({
           size="sm" 
           className={cn(
             "h-9 border-rose-200 dark:border-rose-800/40 bg-white dark:bg-slate-900 hover:bg-rose-50 dark:hover:bg-rose-900/20 hover:text-rose-600 dark:hover:text-rose-400 hover:border-rose-300 dark:hover:border-rose-700 transition-all duration-200 px-3 shadow-sm",
-            selectedValues?.size > 0 ? "border-rose-300 dark:border-rose-700 text-rose-700 dark:text-rose-400" : "border-dashed"
+            isValueSelected ? "border-rose-300 dark:border-rose-700 text-rose-700 dark:text-rose-400" : "border-dashed"
           )}
         >
-          {selectedValues?.size > 0 ? (
+          {isValueSelected ? (
             <Filter className="h-3.5 w-3.5 mr-2 text-rose-500 dark:text-rose-400" />
           ) : (
             <PlusCircle className="h-3.5 w-3.5 mr-2 text-muted-foreground" />
           )}
           <span className="text-sm font-medium">{title}</span>
-          {selectedValues?.size > 0 && (
+          {isValueSelected && (
             <>
               <Separator orientation="vertical" className="mx-2 h-4 bg-rose-200 dark:bg-rose-800/60" />
-              <Badge
-                variant="secondary"
-                className="rounded-md px-1.5 py-0 text-xs font-medium bg-rose-100 dark:bg-rose-900/50 text-rose-700 dark:text-rose-400 border border-rose-200 dark:border-rose-800/50 lg:hidden"
-              >
-                {selectedValues.size}
-              </Badge>
               <div className="hidden space-x-1 lg:flex">
-                {selectedValues.size > 2 ? (
-                  <Badge
-                    variant="secondary"
-                    className="rounded-md px-1.5 py-0 text-xs font-medium bg-rose-100 dark:bg-rose-900/50 text-rose-700 dark:text-rose-400 border border-rose-200 dark:border-rose-800/50"
-                  >
-                    {selectedValues.size} đã chọn
-                  </Badge>
-                ) : (
-                  options
-                    .filter((option) => selectedValues.has(option.value))
-                    .map((option) => (
-                      <Badge
-                        variant="outline"
-                        key={option.value.toString()}
-                        className={cn(
-                          "rounded-md px-1.5 py-0 text-xs font-medium flex items-center gap-1",
-                          option.color || "bg-rose-100 dark:bg-rose-900/50 text-rose-700 dark:text-rose-400 border border-rose-200 dark:border-rose-800/50"
-                        )}
-                      >
-                        {option.icon && <option.icon className="h-3 w-3" />}
-                        {option.label}
-                      </Badge>
-                    ))
-                )}
+                {options
+                  .filter((option) => option.value.toString() === value)
+                  .map((option) => (
+                    <Badge
+                      variant="outline"
+                      key={option.value.toString()}
+                      className={cn(
+                        "rounded-md px-1.5 py-0 text-xs font-medium flex items-center gap-1",
+                        option.color || "bg-rose-100 dark:bg-rose-900/50 text-rose-700 dark:text-rose-400 border border-rose-200 dark:border-rose-800/50"
+                      )}
+                    >
+                      {option.icon && <option.icon className="h-3 w-3" />}
+                      {option.label}
+                    </Badge>
+                  ))
+                }
               </div>
             </>
           )}
@@ -105,17 +95,17 @@ export function OrderDataTableFacetedFilter<TData, TValue>({
             </CommandEmpty>
             <CommandGroup className="py-1.5 px-1">
               {options.map((option) => {
-                const isSelected = selectedValues.has(option.value);
+                const isSelected = option.value.toString() === value;
                 return (
                   <CommandItem
                     key={option.value.toString()}
                     onSelect={() => {
                       if (isSelected) {
-                        selectedValues.delete(option.value);
+                        onValueChange?.("all");
                       } else {
-                        selectedValues.add(option.value);
+                        onValueChange?.(option.value.toString());
                       }
-                      const filterValues = Array.from(selectedValues);
+                      const filterValues = isSelected ? [] : [option.value];
                       column?.setFilterValue(
                         filterValues.length ? filterValues : undefined
                       );
@@ -154,12 +144,15 @@ export function OrderDataTableFacetedFilter<TData, TValue>({
                 );
               })}
             </CommandGroup>
-            {selectedValues.size > 0 && (
+            {value !== "all" && (
               <>
                 <CommandSeparator className="bg-rose-100 dark:bg-rose-800/30 -mx-1" />
                 <CommandGroup className="py-1.5 px-1">
                   <CommandItem
-                    onSelect={() => column?.setFilterValue(undefined)}
+                    onSelect={() => {
+                      column?.setFilterValue(undefined);
+                      onValueChange?.("all");
+                    }}
                     className="justify-center text-center w-full px-2 py-1.5 cursor-pointer text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-900/20 rounded-sm font-medium text-sm"
                   >
                     Xóa bộ lọc
