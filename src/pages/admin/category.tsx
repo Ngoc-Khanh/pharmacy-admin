@@ -1,7 +1,6 @@
 import CategoryDialog from "@/components/dialogs/category.dialog";
 import { CategoryPrimaryButtons, CategoryStats } from "@/components/pages/category";
 import { categoryColumns, CategoryDataTable } from "@/components/table/category";
-import { Skeleton } from "@/components/ui/skeleton";
 import { routeNames, routes, siteConfig } from "@/config";
 import { CategoryResponse, CategoryStatsResponse } from "@/data/interfaces";
 import { useTable } from "@/hooks";
@@ -79,57 +78,44 @@ export default function CategoryPage() {
         {/* Statistics Cards */}
         <CategoryStats categoriesData={statsData} isLoading={isStatsLoading} />
 
-        <div className="grid gap-4 grid-cols-1">
-          {isLoading ? (
+        <div className="flex flex-col gap-6">
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
             <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              className="space-y-3"
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.4, delay: 0.3 }}
             >
-              <Skeleton className="h-16 w-full rounded-lg" />
-              <Skeleton className="h-[400px] w-full rounded-lg" />
-              <Skeleton className="h-10 w-full rounded-lg" />
+              <h3 className="text-lg font-semibold text-slate-800 dark:text-slate-200 flex items-center gap-2">
+                <FolderTree size={18} className="text-amber-600 dark:text-amber-400" />
+                Danh sách tất cả danh mục
+              </h3>
+              <p className="text-sm text-slate-500 dark:text-slate-400">
+                Quản lý và sắp xếp các danh mục sản phẩm
+              </p>
             </motion.div>
-          ) : (
-            <div className="flex flex-col gap-6">
-              <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-                <motion.div
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ duration: 0.4, delay: 0.3 }}
-                >
-                  <h3 className="text-lg font-semibold text-slate-800 dark:text-slate-200 flex items-center gap-2">
-                    <FolderTree size={18} className="text-amber-600 dark:text-amber-400" />
-                    Danh sách tất cả danh mục
-                  </h3>
-                  <p className="text-sm text-slate-500 dark:text-slate-400">
-                    Quản lý và sắp xếp các danh mục sản phẩm
-                  </p>
-                </motion.div>
-                <CategoryPrimaryButtons />
-              </div>
+            <CategoryPrimaryButtons />
+          </div>
 
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ duration: 0.4, delay: 0.4 }}
-                className="bg-white dark:bg-slate-950 rounded-xl shadow-sm border border-amber-100 dark:border-amber-800/30"
-              >
-                <div className="p-4 md:p-6">
-                  <CategoryDataTable
-                    columns={categoryColumns}
-                    data={categoriesData}
-                    searchTerm={searchTerm}
-                    onSearchChange={setSearchTerm}
-                    isLoading={isLoading}
-                    isChangingPage={isChangingPage}
-                    pagination={paginationProps}
-                  />
-                </div>
-              </motion.div>
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.4, delay: 0.4 }}
+            className="bg-white dark:bg-slate-950 rounded-xl shadow-sm border border-amber-100 dark:border-amber-800/30"
+          >
+            <div className="p-4 md:p-6">
+              <CategoryDataTable
+                columns={categoryColumns}
+                data={categoriesData}
+                searchTerm={searchTerm}
+                onSearchChange={setSearchTerm}
+                isLoading={isLoading}
+                isChangingPage={isChangingPage}
+                pagination={paginationProps}
+              />
             </div>
-          )}
+          </motion.div>
         </div>
+
         <CategoryDialog />
       </div>
     </div>
