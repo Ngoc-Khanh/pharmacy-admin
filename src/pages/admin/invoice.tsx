@@ -10,6 +10,10 @@ import { motion } from 'motion/react';
 import { useMemo } from "react";
 import { Helmet } from "react-helmet-async";
 
+type FilterParams = Record<string, string> & {
+  status?: string;
+};
+
 export default function InvoicePage() {
   const {
     data: invoiceData,
@@ -20,6 +24,9 @@ export default function InvoicePage() {
     paginationInfo,
     searchTerm,
     setSearchTerm,
+    filters,
+    handleFiltersChange,
+    resetFilters,
     handlePageChange,
     handlePageSizeChange,
     pageSize,
@@ -27,6 +34,9 @@ export default function InvoicePage() {
     queryKey: "invoices",
     dataFetcher: InvoiceAPI.InvoiceList,
     statsFetcher: InvoiceAPI.InvoiceStats,
+    defaultFilters: {
+      status: ""
+    } as FilterParams
   });
 
   // Memoize pagination props để tránh re-render không cần thiết
@@ -110,6 +120,9 @@ export default function InvoicePage() {
                 isLoading={isLoading}
                 isChangingPage={isChangingPage}
                 pagination={paginationProps}
+                filters={filters as Record<string, string>}
+                onFiltersChange={handleFiltersChange as (filters: Record<string, string>) => void}
+                onResetFilters={resetFilters}
               />
             </div>
           </motion.div>

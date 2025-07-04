@@ -18,14 +18,18 @@ interface InvoiceDataTableFacetedFilterProps<TData, TValue> {
     color?: string;
     count?: number; // Tổng số từ toàn bộ data
   }[];
+  value?: string;
+  onValueChange?: (value: string) => void;
 }
 
 export function InvoiceDataTableFacetedFilter<TData, TValue>({
   column,
   title,
   options,
+  value,
+  onValueChange
 }: InvoiceDataTableFacetedFilterProps<TData, TValue>) {
-  const selectedValues = new Set(column?.getFilterValue() as (string | boolean)[]);
+  const selectedValues = new Set(value ? [value] : column?.getFilterValue() as (string | boolean)[]);
 
   return (
     <Popover>
@@ -110,6 +114,7 @@ export function InvoiceDataTableFacetedFilter<TData, TValue>({
                   <CommandItem
                     key={option.value.toString()}
                     onSelect={() => {
+                      onValueChange?.(option.value.toString());
                       if (isSelected) {
                         selectedValues.delete(option.value);
                       } else {

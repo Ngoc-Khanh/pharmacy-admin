@@ -12,3 +12,7 @@ export interface AccountListParams extends ListParams {
 export interface OrderListParams extends ListParams {
   status?: string;
 }
+
+export interface InvoiceListParams extends ListParams {
+  status?: string;
+}
