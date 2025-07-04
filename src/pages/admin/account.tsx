@@ -1,7 +1,7 @@
 import { useAccountDialog } from "@/atoms";
 import AccountDialog from "@/components/dialogs/account.dialog";
 import { AccountPrimaryButtons, AccountStats } from "@/components/pages/account";
-import { accountColumns, AccountDataTable } from "@/components/table/account";
+import { accountColumns,  AccountDataTable } from "@/components/table/account";
 import { routeNames, routes, siteConfig } from "@/config";
 import { UserResponse, UserStatsResponse } from "@/data/interfaces";
 import { useTable } from "@/hooks";

@@ -7,7 +7,7 @@ import { useExportExcel } from "@/hooks";
 import { Table } from "@tanstack/react-table";
 import { Ban, CheckCircle2, Clock, FileDown, RotateCcw, Search, X } from "lucide-react";
 import { motion } from 'motion/react';
-import { useCallback } from "react";
+import { useCallback, useState } from "react";
 import { InvoiceDataTableFacetedFilter } from "./invoice.data-table-faceted-filter";
 
 interface InvoiceTableToolbarProps {
@@ -18,6 +18,7 @@ interface InvoiceTableToolbarProps {
 
 export function InvoiceTableToolbar({ table, searchTerm, onSearchChange }: InvoiceTableToolbarProps) {
   const exportInvoiceExcel = useExportExcel();
+  const [inputValue, setInputValue] = useState(searchTerm);
   const isFiltered = table.getState().columnFilters.length > 0 || searchTerm !== '';
 
   const handleExportExcel = useCallback(() => {
@@ -28,6 +29,12 @@ export function InvoiceTableToolbar({ table, searchTerm, onSearchChange }: Invoi
     table.resetColumnFilters();
     onSearchChange('');
   }
+
+  const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      onSearchChange(inputValue);
+    }
+  };
 
   return (
     <motion.div
@@ -40,10 +47,11 @@ export function InvoiceTableToolbar({ table, searchTerm, onSearchChange }: Invoi
         <div className="relative w-full sm:w-72 md:w-80">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-emerald-500 dark:text-emerald-400" />
           <Input
-            placeholder="Tìm kiếm hóa đơn..."
-            value={searchTerm}
-            onChange={(e) => onSearchChange(e.target.value)}
-            className="pl-10"
+            placeholder="Tìm kiếm hóa đơn (nhấn Enter)..."
+            value={inputValue}
+            onChange={(e) => setInputValue(e.target.value)}
+            onKeyPress={handleKeyPress}
+            className="w-full pl-9 h-10 shadow-none bg-emerald-50/50 dark:bg-slate-900 border border-emerald-100 dark:border-emerald-800/40 rounded-lg focus-visible:ring-emerald-500"
           />
           {searchTerm && (
             <Button
