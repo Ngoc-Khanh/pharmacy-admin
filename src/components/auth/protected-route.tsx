@@ -18,12 +18,12 @@ export default function ProtectedRoute({ children }: ProtectedRouteProps) {
   if (userLoading) {
     return (
       <div className="flex h-screen items-center justify-center bg-background">
-        <div className="text-center space-y-4">
+        <div className="text-center">
           <div className="flex items-center justify-center">
             <img 
-              src="/mona-loading-dark.gif" 
+              src="/hin.gif" 
               alt="Loading..." 
-              className="w-16 h-16 object-contain"
+              className="w-40 h-40 object-contain"
             />
           </div>
           <div>

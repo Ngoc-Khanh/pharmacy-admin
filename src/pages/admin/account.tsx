@@ -1,7 +1,7 @@
 import { useAccountDialog } from "@/atoms";
 import AccountDialog from "@/components/dialogs/account.dialog";
 import { AccountPrimaryButtons, AccountStats } from "@/components/pages/account";
-import { accountColumns, AccountDataTable } from "@/components/table/account";
+import { accountColumns,  AccountDataTable } from "@/components/table/account";
 import { routeNames, routes, siteConfig } from "@/config";
 import { UserResponse, UserStatsResponse } from "@/data/interfaces";
 import { useTable } from "@/hooks";
@@ -10,6 +10,12 @@ import { ShieldCheck, Users } from "lucide-react";
 import { motion } from 'motion/react';
 import { Helmet } from "react-helmet-async";
 import { useMemo } from "react";
+
+// Type để fix generic constraint
+type FilterParams = Record<string, string> & {
+  role?: string;
+  status?: string;
+};
 
 export default function AccountPage() {
   const { setOpen, setSelectedAccountsForBulkDelete } = useAccountDialog();
@@ -23,13 +29,20 @@ export default function AccountPage() {
     paginationInfo,
     searchTerm,
     setSearchTerm,
+    filters,
+    handleFiltersChange,
+    resetFilters,
     handlePageChange,
     handlePageSizeChange,
     pageSize,
-  } = useTable<UserResponse, UserStatsResponse>({
+  } = useTable<UserResponse, UserStatsResponse, FilterParams>({
     queryKey: "accounts",
     dataFetcher: AccountAPI.AccountList,
     statsFetcher: AccountAPI.AccountStats,
+    defaultFilters: {
+      role: "",
+      status: ""
+    } as FilterParams
   });
 
   const handleBulkDelete = (selectedAccounts: UserResponse[]) => {
@@ -116,8 +129,10 @@ export default function AccountPage() {
                 isLoading={isLoading}
                 isChangingPage={isChangingPage}
                 onBulkDelete={handleBulkDelete}
-                statsData={statsData}
                 pagination={paginationProps}
+                filters={filters as Record<string, string>}
+                onFiltersChange={handleFiltersChange as (filters: Record<string, string>) => void}
+                onResetFilters={resetFilters}
               />
             </div>
           </motion.div>

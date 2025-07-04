@@ -1,6 +1,6 @@
 import { DataTablePagination } from "@/components/table/data-table-pagination";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { PaginationProps, UserResponse, UserStatsResponse } from "@/data/interfaces";
+import { PaginationProps, UserResponse } from "@/data/interfaces";
 import { fadeInUpVariants } from "@/lib/motion-vartiant";
 import { cn } from "@/lib/utils";
 import { ColumnDef, ColumnFiltersState, flexRender, getCoreRowModel, getFacetedRowModel, getFacetedUniqueValues, getFilteredRowModel, getPaginationRowModel, getSortedRowModel, RowData, SortingState, useReactTable, VisibilityState } from "@tanstack/react-table";
@@ -24,7 +24,9 @@ interface DataTableProps {
   isChangingPage?: boolean;
   pagination?: PaginationProps;
   onBulkDelete?: (selectedAccounts: UserResponse[]) => void;
-  statsData?: UserStatsResponse;
+  filters?: Record<string, string>;
+  onFiltersChange?: (filters: Record<string, string>) => void;
+  onResetFilters?: () => void;
 }
 
 export default function AccountDataTable({
@@ -36,7 +38,9 @@ export default function AccountDataTable({
   isChangingPage = false,
   pagination,
   onBulkDelete,
-  statsData
+  filters,
+  onFiltersChange,
+  onResetFilters
 }: DataTableProps) {
   const [rowSelection, setRowSelection] = useState({});
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
@@ -73,7 +77,9 @@ export default function AccountDataTable({
         searchTerm={searchTerm}
         onSearchChange={onSearchChange}
         onBulkDelete={onBulkDelete}
-        statsData={statsData}
+        filters={filters}
+        onFiltersChange={onFiltersChange}
+        onResetFilters={onResetFilters}
       />
 
       <div className="bg-white dark:bg-slate-950 rounded-xl border border-cyan-100 dark:border-cyan-800/30 shadow-sm p-2">

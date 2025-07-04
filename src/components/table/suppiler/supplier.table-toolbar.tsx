@@ -6,7 +6,7 @@ import { useExportExcel } from "@/hooks";
 import { Table } from "@tanstack/react-table";
 import { FileDown, RotateCcw, Search, X } from "lucide-react";
 import { motion } from 'motion/react';
-import { useCallback } from "react";
+import { useCallback, useState } from "react";
 
 interface SupplierTableToolbarProps<TData> {
   table: Table<TData>;
@@ -21,6 +21,7 @@ export function SupplierTableToolbar<TData>({
   onSearchChange,
 }: SupplierTableToolbarProps<TData>) {
   const exportSupplierExcel = useExportExcel();
+  const [inputValue, setInputValue] = useState(searchTerm);
   const isFiltered = table.getState().columnFilters.length > 0 || searchTerm !== "";
 
   const handleExportExcel = useCallback(() => {
@@ -30,6 +31,12 @@ export function SupplierTableToolbar<TData>({
   const handleClearFilters = () => {
     table.resetColumnFilters();
     onSearchChange('');
+  };
+
+  const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      onSearchChange(inputValue);
+    }
   };
 
   return (
@@ -43,9 +50,10 @@ export function SupplierTableToolbar<TData>({
         <div className="relative w-full sm:w-72 md:w-80">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-violet-500 dark:text-violet-400" />
           <Input
-            placeholder="Tìm kiếm nhà cung cấp..."
-            value={searchTerm}
-            onChange={(e) => onSearchChange(e.target.value)}
+            placeholder="Tìm kiếm nhà cung cấp (nhấn Enter)..."
+            value={inputValue}
+            onChange={(e) => setInputValue(e.target.value)}
+            onKeyPress={handleKeyPress}
             className="w-full pl-9 h-10 shadow-none bg-violet-50/50 dark:bg-slate-900 border border-violet-100 dark:border-violet-800/40 rounded-lg focus-visible:ring-violet-500"
           />
           {searchTerm && (

@@ -1,22 +1,24 @@
-import { AccountDataTableFacetedFilter } from "@/components/table/account/account.data-table-faceted-filter";
 import { DataTableViewOptions } from "@/components/table/data-table-view-options";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { AccountRole, AccountStatus } from "@/data/enum";
-import { UserResponse, UserStatsResponse } from "@/data/interfaces";
+import { AccountStatus } from "@/data/enum";
+import { UserResponse } from "@/data/interfaces";
 import { useExportExcel } from "@/hooks";
 import { Table } from "@tanstack/react-table";
 import { FileDown, RotateCcw, Search, Trash2, X } from "lucide-react";
 import { motion } from 'motion/react';
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 import { userTypes } from ".";
+import { AccountDataTableFacetedFilter } from "./account.data-table-faceted-filter";
 
 interface AccountTableToolbarProps {
   table: Table<UserResponse>;
   searchTerm: string;
   onSearchChange: (search: string) => void;
   onBulkDelete?: (selectedAccounts: UserResponse[]) => void;
-  statsData?: UserStatsResponse;
+  filters?: Record<string, string>;
+  onFiltersChange?: (filters: Record<string, string>) => void;
+  onResetFilters?: () => void;
 }
 
 export function AccountTableToolbar({
@@ -24,47 +26,52 @@ export function AccountTableToolbar({
   searchTerm,
   onSearchChange,
   onBulkDelete,
-  statsData
+  filters,
+  onFiltersChange,
+  onResetFilters
 }: AccountTableToolbarProps) {
   const exportAccountExcel = useExportExcel();
-  const [localSearchTerm, setLocalSearchTerm] = useState(searchTerm);
-  const isFiltered = table.getState().columnFilters.length > 0 || searchTerm !== '';
+  const [inputValue, setInputValue] = useState(searchTerm);
+  const isFiltered = (filters?.status || filters?.role || searchTerm !== '');
   const selectedRows = table.getFilteredSelectedRowModel().rows;
   const hasSelectedRows = selectedRows.length > 0;
 
-  // Debounce search API calls
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      onSearchChange(localSearchTerm);
-    }, 500);
-
-    return () => clearTimeout(timer);
-  }, [localSearchTerm, onSearchChange]);
+  const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      onSearchChange(inputValue);
+    }
+  };
 
   const handleExportExcel = useCallback(() => {
     exportAccountExcel.mutate('users');
   }, [exportAccountExcel]);
 
-  // Sync với external search term
-  useEffect(() => {
-    setLocalSearchTerm(searchTerm);
-  }, [searchTerm]);
-
   const handleClearSearch = useCallback(() => {
-    setLocalSearchTerm('');
+    setInputValue('');
     onSearchChange('');
   }, [onSearchChange]);
 
   const handleClearFilters = useCallback(() => {
     table.resetColumnFilters();
-    setLocalSearchTerm('');
+    setInputValue('');
     onSearchChange('');
-  }, [table, onSearchChange]);
+    onResetFilters?.();
+  }, [table, onSearchChange, onResetFilters]);
 
   const handleBulkDelete = useCallback(() => {
     const selectedAccounts = selectedRows.map(row => row.original);
     onBulkDelete?.(selectedAccounts);
   }, [selectedRows, onBulkDelete]);
+
+  // Handle filter change
+  const handleFilterChange = useCallback((filterKey: string, value: string | null) => {
+    if (onFiltersChange) {
+      onFiltersChange({
+        ...filters,
+        [filterKey]: value === "all" ? "" : value || ""
+      });
+    }
+  }, [filters, onFiltersChange]);
 
   return (
     <motion.div
@@ -97,12 +104,13 @@ export function AccountTableToolbar({
         <div className="relative w-full sm:w-72 md:w-80">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-cyan-500 dark:text-cyan-400" />
           <Input
-            placeholder="Tìm kiếm tài khoản theo tên, email, username..."
-            value={localSearchTerm}
-            onChange={(e) => setLocalSearchTerm(e.target.value)}
+            placeholder="Tìm kiếm tài khoản (nhấn Enter)..."
+            value={inputValue}
+            onChange={(e) => setInputValue(e.target.value)}
+            onKeyPress={handleKeyPress}
             className="w-full pl-9 h-10 shadow-none bg-cyan-50/50 dark:bg-slate-900 border border-cyan-100 dark:border-cyan-800/40 rounded-lg focus-visible:ring-cyan-500"
           />
-          {localSearchTerm && (
+          {inputValue && (
             <Button
               variant="ghost"
               size="sm"
@@ -118,38 +126,23 @@ export function AccountTableToolbar({
         <div className="flex items-center gap-2">
           {table.getColumn("status") && (
             <AccountDataTableFacetedFilter
-              column={table.getColumn("status")}
               title="Trạng thái"
               options={[
-                {
-                  label: "Hoạt động",
-                  value: AccountStatus.ACTIVE,
-                  count: statsData?.activeUsers ?? 0
-                },
-                {
-                  label: "Chờ xác thực",
-                  value: AccountStatus.PENDING,
-                  count: statsData?.pendingUsers ?? 0
-                },
-                {
-                  label: "Không hoạt động",
-                  value: AccountStatus.SUSPENDED,
-                  count: statsData?.suspendedUsers ?? 0
-                },
+                { label: "Hoạt động", value: AccountStatus.ACTIVE },
+                { label: "Chờ xác thực", value: AccountStatus.PENDING },
+                { label: "Không hoạt động", value: AccountStatus.SUSPENDED }
               ]}
+              onValueChange={(value) => handleFilterChange("status", value)}
+              value={filters?.status || "all"}
             />
           )}
 
           {table.getColumn("role") && (
             <AccountDataTableFacetedFilter
-              column={table.getColumn("role")}
               title="Vai trò"
-              options={userTypes.map((t) => ({
-                ...t,
-                count: t.value === AccountRole.ADMIN ? (statsData?.adminAccounts ?? 0) :
-                  t.value === AccountRole.PHARMACIST ? (statsData?.pharmacistAccounts ?? 0) :
-                    t.value === AccountRole.CUSTOMER ? (statsData?.customerAccounts ?? 0) : 0
-              }))}
+              options={userTypes}
+              onValueChange={(value) => handleFilterChange("role", value)}
+              value={filters?.role || "all"}
             />
           )}
         </div>
