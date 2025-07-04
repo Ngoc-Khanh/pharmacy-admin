@@ -8,3 +8,7 @@ export interface AccountListParams extends ListParams {
   role?: string;
   status?: string;
 }
+
+export interface OrderListParams extends ListParams {
+  status?: string;
+}

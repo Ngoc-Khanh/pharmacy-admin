@@ -10,6 +10,10 @@ import { motion } from 'motion/react';
 import { useMemo } from "react";
 import { Helmet } from "react-helmet-async";
 
+type FilterParams = Record<string, string> & {
+  status?: string;
+};
+
 export default function OrderPage() {
   const {
     data: orderData,
@@ -20,6 +24,9 @@ export default function OrderPage() {
     paginationInfo,
     searchTerm,
     setSearchTerm,
+    filters,
+    handleFiltersChange,
+    resetFilters,
     handlePageChange,
     handlePageSizeChange,
     pageSize,
@@ -27,6 +34,9 @@ export default function OrderPage() {
     queryKey: "orders",
     dataFetcher: OrderAPI.OrderList,
     statsFetcher: OrderAPI.OrderStats,
+    defaultFilters: {
+      status: ""
+    } as FilterParams
   });
 
   const paginationProps = useMemo(() => {
@@ -105,6 +115,9 @@ export default function OrderPage() {
                 isLoading={isLoading}
                 isChangingPage={isChangingPage}
                 pagination={paginationProps}
+                filters={filters as Record<string, string>}
+                onFiltersChange={handleFiltersChange as (filters: Record<string, string>) => void}
+                onResetFilters={resetFilters}
               />
             </div>
           </motion.div>

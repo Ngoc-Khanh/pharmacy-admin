@@ -13,26 +13,26 @@ interface OrderTableToolbarProps<TData> {
   table: Table<TData>;
   searchTerm: string;
   onSearchChange: (search: string) => void;
+  filters?: Record<string, string>;
+  onFiltersChange?: (filters: Record<string, string>) => void;
+  onResetFilters?: () => void;
 }
 
 export function OrderTableToolbar<TData>({
   table,
   searchTerm,
-  onSearchChange
+  onSearchChange,
+  filters,
+  onFiltersChange,
+  onResetFilters
 }: OrderTableToolbarProps<TData>) {
   const exportOrderExcel = useExportExcel();
   const [inputValue, setInputValue] = useState(searchTerm);
-  const isFiltered = table.getState().columnFilters.length > 0 || searchTerm !== "";
+  const isFiltered = (filters?.status || searchTerm !== '');
 
   const handleExportExcel = useCallback(() => {
     exportOrderExcel.mutate('orders');
   }, [exportOrderExcel]);
-
-  const handleClearFilters = () => {
-    table.resetColumnFilters();
-    onSearchChange('');
-    setInputValue('');
-  };
 
   const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') {
@@ -44,6 +44,22 @@ export function OrderTableToolbar<TData>({
     setInputValue('');
     onSearchChange('');
   };
+
+  const handleClearFilters = useCallback(() => {
+    table.resetColumnFilters();
+    setInputValue('');
+    onSearchChange('');
+    onResetFilters?.();
+  }, [table, onSearchChange, onResetFilters]);
+
+  const handleFilterChange = useCallback((filterKey: string, value: string | null) => {
+    if (onFiltersChange) {
+      onFiltersChange({
+        ...filters,
+        [filterKey]: value === "all" ? "" : value || ""
+      });
+    }
+  }, [filters, onFiltersChange]);
 
   return (
     <motion.div
@@ -85,6 +101,8 @@ export function OrderTableToolbar<TData>({
                 { label: "Đã hoàn thành", value: OrderStatus.COMPLETED },
                 { label: "Đã hủy", value: OrderStatus.CANCELLED },
               ]}
+              onValueChange={(value) => handleFilterChange("status", value)}
+              value={filters?.status || "all"}
             />
           )}
         </div>

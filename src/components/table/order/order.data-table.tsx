@@ -16,6 +16,9 @@ interface DataTableProps {
   isLoading: boolean;
   isChangingPage?: boolean;
   pagination?: PaginationProps;
+  filters?: Record<string, string>;
+  onFiltersChange?: (filters: Record<string, string>) => void;
+  onResetFilters?: () => void;
 }
 
 export function OrderDataTable({
@@ -26,6 +29,9 @@ export function OrderDataTable({
   isLoading,
   isChangingPage = false,
   pagination,
+  filters,
+  onFiltersChange,
+  onResetFilters
 }: DataTableProps) {
   const [rowSelection, setRowSelection] = useState({});
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
@@ -62,6 +68,9 @@ export function OrderDataTable({
         table={table}
         searchTerm={searchTerm}
         onSearchChange={onSearchChange}
+        filters={filters}
+        onFiltersChange={onFiltersChange}
+        onResetFilters={onResetFilters}
       />
 
       <div className="bg-white dark:bg-slate-950 rounded-xl border border-rose-100 dark:border-rose-800/30 shadow-sm p-2">
