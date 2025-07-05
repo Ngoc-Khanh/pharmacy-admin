@@ -47,4 +47,9 @@ export const MedicineAPI = {
     );
     return res.data.data;
   },
+
+  async MedicineBulkDelete(medicineIds: string[]) {
+    const res = await apiDelete<SRO<{deletedCount: number}>>(`v1/admin/medicines/bulk-delete?ids=${medicineIds.join(',')}`);
+    return res.data.data;
+  },
 }

@@ -1,3 +1,4 @@
+import { useMedicineDialog } from "@/atoms";
 import MedicineDialog from "@/components/dialogs/medicine.dialog";
 import { MedicinePrimaryButtons, MedicineStats } from "@/components/pages/medicine";
 import { medicineColumns, MedicineDataTable } from "@/components/table/medicine";
@@ -11,6 +12,8 @@ import { useMemo } from "react";
 import { Helmet } from "react-helmet-async";
 
 export default function MedicinePage() {
+  const { setOpen, setSelectedMedicinesForBulkDelete } = useMedicineDialog();
+  
   const {
     data: medicineData,
     statsData,
@@ -28,6 +31,11 @@ export default function MedicinePage() {
     dataFetcher: MedicineAPI.MedicineList,
     statsFetcher: MedicineAPI.MedicineStats,
   });
+
+  const handleBulkDelete = (selectedMedicines: MedicineResponse[]) => {
+    setSelectedMedicinesForBulkDelete(selectedMedicines);
+    setOpen("bulk-delete");
+  };
 
   // Memoize pagination props để tránh re-render không cần thiết
   const paginationProps = useMemo(() => {
@@ -106,6 +114,7 @@ export default function MedicinePage() {
                 onSearchChange={setSearchTerm}
                 isLoading={isLoading}
                 isChangingPage={isChangingPage}
+                onBulkDelete={handleBulkDelete}
                 pagination={paginationProps}
               />
             </div>

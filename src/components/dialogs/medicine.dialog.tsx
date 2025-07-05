@@ -1,8 +1,12 @@
 import { useMedicineDialog } from "@/atoms";
-import { MedicineCreateDialog, MedicineDeleteDialog, MedicineUpdateDialog, MedicineUploadImage } from "@/components/dialogs/medicine";
+import { MedicineBulkDeleteDialog, MedicineCreateDialog, MedicineDeleteDialog, MedicineUpdateDialog, MedicineUploadImage } from "@/components/dialogs/medicine";
 
-export default function MedicineDialog() {
-  const { open, setOpen, currentMedicine, setCurrentMedicine } = useMedicineDialog();
+interface Props {
+  onBulkDeleteSuccess?: () => void;
+}
+
+export default function MedicineDialog({ onBulkDeleteSuccess }: Props = {}) {
+  const { open, setOpen, currentMedicine, setCurrentMedicine, selectedMedicinesForBulkDelete, setSelectedMedicinesForBulkDelete } = useMedicineDialog();
 
   return (
     <>
@@ -57,6 +61,23 @@ export default function MedicineDialog() {
               }
             }}
             medicineId={currentMedicine.id}
+          />
+
+          <MedicineBulkDeleteDialog
+            open={open === "bulk-delete"}
+            onOpenChange={(isOpen) => {
+              if (!isOpen) {
+                setOpen(null);
+                setTimeout(() => {
+                  setSelectedMedicinesForBulkDelete([]);
+                }, 300);
+              }
+            }}
+            selectedMedicines={selectedMedicinesForBulkDelete}
+            onSuccess={() => {
+              setSelectedMedicinesForBulkDelete([]);
+              onBulkDeleteSuccess?.();
+            }}
           />
         </>
       )}
