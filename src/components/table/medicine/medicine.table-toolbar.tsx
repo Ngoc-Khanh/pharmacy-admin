@@ -4,7 +4,7 @@ import { Input } from "@/components/ui/input";
 import { MedicineResponse } from "@/data/interfaces";
 import { useExportExcel } from "@/hooks";
 import { Table } from "@tanstack/react-table";
-import { FileDown, RotateCcw, Search, X } from "lucide-react";
+import { FileDown, RotateCcw, Search, Trash2, X } from "lucide-react";
 import { motion } from 'motion/react';
 import { useCallback, useState } from "react";
 
@@ -12,12 +12,15 @@ interface MedicineTableToolbarProps {
   table: Table<MedicineResponse>;
   searchTerm: string;
   onSearchChange: (search: string) => void;
+  onBulkDelete?: (selectedMedicines: MedicineResponse[]) => void;
 }
 
-export function MedicineTableToolbar({ table, searchTerm, onSearchChange }: MedicineTableToolbarProps) {
+export function MedicineTableToolbar({ table, searchTerm, onSearchChange, onBulkDelete }: MedicineTableToolbarProps) {
   const exportMedicineExcel = useExportExcel();
   const [inputValue, setInputValue] = useState(searchTerm);
   const isFiltered = table.getState().columnFilters.length > 0 || searchTerm !== "";
+  const selectedRows = table.getFilteredSelectedRowModel().rows;
+  const hasSelectedRows = selectedRows.length > 0;
 
   const handleExportExcel = useCallback(() => {
     exportMedicineExcel.mutate('medicines');
@@ -28,6 +31,11 @@ export function MedicineTableToolbar({ table, searchTerm, onSearchChange }: Medi
     onSearchChange('');
     setInputValue('');
   };
+
+  const handleBulkDelete = useCallback(() => {
+    const selectedMedicines = selectedRows.map(row => row.original);
+    onBulkDelete?.(selectedMedicines);
+  }, [selectedRows, onBulkDelete]);
 
   const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') {
@@ -48,6 +56,26 @@ export function MedicineTableToolbar({ table, searchTerm, onSearchChange }: Medi
       className="flex flex-col sm:flex-row items-center justify-between gap-3 bg-white dark:bg-slate-950 rounded-lg p-2 shadow-sm border border-rose-100 dark:border-rose-800/30"
     >
       <div className="flex w-full sm:w-auto items-center gap-2">
+        {/* Bulk Delete Button - chỉ hiển thị khi có rows được chọn */}
+        {hasSelectedRows && (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.9 }}
+            transition={{ duration: 0.2 }}
+          >
+            <Button
+              variant="destructive"
+              size="sm"
+              className="h-10 px-3 bg-rose-500 hover:bg-rose-600 text-white"
+              onClick={handleBulkDelete}
+            >
+              <Trash2 className="mr-2 h-4 w-4" />
+              Xóa {selectedRows.length} dược phẩm
+            </Button>
+          </motion.div>
+        )}
+        
         <div className="relative w-full sm:w-72 md:w-80">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-fuchsia-500 dark:text-fuchsia-400" />
           <Input

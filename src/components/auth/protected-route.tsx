@@ -23,7 +23,7 @@ export default function ProtectedRoute({ children }: ProtectedRouteProps) {
             <img 
               src="/hin.gif" 
               alt="Loading..." 
-              className="w-40 h-40 object-contain"
+              className="w-28 h-28 object-contain"
             />
           </div>
           <div>

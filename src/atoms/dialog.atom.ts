@@ -14,14 +14,7 @@ export const useAccountDialog = () => {
   const [open, setOpen] = useAtom(openAccountDialogAtom);
   const [currentAccount, setCurrentAccount] = useAtom(currentAccountAtom);
   const [selectedAccountsForBulkDelete, setSelectedAccountsForBulkDelete] = useAtom(selectedAccountsForBulkDeleteAtom);
-  return { 
-    open, 
-    setOpen, 
-    currentAccount, 
-    setCurrentAccount,
-    selectedAccountsForBulkDelete,
-    setSelectedAccountsForBulkDelete
-  };
+  return { open, setOpen, currentAccount, setCurrentAccount, selectedAccountsForBulkDelete, setSelectedAccountsForBulkDelete };
 }
 
 // Category Dialog
@@ -37,15 +30,17 @@ export const useCategoryDialog = () => {
 }
 
 // Medicine Dialog
-export type MedicineDialogType = DialogType | "detail" | "thumbnail";
+export type MedicineDialogType = DialogType | "detail" | "thumbnail" | "bulk-delete";
 
 export const openMedicineDialogAtom = atom<MedicineDialogType | null>(null);
 export const currentMedicineAtom = atom<MedicineResponse | null>(null);
+export const selectedMedicinesForBulkDeleteAtom = atom<MedicineResponse[]>([]);
 
 export const useMedicineDialog = () => {
   const [open, setOpen] = useAtom(openMedicineDialogAtom);
   const [currentMedicine, setCurrentMedicine] = useAtom(currentMedicineAtom);
-  return { open, setOpen, currentMedicine, setCurrentMedicine };
+  const [selectedMedicinesForBulkDelete, setSelectedMedicinesForBulkDelete] = useAtom(selectedMedicinesForBulkDeleteAtom);
+  return { open, setOpen, currentMedicine, setCurrentMedicine, selectedMedicinesForBulkDelete, setSelectedMedicinesForBulkDelete };
 }
 
 // Supplier Dialog

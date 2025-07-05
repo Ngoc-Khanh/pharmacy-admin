@@ -23,6 +23,7 @@ interface DataTableProps {
   isLoading: boolean;
   isChangingPage?: boolean;
   pagination?: PaginationProps;
+  onBulkDelete?: (selectedMedicines: MedicineResponse[]) => void;
 }
 
 export function MedicineDataTable({
@@ -33,7 +34,7 @@ export function MedicineDataTable({
   isLoading,
   isChangingPage = false,
   pagination,
-
+  onBulkDelete,
 }: DataTableProps) {
   const [rowSelection, setRowSelection] = useState({});
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
@@ -69,6 +70,7 @@ export function MedicineDataTable({
         table={table}
         searchTerm={searchTerm}
         onSearchChange={onSearchChange}
+        onBulkDelete={onBulkDelete}
       />
 
       <div className="bg-white dark:bg-slate-950 rounded-xl border border-fuchsia-100 dark:border-fuchsia-800/30 shadow-sm p-1">
